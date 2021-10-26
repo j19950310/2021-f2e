@@ -10,6 +10,7 @@
     "lint": "yarn lint:js && yarn lint:style"
   },
   "dependencies": {
+    "axios": "^0.24.0",
     "body-scroll-lock": "^4.0.0-beta.0",
     "vite-plugin-svg-icons": "^1.0.5",
     "vue": "^3.2.16",
