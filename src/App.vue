@@ -6,6 +6,9 @@
 
 <template>
     <div class="app">
+        <router-link to="/dev">
+            DEV
+        </router-link>
         <router-view />
     </div>
 </template>
