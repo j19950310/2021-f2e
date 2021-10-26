@@ -1,9 +1,23 @@
 <script setup>
+
 </script>
 
 <template>
-<div>view - home</div>
+    <div class="page-index">
+        <div class="container">
+            <img
+                alt="Vue logo"
+                src="@/assets/logo.png"
+            >
+            <HelloWorld
+                msg="Hello Vue 3 + Vite"
+            />
+        </div>
+    </div>
 </template>
 
-<style>
+<style lang="scss">
+.page-index {
+    text-align: center;
+}
 </style>
