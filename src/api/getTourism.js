@@ -7,7 +7,7 @@ import { filter as $filter, select as $select } from '@/api/paramsFormat'
 const axios = getAxios('Tourism')
 
 function errorHandler (e) {
-    console.log(e)
+    // console.log(e)
     return e
 }
 

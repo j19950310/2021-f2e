@@ -17,7 +17,7 @@ onMounted(async () => {
             }
         })
     })
-    console.log({ collection })
+    // console.log({ collection })
 })
 
 </script>
