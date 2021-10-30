@@ -1,7 +1,7 @@
 
-import TourSpot from '@/api/TourSpot'
+import { ScenicSpot, RestaurantSpot, HotelSpot, ActivitySpot } from '@/api/TourSpot'
 import getAxios from '@/api/getAxios'
-import { filter as $filter, select as $select } from '@/api/paramsFormat'
+import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 
 // Request URL: https://ptx.transportdata.tw/MOTC/v2/Tourism
 const axios = getAxios('Tourism')
@@ -12,28 +12,173 @@ function errorHandler (e) {
 }
 
 // GET /v2/Tourism/ScenicSpot
-export const getScenicSpot = async () => {
+/**
+ * 取得景點資訊
+ * @param {*} config 參數設定
+ * @returns {Array} ScenicSpot
+ */
+export const getScenicSpot = async (config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/ScenicSpot/?${queryString}`)
+        return data.map(item => (new ScenicSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/ScenicSpot/{City} 取得指定[縣市]觀光景點資料
+/**
+ * 取得特定縣市景點資訊
+ * @param {string} queryCity 縣市
+ * @param {*} config 參數設定
+ * @returns {Array} ScenicSpot
+ */
+export const getScenicSpotByCity = async (queryCity, config = {}) => {
     try {
         // $select=[A,B,C]
-        const params = new URLSearchParams()
-        params.append('$top', 100)
-        params.append('$format', 'JSON')
-        params.append('$skip', 700)
-        params.append('$select', $select(['OpenTime']))
-        // params.append('$filter', $filter(`!contains(OpenTime,'${allTime.join('\')&!contains(OpenTime,\'')}')`))
-        params.append('$filter', $filter(`trim(OpenTime)!='${allTime.join('\'&trim(OpenTime)!=\'')}'`))
+        const city = getCityParam(queryCity)
+        if (!city) throw new Error('查詢不到輸入字串的城市')
+        const queryString = paramsFormat(config)
+
         // 取得資料
-        const { data } = await axios.get(`/ScenicSpot/?${params.toString()}`)
-        return data.map(item => (new TourSpot(item)))
+        const { data } = await axios.get(`/ScenicSpot/${city}/?${queryString}`)
+        return data.map(item => (new ScenicSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Restaurant 取得所有觀光餐飲資料
+/**
+ * 取得餐廳資訊
+ * @param {*} config 參數設定
+ * @returns {Array} RestaurantSpot
+ */
+export const getRestaurantSpot = async (config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Restaurant/?${queryString}`)
+        data.forEach(item => { console.log(item) })
+        return data.map(item => (new RestaurantSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Restaurant/{City} 取得指定[縣市]觀光餐飲資料
+/**
+ * 取得特定縣市餐廳資訊
+ * @param {string} queryCity 縣市
+ * @param {*} config 參數設定
+ * @returns {Array} RestaurantSpot
+ */
+export const getRestaurantSpotByCity = async (queryCity, config = {}) => {
+    try {
+        // $select=[A,B,C]
+        const city = getCityParam(queryCity)
+        if (!city) throw new Error('查詢不到輸入字串的城市')
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Restaurant/${city}/?${queryString}`)
+        return data.map(item => (new RestaurantSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Hotel 取得所有觀光旅宿資料
+/**
+ * 取得旅館資訊
+ * @param {*} config 參數設定
+ * @returns {Array} HotelSpot
+*/
+export const getHotelSpot = async (config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Hotel/?${queryString}`)
+        return data.map(item => (new HotelSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Hotel/{City} 取得指定[縣市]觀光旅宿資料
+/**
+ * 取得特定縣市旅館資訊
+ * @param {string} queryCity 縣市
+ * @param {*} config 參數設定
+ * @returns {Array} HotelSpot
+ */
+export const getHotelSpotByCity = async (queryCity, config = {}) => {
+    try {
+        // $select=[A,B,C]
+        const city = getCityParam(queryCity)
+        if (!city) throw new Error('查詢不到輸入字串的城市')
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Hotel/${city}/?${queryString}`)
+        data.forEach(item => { console.log(item) })
+        return data.map(item => (new HotelSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Activity 取得所有觀光活動資料
+/**
+ * 取得活動資訊
+ * @param {*} config 參數設定
+ * @returns {Array} ActivitySpot
+ */
+export const getActivitySpot = async (config = {}) => {
+    try {
+        // $select=[A,B,C]
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Activity/?${queryString}`)
+        data.forEach(item => { console.log(item) })
+        return data.map(item => (new ActivitySpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
+}
+
+// GET /v2/Tourism/Activity/{City} 取得指定[縣市]觀光活動資料
+/**
+ * 取得特定縣市活動資訊
+ * @param {string} queryCity 縣市
+ * @param {*} config 參數設定
+ * @returns {Array} ActivitySpot
+ */
+export const getActivitySpotByCity = async (queryCity, config = {}) => {
+    try {
+        // $select=[A,B,C]
+        const city = getCityParam(queryCity)
+        if (!city) throw new Error('查詢不到輸入字串的城市')
+        const queryString = paramsFormat(config)
+
+        // 取得資料
+        const { data } = await axios.get(`/Activity/${city}/?${queryString}`)
+        return data.map(item => (new ActivitySpot(item)))
     } catch (e) {
         return errorHandler(e)
     }
 }
 
 // TODO 利用 $filter 搜尋 字串包含ＸＸＸ
-function getAlwaysOpenQueryString () {
+// function getAlwaysOpenQueryString () {
 
-}
+// }
 
 const allTime = [
     'Sun 24 hours；Sun 24 hours；Mon 24 hours；Mon 24 hours；Tue 24 hours；Tue 24 hours；Wed 24 hours；Wed 24 hours；Thu 24 hours；Thu 24 hours；Fri 24 hours；Fri 24 hours；Sat 24 hours；Sat 24 hours',
@@ -71,18 +216,3 @@ const allTime = [
     '24小時營業',
     '00:00~24:00',
 ]
-// GET /v2/Tourism/ScenicSpot 取得所有觀光景點資料
-// ScenicSpot?$top=30&$format=JSON
-// console.log($filter(`trim(OpenTime)!='${allTime.join('\'&trim(OpenTime)!=\'')}'`))
-
-// GET /v2/Tourism/ScenicSpot/{City} 取得指定[縣市]觀光景點資料
-
-// GET /v2/Tourism/Restaurant 取得所有觀光餐飲資料
-
-// GET /v2/Tourism/Restaurant/{City} 取得指定[縣市]觀光餐飲資料
-
-// GET /v2/Tourism/Hotel 取得所有觀光旅宿資料
-
-// GET /v2/Tourism/Hotel/{City} 取得指定[縣市]觀光旅宿資料
-
-// GET /v2/Tourism/Activity 取得所有觀光活動資料

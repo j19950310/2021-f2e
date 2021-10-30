@@ -15,14 +15,14 @@ export default class TourSpot {
         return this.Name
     }
 
-    get descriptionDetail () {
-        // 景點特色詳細說明 ,
-        return this.DescriptionDetail
-    }
-
     get description () {
         // 景點特色精簡說明 ,
         return this.Description
+    }
+
+    get address () {
+        // 景點地址 ,
+        return this.Address
     }
 
     get phone () {
@@ -36,14 +36,66 @@ export default class TourSpot {
         }
     }
 
-    get address () {
-        // 景點地址 ,
-        return this.Address
+    get websiteUrl () {
+        // 景點官方網站網址 ,
+        return this.WebsiteUrl
+    }
+
+    get picture () {
+        // 景點照片 ,
+        return new TourismPicture(this.Picture)
+    }
+
+    get position () {
+        // 景點位置 {GeoHash,PositionLat,PositionLon}
+        // google map api { lat, lng }
+        return new PointType(this.Position)
+    }
+
+    get class () {
+        // 景點分類 ,
+        return this.Class
+    }
+
+    get mapUrl () {
+        // 景點地圖/簡圖介紹網址 ,
+        return this.MapUrl
     }
 
     get zipCode () {
         // 郵遞區號 ,
         return this.ZipCode
+    }
+
+    get parkingInfo () {
+        // 停車資訊 ,
+        return this.ParkingInfo
+    }
+
+    get city () {
+        // 所屬縣市 ,
+        return this.City
+    }
+
+    get srcUpdateTime () {
+        // 觀光局檔案更新時間(ISO8601格式:yyyy-MM-ddTHH:mm:sszzz) ,
+        return new Date(this.SrcUpdateTime)
+    }
+
+    get updateTime () {
+        // 本平台資料更新時間(ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
+        return new Date(this.UpdateTime)
+    }
+}
+
+export class ScenicSpot extends TourSpot {
+    // constructor (config) {
+    //     super(config)
+    // }
+
+    get descriptionDetail () {
+        // 景點特色詳細說明 ,
+        return this.DescriptionDetail
     }
 
     get travelInfo () {
@@ -56,50 +108,9 @@ export default class TourSpot {
         return this.OpenTime
     }
 
-    get picture () {
-        // 景點照片 ,
-        return new TourismPicture(this.Picture)
-    }
-
-    get mapUrl () {
-        // 景點地圖/簡圖介紹網址 ,
-        return this.MapUrl
-    }
-
-    get position () {
-        // 景點位置 {GeoHash,PositionLat,PositionLon}
-        // google map api { lat, lng }
-        return new PointType(this.Position)
-    }
-
-    get class1 () {
-        // 景點分類1 ,
-        return this.Class1
-    }
-
-    get class2 () {
-        // 景點分類2 ,
-        return this.Class2
-    }
-
-    get class3 () {
-        // 景點分類3 ,
-        return this.Class3
-    }
-
     get level () {
         // 古蹟分級 ,
         return this.Level
-    }
-
-    get websiteUrl () {
-        // 景點官方網站網址 ,
-        return this.WebsiteUrl
-    }
-
-    get parkingInfo () {
-        // 停車資訊 ,
-        return this.ParkingInfo
     }
 
     get parkingPosition () {
@@ -121,20 +132,74 @@ export default class TourSpot {
         // 常用搜尋關鍵字 ,
         return this.Keyword
     }
+}
 
-    get city () {
-        // 所屬縣市 ,
-        return this.City
+export class RestaurantSpot extends TourSpot {
+    // constructor (config) {
+    //     super(config)
+    // }
+}
+
+export class HotelSpot extends TourSpot {
+    // constructor (config) {
+    //     super(config)
+    // }
+    get grade () {
+        // 旅宿星級 ,
+        return this.Grade
     }
 
-    get srcUpdateTime () {
-        // 觀光局檔案更新時間(ISO8601格式:yyyy-MM-ddTHH:mm:sszzz) ,
-        return new Date(this.SrcUpdateTime)
+    get fax () {
+        // 旅宿傳真 ,
+        return this.Fax
     }
 
-    get updateTime () {
-        // 本平台資料更新時間(ISO8601格式:yyyy-MM-ddTHH:mm:sszzz)
-        return new Date(this.UpdateTime)
+    get spec () {
+        // 旅宿特色 ,
+        return this.Spec
+    }
+
+    get serverInfo () {
+        // 旅宿服務 ,
+        return this.ServerInfo
+    }
+}
+
+export class ActivitySpot extends TourSpot {
+    // constructor (config) {
+    //     super(config)
+    // }
+    get particpation () {
+        // 活動參與對象 ,
+        return this.Particpation
+    }
+
+    get organizer () {
+        // 活動主辦單位 ,
+        return this.Organizer
+    }
+
+    get time () {
+        return {
+            start: new Date(this.StartTime),
+            end: new Date(this.EndTime),
+        }
+    }
+
+    get cycle () {
+        // 活動周期 ,
+        return this.Cycle
+    }
+
+    get nonCycle () {
+        // 活動不重複 ,
+        return this.NonCycle
+    }
+
+    // get class(){} // TODO
+    get charge () {
+        // 活動費用標示 ,
+        return this.Charge
     }
 }
 
