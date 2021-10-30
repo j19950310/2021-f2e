@@ -10,6 +10,9 @@ export default ({ mode }) => {
     process.env = { ...process.env, ...loadEnv(mode, process.cwd()) }
 
     return defineConfig({
+        build: {
+            outDir: 'docs',
+        },
         resolve: {
             alias: [
                 { find: '@', replacement: '/src' },
