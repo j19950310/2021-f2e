@@ -11,9 +11,6 @@ export default ({ mode }) => {
 
     return defineConfig({
         base: './',
-        build: {
-            outDir: 'docs',
-        },
         resolve: {
             alias: [
                 { find: '@', replacement: '/src' },
