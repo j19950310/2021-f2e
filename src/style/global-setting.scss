@@ -3,7 +3,7 @@
 }
 
 ::selection {
-    color: map-get($colors, white);
+    // color: map-get($colors, white);
     background: map-get($colors, primary);
 }
 
