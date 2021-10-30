@@ -1,9 +1,10 @@
 <script setup>
-import { getScenicSpot } from '@/api/getTourism'
+import { getScenicSpot, getScenicSpotByCity } from '@/api/getTourism'
 import { onMounted } from 'vue'
 // dev
 onMounted(async () => {
-    const data = await getScenicSpot()
+    const data = await getScenicSpotByCity('台中')
+    // await new Promise(resolve => setTimeout(resolve, 100))
     const collection = {}
     const keys = ['ID', 'Name', 'DescriptionDetail', 'Description', 'Phone', 'Address', 'ZipCode', 'TravelInfo', 'OpenTime', 'Picture', 'Position', 'ParkingPosition', 'TicketInfo', 'Remarks', 'SrcUpdateTime', 'UpdateTime']
     data.forEach(item => {

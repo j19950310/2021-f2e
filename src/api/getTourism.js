@@ -1,7 +1,11 @@
 
 import TourSpot from '@/api/TourSpot'
 import getAxios from '@/api/getAxios'
-import { filter as $filter, select as $select } from '@/api/paramsFormat'
+import {
+    filter as $filter,
+    select as $select,
+    getCityParam
+} from '@/api/paramsFormat'
 
 // Request URL: https://ptx.transportdata.tw/MOTC/v2/Tourism
 const axios = getAxios('Tourism')
@@ -12,15 +16,17 @@ function errorHandler (e) {
 }
 
 // GET /v2/Tourism/ScenicSpot
-export const getScenicSpot = async () => {
+export const getScenicSpot = async (config = {}) => {
     try {
         // $select=[A,B,C]
         const params = new URLSearchParams()
         params.append('$top', 100)
         params.append('$format', 'JSON')
         params.append('$skip', 700)
-        params.append('$select', $select(['OpenTime']))
+        params.append('$select', $select(['OpenTime'])) // 可選擇欄位
         // params.append('$filter', $filter(`!contains(OpenTime,'${allTime.join('\')&!contains(OpenTime,\'')}')`))
+
+        // 測試取得OpenTime肯定全開的景點
         params.append('$filter', $filter(`trim(OpenTime)!='${allTime.join('\'&trim(OpenTime)!=\'')}'`))
         // 取得資料
         const { data } = await axios.get(`/ScenicSpot/?${params.toString()}`)
@@ -30,10 +36,29 @@ export const getScenicSpot = async () => {
     }
 }
 
-// TODO 利用 $filter 搜尋 字串包含ＸＸＸ
-function getAlwaysOpenQueryString () {
+export const getScenicSpotByCity = async (queryCity, config = {}) => {
+    try {
+        // $select=[A,B,C]
+        const city = getCityParam(queryCity)
+        if (!city) throw new Error('查詢不到輸入字串的城市')
+        const params = new URLSearchParams()
+        params.append('$top', 20)
+        params.append('$format', 'JSON')
+        params.append('$skip', 0)
+        params.append('$select', $select(['OpenTime']))
 
+        // 取得資料
+        const { data } = await axios.get(`/ScenicSpot/${city}/?${params.toString()}`)
+        return data.map(item => (new TourSpot(item)))
+    } catch (e) {
+        return errorHandler(e)
+    }
 }
+
+// TODO 利用 $filter 搜尋 字串包含ＸＸＸ
+// function getAlwaysOpenQueryString () {
+
+// }
 
 const allTime = [
     'Sun 24 hours；Sun 24 hours；Mon 24 hours；Mon 24 hours；Tue 24 hours；Tue 24 hours；Wed 24 hours；Wed 24 hours；Thu 24 hours；Thu 24 hours；Fri 24 hours；Fri 24 hours；Sat 24 hours；Sat 24 hours',
@@ -71,9 +96,6 @@ const allTime = [
     '24小時營業',
     '00:00~24:00',
 ]
-// GET /v2/Tourism/ScenicSpot 取得所有觀光景點資料
-// ScenicSpot?$top=30&$format=JSON
-// console.log($filter(`trim(OpenTime)!='${allTime.join('\'&trim(OpenTime)!=\'')}'`))
 
 // GET /v2/Tourism/ScenicSpot/{City} 取得指定[縣市]觀光景點資料
 
