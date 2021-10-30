@@ -63,7 +63,7 @@ export const getRestaurantSpot = async (config = {}) => {
 
         // 取得資料
         const { data } = await axios.get(`/Restaurant/?${queryString}`)
-        data.forEach(item => { console.log(item) })
+
         return data.map(item => (new RestaurantSpot(item)))
     } catch (e) {
         return errorHandler(e)
@@ -126,7 +126,7 @@ export const getHotelSpotByCity = async (queryCity, config = {}) => {
 
         // 取得資料
         const { data } = await axios.get(`/Hotel/${city}/?${queryString}`)
-        data.forEach(item => { console.log(item) })
+
         return data.map(item => (new HotelSpot(item)))
     } catch (e) {
         return errorHandler(e)
@@ -146,7 +146,7 @@ export const getActivitySpot = async (config = {}) => {
 
         // 取得資料
         const { data } = await axios.get(`/Activity/?${queryString}`)
-        data.forEach(item => { console.log(item) })
+
         return data.map(item => (new ActivitySpot(item)))
     } catch (e) {
         return errorHandler(e)
