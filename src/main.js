@@ -5,9 +5,11 @@ import store from '@/store/index'
 import '@/style/_main.scss'
 import 'virtual:svg-icons-register'
 import directives from '@/plugins/directives/index'
+import gsap from 'gsap/dist/gsap'
 
 const app = createApp(App)
 
+app.provide('gsap', gsap)
 app.use(directives)
 app.use(router)
 app.use(store)
