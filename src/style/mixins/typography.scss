@@ -6,64 +6,190 @@ $font-weight: (
 $font-family: (
     default: #{'Noto Sans TC', 'Microsoft YaHei UI', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif},
 );
+$line-height-auto: 30/21;
+$typos:(
+    'ZH/Minimal_12px_Medium':(
+        font-size:12px,
+        letter-spacing:0,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/H1_48px_Bold':(
+        font-size:48px,
+        letter-spacing:-0.01em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/H2_21px_Medium':(
+        font-size:21px,
+        letter-spacing:0,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/H3_16px_Medium':(
+        font-size:16px,
+        letter-spacing:0.005em,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/H4_14px_Medium':(
+        font-size:14px,
+        letter-spacing:0,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height:1.4,
+        text-indent:0
+    ),
+    'ZH/M/H1_24px_Bold':(
+        font-size:24px,
+        letter-spacing:-0.01em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/M/H2_17px_Medium':(
+        font-size:17px,
+        letter-spacing:0.005em,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/M/H3_15px_Medium':(
+        font-size:15px,
+        letter-spacing:0.005em,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'ZH/M/H4_14px_Medium':(
+        font-size:14px,
+        letter-spacing:0,
+        font-family:'Noto Sans TC',
+        font-weight:500,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/Minimal_12px_Semi-Bold_Superscript':(
+        font-size:12px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/Display_80px_Bold':(
+        font-size:80px,
+        letter-spacing:-0.01em,
+        font-family:'Inter',
+        font-weight:700,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/H1_48px_Bold':(
+        font-size:48px,
+        letter-spacing:-0.01em,
+        font-family:'Inter',
+        font-weight:700,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/H2_21px_Semi-Bold':(
+        font-size:21px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/H3_16px_Semi-Bold':(
+        font-size:16px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/H4_14_Semi-Bold':(
+        font-size:14px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/D/Minimal_12px_Semi-Bold':(
+        font-size:12px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/M/Display_40px_Bold':(
+        font-size:40px,
+        letter-spacing:-0.01em,
+        font-family:'Inter',
+        font-weight:700,
+        line-height: $line-height-auto,
+        text-indent:0
+    ),
+    'EN/M/H4_14_Semi-Bold':(
+        font-size:14px,
+        letter-spacing:0,
+        font-family:'Inter',
+        line-height: $line-height-auto,
+        text-indent:0
+    )
+);
 
-@mixin typo($lv, $type) {
-    @if ($lv == 'display') {
-        @if ($type == 1) {
-            font-size: 52px;
-            font-weight: map-get($font-weight, light);
-            line-height: normal;
-            letter-spacing: 10.8px;
-        }
-        @else {
-            @error '#{$type}：沒有這個type';
+@mixin typo($index) {
+    @each $style-key, $style-value in map-get($typos, #{$index}) {
+        #{$style-key}: #{$style-value};
+    }
+}
+
+@mixin typo-h2() {
+    @include typo('ZH/D/H2_21px_Medium');
+
+    &:lang(en) {
+        @include typo('EN/D/H2_21px_Semi-Bold');
+    }
+
+    @include media-breakpoint-down('desktop') {
+        @include typo('EN/M/H2_17px_Medium');
+
+        &:lang(en) {
+            @include typo('EN/M/H4_14_Semi-Bold');
         }
     }
-    @else if ($lv == 'heading') {
-        @if ($type == 1) {
-            font-size: 36px;
-            font-weight: map-get($font-weight, normal);
-            line-height: normal;
-            letter-spacing: 9px;
-        }
-        @else {
-            @error '#{$type}：沒有這個type';
-        }
+}
+
+@mixin typo-h3() {
+    @include typo('ZH/D/H3_16px_Medium');
+
+    @include media-breakpoint-down('desktop') {
+        @include typo('ZH/M/H3_15px_Medium');
     }
-    @else if ($lv == 'body') {
-        @if ($type == 1) {
-            font-size: 16px;
-            font-weight: map-get($font-weight, normal);
-            line-height: normal;
-            letter-spacing: 2px;
-        }
-        @else {
-            @error '#{$type}：沒有這個type';
-        }
+
+    &:lang(en) {
+        @include typo('EN/D/H3_16px_Semi-Bold');
     }
-    @else if ($lv == 'list') {
-        @if ($type == 1) {
-            font-size: 14px;
-            font-weight: map-get($font-weight, normal);
-            line-height: 2.14;
-            letter-spacing: 2.5px;
-        }
-        @else {
-            @error '#{$level}：沒有這個type';
-        }
+}
+
+@mixin typo-h4() {
+    @include typo('ZH/D/H4_14px_Medium');
+
+    @include media-breakpoint-down('desktop') {
+        @include typo('ZH/M/H4_14px_Medium');
     }
-    @else if ($lv == 'button') {
-        @if ($type == 1) {
-            font-size: 16px;
-            font-weight: map-get($font-weight, normal);
-            line-height: normal;
-            letter-spacing: 2px;
-        }
-        @else {
-            @error '#{$level}：沒有這個type';
-        }
-    }
-    @else {
-        @error '#{$level}：沒有這個level';
+
+    &:lang(en) {
+        @include typo('EN/D/H4_14_Semi-Bold');
     }
 }

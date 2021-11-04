@@ -28,7 +28,7 @@ textarea {
 
 html,
 body {
-    @include typo("body", 1);
+    @include typo-h3;
 
     min-width: 320px;
     overscroll-behavior: none;
@@ -37,7 +37,7 @@ body {
 
 input,
 textarea {
-    @include typo("body", 1);
+    @include typo-h3;
 
     border: none;
     appearance: none;
@@ -59,13 +59,13 @@ a {
 }
 
 button {
-    @include typo("button", 1);
+    @include typo-h3();
 
     background-color: transparent;
 }
 
 .icon {
-    @include size(1rem);
+    @include size(1em);
 
     fill: currentColor;
 }
