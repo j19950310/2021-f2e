@@ -3,25 +3,7 @@
 
 <template>
     <div class="page-index">
-        <div class="container">
-            <div class="row">
-                <div class="col-3">
-                    <ButtonCategory>
-                        ButtonCategory
-                    </ButtonCategory>
-                </div>
-                <div class="col-3">
-                    <ButtonCategory :active="true">
-                        景點
-                    </ButtonCategory>
-                </div>
-                <div class="col-3">
-                    <Dropdown title="Dropdown">
-                        Dropdown
-                    </Dropdown>
-                </div>
-            </div>
-        </div>
+        但幾勒...
     </div>
 </template>
 
