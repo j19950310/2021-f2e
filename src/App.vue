@@ -9,6 +9,9 @@
         <router-link to="/dev">
             DEV
         </router-link>
+        <router-link to="/components">
+            Component
+        </router-link>
         <router-view />
     </div>
 </template>
