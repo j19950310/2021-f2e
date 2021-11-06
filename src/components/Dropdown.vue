@@ -72,7 +72,7 @@ export default {
     #{$class-name} {
         position: relative;
         display: inline-block;
-        padding-bottom: 34px;
+        width: 100%;
 
         &__title {
             display: block;
@@ -88,16 +88,18 @@ export default {
             }
 
             #{$class-name}.-active & {
+                border-bottom-width: 2px;
                 border-bottom-color: color('Primary');
 
                 .icon {
-                    transform: rotate(180deg);
+                    transform: rotate(180deg) translateY(-4px);
                 }
             }
 
             .icon {
                 margin-left: 16px;
                 font-size: 24px;
+                transform: rotate(0deg) translateY(4px);
                 transition: transform 0.3s ease;
             }
         }

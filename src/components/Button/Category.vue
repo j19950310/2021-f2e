@@ -1,8 +1,8 @@
 <template>
-    <!-- 大類別篩選 -->
     <div
         class="button-category"
         :class="className"
+        @click="onClick"
     >
         <slot />
         <Icon
@@ -20,13 +20,24 @@ export default {
             type: Boolean,
             default: false,
         },
+        focus: {
+            type: Boolean,
+            default: false,
+        },
     },
+    emits: ['click'],
     computed: {
         className () {
             return {
                 '-active': this.active,
                 '-default': !this.active,
+                '-focus': this.focus,
             }
+        },
+    },
+    methods: {
+        onClick () {
+            this.$emit('click')
         },
     },
 }
@@ -40,12 +51,22 @@ export default {
     justify-content: center;
     padding: 8px 12px;
     min-width: 88px;
+    white-space: nowrap;
     border: 2px solid #2c2c2c;
     border-radius: 40px;
-    transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
-    margin-bottom: 1rem;
+    transition: border-color 0.15s ease-in-out, background-color 0.15s ease-in-out;
     cursor: pointer;
+    user-select: none;
     @include hover {
+        background-color: color('Primary');
+        border-color: color('Primary');
+
+        .icon {
+            color: color('Primary');
+        }
+    }
+
+    &.-focus {
         background-color: color('Primary');
         border-color: color('Primary');
 
@@ -67,7 +88,7 @@ export default {
         margin: 0;
         width: 0;
         opacity: 0;
-        transition: color 0.2s ease-in-out, width 0.2s linear 0.2s, opacity 0.2s, margin 0.2s linear 0.2s;
+        transition: color 0.15s ease-in-out, width 0.15s linear 0.15s, opacity 0.15s, margin 0.15s linear 0.15s;
     }
 
     .icon {
@@ -75,7 +96,7 @@ export default {
         font-size: 24px;
         color: color('White');
         opacity: 1;
-        transition: color 0.2s ease-in-out, width 0.2s linear, opacity 0.2s 0.2s, margin 0.2s linear;
+        transition: color 0.15s ease-in-out, width 0.15s linear, opacity 0.15s 0.15s, margin 0.15s linear;
     }
 }
 </style>
