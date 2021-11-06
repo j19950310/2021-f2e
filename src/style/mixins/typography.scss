@@ -193,3 +193,11 @@ $typos:(
         @include typo('EN/D/H4_14_Semi-Bold');
     }
 }
+
+@mixin typo-min {
+    @include typo('ZH/Minimal_12px_Medium');
+
+    &:lang(en) {
+        @include typo('EN/D/Minimal_12px_Semi-Bold');
+    }
+}

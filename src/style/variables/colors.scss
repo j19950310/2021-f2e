@@ -1,4 +1,14 @@
-$colors: ('White':#ffffff,'Primary':#57ffc2,'Black':#2c2c2c,'Dark-Gray':#848484,'Gray':#a8a8a8,'Light-Gray':#e0e0e0,'Black_80%':#2c2c2c,'Black_20%':#2c2c2c,'Alert':#ff4949,);
+$colors: (
+    'White':#ffffff,
+    'Primary':#57ffc2,
+    'Black':#2c2c2c,
+    'Dark-Gray':#848484,
+    'Gray':#a8a8a8,
+    'Light-Gray':#e0e0e0,
+    'Black_80%':#2c2c2c,
+    'Black_20%':#2c2c2c,
+    'Alert':#ff4949
+);
 
 @function color($id) {
     @return map-get($colors, $id);

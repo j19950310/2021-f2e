@@ -3,8 +3,8 @@
 }
 
 ::selection {
-    // color: map-get($colors, white);
-    background: map-get($colors, primary);
+    color: color('White');
+    background: color('Dark-Gray');
 }
 
 @include get-container();
@@ -41,6 +41,10 @@ textarea {
 
     border: none;
     appearance: none;
+
+    &::selection {
+        background: color('Primary');
+    }
 }
 
 pre {
