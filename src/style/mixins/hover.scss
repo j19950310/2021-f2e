@@ -1,0 +1,10 @@
+@mixin hover {
+    &:hover {
+        @content;
+    }
+    @include media-breakpoint-down('tablet') {
+        &:active {
+            @content;
+        }
+    }
+}

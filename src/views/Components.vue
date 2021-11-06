@@ -1,0 +1,104 @@
+<script setup>
+import { ref } from 'vue'
+import { getTownsByCountycode } from '@/api/getAdministrative'
+const search = ref('132')
+const Taipei = []
+getTownsByCountycode('A').then(res => {
+    Taipei.push(...res)
+})
+</script>
+
+<template>
+    <div class="page-components">
+        <div class="container">
+            <!-- 1 -->
+            <div class="row">
+                <div class="col-3">
+                    <ButtonCategory>
+                        ButtonCategory
+                    </ButtonCategory>
+                </div>
+                <div class="col-3">
+                    <ButtonCategory :active="true">
+                        景點
+                    </ButtonCategory>
+                </div>
+                <div class="col-3">
+                    <Dropdown title="Dropdown">
+                        Dropdown
+                    </Dropdown>
+                </div>
+                <div class="col-3">
+                    <ButtonPrimary icon="shuffle">
+                        ButtonPrimary
+                    </ButtonPrimary>
+                </div>
+            </div>
+            <!-- 2 -->
+            <div class="row">
+                <div class="col-3">
+                    <ButtonSecondary icon="shuffle">
+                        ButtonSecondary
+                    </ButtonSecondary>
+                </div>
+                <div class="col-3">
+                    <ButtonThird icon="info">
+                        ButtonThird
+                    </ButtonThird>
+                </div>
+                <div class="col-3">
+                    <ButtonThird icon="info">
+                        資訊
+                    </ButtonThird>
+                </div>
+                <div class="col-3">
+                    <ButtonMin icon="check">
+                        資訊
+                    </ButtonMin>
+                </div>
+            </div>
+            <!-- 3 -->
+            <div class="row">
+                <div class="col-6">
+                    SearchDefault
+                    <SearchDefault
+                        v-model="search"
+                        :value="search"
+                    />
+                </div>
+                <div class="col-6">
+                    SearchKeywords
+                    <SearchKeywords
+                        v-model="search"
+                    />
+                </div>
+            </div>
+            <!-- 4 -->
+            <div
+                class="row"
+                style="padding-top: 20px; padding-bottom: 20px;"
+            >
+                <div class="col-6">
+                    SearchFilter
+                    <SearchFilter
+                        v-model="search"
+                    />
+                </div>
+                <div
+                    class="col-6"
+                    style="background: #000000; backdrop-filter: blur(2px);"
+                >
+                    FormFilter
+                    <FormFilter />
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<style lang="scss">
+.page-components {
+    text-align: center;
+    background-color: #eeeeee;
+}
+</style>

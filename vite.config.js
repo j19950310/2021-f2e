@@ -26,7 +26,9 @@ export default ({ mode }) => {
         },
         plugins: [
             vue(),
-            vueComponents(),
+            vueComponents({
+                directoryAsNamespace: true,
+            }),
             eslintPlugin(),
             viteSvgIcons({
                 iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],

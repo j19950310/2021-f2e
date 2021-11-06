@@ -3,8 +3,8 @@
 }
 
 ::selection {
-    // color: map-get($colors, white);
-    background: map-get($colors, primary);
+    color: color('White');
+    background: color('Dark-Gray');
 }
 
 @include get-container();
@@ -28,7 +28,7 @@ textarea {
 
 html,
 body {
-    @include typo("body", 1);
+    @include typo-h3;
 
     min-width: 320px;
     overscroll-behavior: none;
@@ -37,10 +37,14 @@ body {
 
 input,
 textarea {
-    @include typo("body", 1);
+    @include typo-h3;
 
     border: none;
     appearance: none;
+
+    &::selection {
+        background: color('Primary');
+    }
 }
 
 pre {
@@ -59,13 +63,13 @@ a {
 }
 
 button {
-    @include typo("button", 1);
+    @include typo-h3();
 
     background-color: transparent;
 }
 
 .icon {
-    @include size(1rem);
+    @include size(1em);
 
     fill: currentColor;
 }

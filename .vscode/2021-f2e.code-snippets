@@ -1,0 +1,37 @@
+{
+	// Place your 2021-f2e 工作區 snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+    "Typo Select": {
+        "scope": "scss, vue",
+        "prefix": "typo",
+        "body": [
+            "@include typo('${1|ZH/Minimal_12px_Medium,ZH/D/H1_48px_Bold,ZH/D/H2_21px_Medium,ZH/D/H3_16px_Medium,ZH/D/H4_14px_Medium,ZH/M/H1_24px_Bold,ZH/M/H2_17px_Medium,ZH/M/H3_15px_Medium,ZH/M/H4_14px_Medium,EN/Minimal_12px_Semi-Bold_Superscript,EN/D/Display_80px_Bold,EN/D/H1_48px_Bold,EN/D/H2_21px_Semi-Bold,EN/D/H3_16px_Semi-Bold,EN/D/H4_14_Semi-Bold,EN/D/Minimal_12px_Semi-Bold,EN/M/Display_40px_Bold,EN/M/H4_14_Semi-Bold|}');",
+        ],
+        "description": "與figma同步"
+    },
+    
+    "theme color": {
+        "scope": "scss, vue",
+        "prefix": "color",
+        "body": [
+            "color('${1|White,Primary,Black,Dark-Gray,Gray,Light-Gray,Black_80%,Black_20%,Alert|}');",
+        ],
+        "description": "與figma同步"
+    },
+    
+}
