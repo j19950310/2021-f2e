@@ -2,7 +2,7 @@ import { getTaiwanCounty, getTownsByCountycode } from '@/api/getAdministrative'
 export default {
     namespaced: true,
     state: () => ({
-        county: null,
+        county: {},
     }),
     getters: {
         getSelectedTownListByCounties: (state) => (counties) => {
