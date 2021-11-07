@@ -92,6 +92,43 @@ getTownsByCountycode('A').then(res => {
                     <FormFilter />
                 </div>
             </div>
+            <!-- 5 -->
+            <div
+                class="row"
+                style="padding-bottom: 200px;"
+            >
+                <div class="col-4">
+                    <ButtonTabCategory
+                        name="ButtonTabCategory"
+                        :number="10000"
+                        :active="true"
+                    />
+                </div>
+                <div class="col-2">
+                    <ButtonTabCategory
+                        name="餐飲"
+                        :number="1000"
+                    />
+                </div>
+                <div class="col-2">
+                    <ButtonTabCategory
+                        name="餐飲"
+                        :number="0"
+                    />
+                </div>
+                <div class="col-2">
+                    <ButtonTabCategory
+                        name="旅宿"
+                        :number="999"
+                    />
+                </div>
+                <div class="col-2">
+                    <ButtonTabCategory
+                        name="活動"
+                        :number="100"
+                    />
+                </div>
+            </div>
         </div>
     </div>
 </template>
