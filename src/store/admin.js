@@ -40,8 +40,11 @@ export default {
                         commit('setTowns', { countyName, towns: res })
                         resolve(res)
                     })
-                } else {
+                } else if (state.county[countyName]) {
                     resolve(state.county[countyName].towns)
+                } else {
+                    console.log(`沒有${countyName}`)
+                    resolve([])
                 }
             })
         },
