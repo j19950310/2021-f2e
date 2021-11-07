@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
-import admin from './admin'
+import admin from './admin' // 行政區
+import tour from './tour' // 旅遊
 
 export default createStore({
     state: () => ({}),
@@ -9,5 +10,6 @@ export default createStore({
     },
     modules: {
         admin,
+        tour,
     },
 })

@@ -5,6 +5,11 @@ import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 
 // Request URL: https://ptx.transportdata.tw/MOTC/v2/Tourism
 const axios = getAxios('Tourism')
+const simpleQueryNumConfig = {
+    top: 10000,
+    skip: 0,
+    select: ['ID'],
+}
 
 function errorHandler (e) {
     return e
@@ -19,10 +24,22 @@ function errorHandler (e) {
 export const getScenicSpot = async (config = {}) => {
     try {
         const queryString = paramsFormat(config)
+        const queryQuickNumString = paramsFormat(Object.assign({ }, config, { ...simpleQueryNumConfig }))
+        let length = 0
 
         // 取得資料
         const { data } = await axios.get(`/ScenicSpot/?${queryString}`)
-        return data.map(item => (new ScenicSpot(item)))
+        // 若無數量快取資料
+        if (!config.skip) {
+            const { data: { length: total } } = await axios.get(`/ScenicSpot/?${queryQuickNumString}`)
+            length = total
+        }
+
+        return {
+            length,
+            type: 'scenic',
+            list: data.map(item => (new ScenicSpot(item))),
+        }
     } catch (e) {
         return errorHandler(e)
     }
@@ -44,6 +61,7 @@ export const getScenicSpotByCity = async (queryCity, config = {}) => {
 
         // 取得資料
         const { data } = await axios.get(`/ScenicSpot/${city}/?${queryString}`)
+
         return data.map(item => (new ScenicSpot(item)))
     } catch (e) {
         return errorHandler(e)
@@ -59,11 +77,22 @@ export const getScenicSpotByCity = async (queryCity, config = {}) => {
 export const getRestaurantSpot = async (config = {}) => {
     try {
         const queryString = paramsFormat(config)
+        const queryQuickNumString = paramsFormat(Object.assign({ }, config, { ...simpleQueryNumConfig }))
+        let length = 0
 
         // 取得資料
         const { data } = await axios.get(`/Restaurant/?${queryString}`)
-        // data.forEach(item => { console.log(item) })
-        return data.map(item => (new RestaurantSpot(item)))
+        // 若無數量快取資料
+        if (!config.skip) {
+            const { data: { length: total } } = await axios.get(`/Restaurant/?${queryQuickNumString}`)
+            length = total
+        }
+
+        return {
+            length,
+            type: 'restaurant',
+            list: data.map(item => (new RestaurantSpot(item))),
+        }
     } catch (e) {
         return errorHandler(e)
     }
@@ -75,6 +104,7 @@ export const getRestaurantSpot = async (config = {}) => {
  * @param {string} queryCity 縣市
  * @param {*} config 參數設定
  * @returns {Array} RestaurantSpot
+ * @example getRestaurantSpotByCity('台北市')
  */
 export const getRestaurantSpotByCity = async (queryCity, config = {}) => {
     try {
@@ -100,10 +130,20 @@ export const getRestaurantSpotByCity = async (queryCity, config = {}) => {
 export const getHotelSpot = async (config = {}) => {
     try {
         const queryString = paramsFormat(config)
-
+        const queryQuickNumString = paramsFormat(Object.assign({ }, config, { ...simpleQueryNumConfig }))
+        let length = 0
         // 取得資料
         const { data } = await axios.get(`/Hotel/?${queryString}`)
-        return data.map(item => (new HotelSpot(item)))
+        // 若無數量快取資料
+        if (!config.skip) {
+            const { data: { length: total } } = await axios.get(`/Hotel/?${queryQuickNumString}`)
+            length = total
+        }
+        return {
+            length,
+            type: 'hotel',
+            list: data.map(item => (new HotelSpot(item))),
+        }
     } catch (e) {
         return errorHandler(e)
     }
@@ -115,6 +155,7 @@ export const getHotelSpot = async (config = {}) => {
  * @param {string} queryCity 縣市
  * @param {*} config 參數設定
  * @returns {Array} HotelSpot
+ * @example getHotelSpotByCity('台北市')
  */
 export const getHotelSpotByCity = async (queryCity, config = {}) => {
     try {
@@ -142,11 +183,22 @@ export const getActivitySpot = async (config = {}) => {
     try {
         // $select=[A,B,C]
         const queryString = paramsFormat(config)
+        const queryQuickNumString = paramsFormat(Object.assign({ }, config, { ...simpleQueryNumConfig }))
+        let length = 0
 
         // 取得資料
         const { data } = await axios.get(`/Activity/?${queryString}`)
+        // 若無數量快取資料
+        if (!config.skip) {
+            const { data: { length: total } } = await axios.get(`/Activity/?${queryQuickNumString}`)
+            length = total
+        }
         // data.forEach(item => { console.log(item) })
-        return data.map(item => (new ActivitySpot(item)))
+        return {
+            length,
+            type: 'activity',
+            list: data.map(item => (new ActivitySpot(item))),
+        }
     } catch (e) {
         return errorHandler(e)
     }
@@ -158,6 +210,7 @@ export const getActivitySpot = async (config = {}) => {
  * @param {string} queryCity 縣市
  * @param {*} config 參數設定
  * @returns {Array} ActivitySpot
+ * @example getActivitySpotByCity('台北市')
  */
 export const getActivitySpotByCity = async (queryCity, config = {}) => {
     try {
