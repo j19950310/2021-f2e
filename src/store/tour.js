@@ -83,7 +83,6 @@ function getConfigQueryTowns (config) {
 }
 
 function pushScenicQuery (config) {
-    console.log('tour/queryScenic', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_SCENIC_BY_CITY,
@@ -97,7 +96,6 @@ function pushScenicQuery (config) {
 }
 
 function pushRestaurantQuery (config) {
-    console.log('tour/queryRestaurant', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_RESTAURANT_BY_CITY,
@@ -111,7 +109,6 @@ function pushRestaurantQuery (config) {
 }
 
 function pushHotelQuery (config) {
-    console.log('tour/queryHotel', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_HOTEL_BY_CITY,
@@ -125,7 +122,6 @@ function pushHotelQuery (config) {
 }
 
 function pushActivityQuery (config) {
-    console.log('tour/queryActivity', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_ACTIVITY_BY_CITY,
@@ -171,7 +167,6 @@ export default {
     actions: {
         // ------------ 0: 分類別 (OR) ------------
         query (context, formDate) {
-            console.log('tour/query')
             const config = {
                 region: {},
                 countyAll: {},
@@ -271,7 +266,6 @@ export default {
                 } else if (category === 'activity') { // 活動沒有ZipCode
                     queryFilter = `(${filter[QUERY_ACTIVITY_BY_CITY]})`
                 }
-                console.log(category, queryFilter)
                 const queryConfig = Object.assign({ ...baseQueryConfig }, {
                     filter: queryFilter,
                 })

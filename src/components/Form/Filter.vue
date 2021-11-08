@@ -333,7 +333,6 @@ export default {
         },
         updateSelectedRegion (regionName, currentValue) {
             const isCheck = !currentValue
-            console.log({ regionName, isCheck })
             this.region[regionName] = isCheck // 反向
             getRegionCounty(regionName).forEach((countyName) => {
                 const simpleCountyName = this.countyNameSimpleConvert(countyName)
@@ -409,7 +408,6 @@ export default {
         },
         submit () {
             const data = new FormData(this.$el)
-            console.log('submit', [...data.keys()])
             this.submitQuery(data)
         },
     },
