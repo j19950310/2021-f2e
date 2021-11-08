@@ -50,42 +50,23 @@
                 :checked="cat"
             >
         </div>
-        <!-- 地區 -->
-        <div class="form-filter__row">
-            <Dropdown title="地區">
-                <div class="form-filter__dropdown-checkboxs">
-                    <div
-                        v-for="option in regionOptions"
-                        :key="option.id"
-                        class="form-filter__dropdown-checkboxs-item"
-                    >
-                        <FormCheckbox
-                            v-bind="option"
-                            prefix="region/"
-                            :value="region[option.id]"
-                            @update="region[option.id] = $event"
-                        />
-                    </div>
-                </div>
-                <div class="form-filter__dropdown-all">
-                    <ButtonMin
-                        icon="check"
-                        @click="selectAllRegion"
-                    >
-                        全選
-                    </ButtonMin>
-                    <ButtonMin
-                        icon="close-default"
-                        @click="clearRegion"
-                    >
-                        清除
-                    </ButtonMin>
-                </div>
-            </Dropdown>
-        </div>
-        <!-- 縣市 -->
+        <!-- 地區 / 縣市 -->
         <div class="form-filter__row">
             <Dropdown title="縣市">
+                <div class="form-filter__dropdown-category">
+                    <div
+                        v-for="(regionValue, regionKey) in region"
+                        :key="regionKey"
+                        class="form-filter__dropdown-category-item"
+                    >
+                        <ButtonCategory
+                            :active="regionValue && regionButtonState.includes(regionKey)"
+                            @click="updateSelectedRegion(regionKey, regionValue)"
+                        >
+                            {{ regionLabels[regionKey] }}
+                        </ButtonCategory>
+                    </div>
+                </div>
                 <div class="form-filter__dropdown-checkboxs">
                     <div
                         v-for="option in coutiesOptions"
@@ -208,6 +189,7 @@ import { mapGetters, mapActions } from 'vuex'
 import {
     regionLabels,
     getRegionCounty,
+    getCountyRegion,
     coutiesLabels,
     coutiesMap,
     countySimpleNameMap
@@ -219,7 +201,7 @@ export default {
         const region = Object.keys(regionLabels).reduce((obj, key) => {
             obj[key] = false
             return obj
-        }, {})
+        }, {}) // => {'北部': false}
         const couties = Object.keys(coutiesLabels).reduce((obj, key) => {
             obj[key] = false
             return obj
@@ -238,17 +220,11 @@ export default {
             selectedTown: [],
             countySelectedAllTowns: [], // 選擇全鄉鎮的 縣市
             pendding: false,
+            regionLabels,
         }
     },
     computed: {
-        regionOptions () {
-            return Object.entries(this.region).map(([key, value]) => {
-                return {
-                    name: regionLabels[key],
-                    id: key,
-                }
-            })
-        },
+        // 還原縣市/直轄市 名稱/值
         coutiesOptions () {
             return Object.entries(this.couties).map(([key, value]) => {
                 return {
@@ -257,6 +233,7 @@ export default {
                 }
             })
         },
+        // 打API撈取現在選取縣市底下 所有鄉鎮
         selectedTownList () {
             const zhCountyList = Object.entries(this.couties).reduce((list, [key, value]) => {
                 const countyKey = coutiesMap.get(key)
@@ -266,6 +243,17 @@ export default {
                 return list
             }, [])
             return this.getSelectedTownListByCounties()(zhCountyList)
+        },
+        // 區域按鈕狀態
+        regionButtonState () {
+            return Object.entries(this.couties).reduce((arr, [key, value]) => {
+                const countyName = coutiesLabels[key]
+                const regionKey = getCountyRegion(countyName)
+                if (regionKey && value && !arr.includes(regionKey)) {
+                    arr.push(regionKey)
+                }
+                return arr
+            }, [])
         },
     },
     watch: {
@@ -303,7 +291,7 @@ export default {
         },
     },
     mounted () {
-        // 建立(快取)監聽查詢鄉鎮市區
+        // 建立(快取)監聽查詢鄉鎮市區，首次點擊查詢API
         Object.keys(this.couties).forEach(key => {
             const killWatch = this.$watch(`couties.${key}`, (isActive) => {
                 this.pendding = true // prevent bug
@@ -319,26 +307,16 @@ export default {
                 })
             })
         })
-
-        // 區域快選
-        Object.keys(this.region).forEach(key => {
-            const killWatch = this.$watch(`region.${key}`, (isActive) => {
-                if (isActive) { // 只有開啟時會加入，純粹打勾
-                    getRegionCounty(key).forEach((countyName) => {
-                        const simpleCountyName = this.countyNameSimpleConvert(countyName)
-                        this.updateSelectedCounty(coutiesMap.get(simpleCountyName), true)
-                    })
-                }
-            })
-        })
     },
     methods: {
         ...mapActions({
             // 政府查詢鄉鎮API
             getTownsByCountyName: 'admin/getTownsByCountyName',
+            // 景點 API
             submitQuery: 'tour/query',
         }),
         ...mapGetters({
+            // 取得選取縣市的鄉鎮
             getSelectedTownListByCounties: 'admin/getSelectedTownListByCounties',
         }),
         countyNameSimpleConvert (name) {
@@ -352,6 +330,15 @@ export default {
                 return adjustName
             }
             return name
+        },
+        updateSelectedRegion (regionName, currentValue) {
+            const isCheck = !currentValue
+            console.log({ regionName, isCheck })
+            this.region[regionName] = isCheck // 反向
+            getRegionCounty(regionName).forEach((countyName) => {
+                const simpleCountyName = this.countyNameSimpleConvert(countyName)
+                this.updateSelectedCounty(coutiesMap.get(simpleCountyName), isCheck)
+            })
         },
         updateSelectedCounty (key, event) {
             if (this.couties[key] !== undefined) {
@@ -504,9 +491,7 @@ export default {
             flex-wrap: wrap;
             align-content: flex-start;
 
-            &.-town { // TODO: 切換高度會震動
-                overflow: auto;
-                height: 250px;
+            &.-town {
                 transition: height 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
             }
 

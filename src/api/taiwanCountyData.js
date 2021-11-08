@@ -29,6 +29,39 @@ export const getRegionCounty = (region) => {
             return []
     }
 }
+export const getCountyRegion = (county) => {
+    switch (county) {
+        case '臺北市':
+        case '新北市':
+        case '基隆市':
+        case '新竹市':
+        case '桃園市':
+        case '新竹縣':
+        case '宜蘭縣':
+            return 'north'
+        case '臺中市':
+        case '苗栗縣':
+        case '彰化縣':
+        case '南投縣':
+        case '雲林縣':
+            return 'center'
+        case '高雄市':
+        case '臺南市':
+        case '嘉義市':
+        case '嘉義縣':
+        case '屏東縣':
+            return 'south'
+        case '花蓮縣':
+        case '臺東縣':
+            return 'east'
+        case '金門縣':
+        case '連江縣':
+        case '澎湖縣':
+            return 'outlyingIslands'
+        default:
+            return undefined
+    }
+}
 
 export const coutiesLabels = {
     Taipei: '台北市',

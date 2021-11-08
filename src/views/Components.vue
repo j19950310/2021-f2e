@@ -1,8 +1,22 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { getTownsByCountycode } from '@/api/getAdministrative'
+import { useStore } from 'vuex'
 const search = ref('132')
+const store = useStore()
 const Taipei = []
+const scenic = computed(() => {
+    return store.state.tour.currentQuery.scenic
+})
+const restaurant = computed(() => {
+    return store.state.tour.currentQuery.restaurant
+})
+const hotel = computed(() => {
+    return store.state.tour.currentQuery.hotel
+})
+const activity = computed(() => {
+    return store.state.tour.currentQuery.activity
+})
 getTownsByCountycode('A').then(res => {
     Taipei.push(...res)
 })
@@ -127,6 +141,38 @@ getTownsByCountycode('A').then(res => {
                         name="活動"
                         :number="100"
                     />
+                </div>
+            </div>
+            <div
+                style="padding-bottom: 200px;"
+                class="row"
+            >
+                <div class="col-3">
+                    <Pagination
+                        :max="1000"
+                        :now="+$route.query.page || 1"
+                    />
+                </div>
+            </div>
+            <div
+                class="row"
+                style="padding-bottom: 200px;"
+            >
+                <div class="col-3">
+                    景點<br>
+                    {{ scenic }}
+                </div>
+                <div class="col-3">
+                    餐飲<br>
+                    {{ restaurant }}
+                </div>
+                <div class="col-3">
+                    旅宿<br>
+                    {{ hotel }}
+                </div>
+                <div class="col-3">
+                    活動<br>
+                    {{ activity }}
                 </div>
             </div>
         </div>
