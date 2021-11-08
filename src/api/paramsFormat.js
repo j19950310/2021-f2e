@@ -1,34 +1,55 @@
-// https://github.com/ptxmotc/PTX_Web/blob/master/Swagger服務說明上傳參考檔案/公共運輸整合資訊平台資料服務開發實作.pdf
+/**
+ * 轉換參數格式
+ */
+// Filter參考： https://github.com/ptxmotc/PTX_Web/blob/master/Swagger服務說明上傳參考檔案/公共運輸整合資訊平台資料服務開發實作.pdf
 
+/**
+ * 轉換物件參數至搜尋字串
+ * @param {Object} config    參數物件
+ * @returns {String}         搜尋字串
+ * @example paramsFormat({
+ *      top:1,
+ *      skip:0,
+ *      filter: '',
+ *      select:['ID']
+ *  })
+ */
 export default function paramsFormat (config) {
     const {
         top = 1,
         format = 'JSON',
         skip = 0,
+        select = [],
+        filter = '',
     } = config
     const params = new URLSearchParams()
     params.append('$top', top)
     params.append('$format', format)
     params.append('$skip', skip)
-    // 可選擇欄位 $select=[A,B,C]
-    // params.append('$select', $select(['OpenTime']))
-    // params.append('$filter', $filter(`!contains(OpenTime,'${allTime.join('\')&!contains(OpenTime,\'')}')`))
 
-    // 測試取得OpenTime肯定全開的景點
-    // params.append('$filter', $filter(`trim(OpenTime)!='${allTime.join('\'&trim(OpenTime)!=\'')}'`))
+    // 可選擇欄位 $select=[A,B,C]
+    if (select.length > 0) {
+        params.append('$select', selectToString(select))
+    }
+
+    // 主要filter
+    if (filter) {
+        params.append('$filter', filterStringConvert(filter))
+    }
+
     return params.toString()
 }
 
 // 回傳特定欄位
-export function select (arr) {
+export function selectToString (arr) {
     if (arr.length === 0) {
         return ''
     }
     return `${arr.join(',')}`
 }
 
-// filter('test > 3 & amout < 9 | ewaf == 123') => 'test gt 3 and amout lt 9 or ewa eq 123'
-export function filter (str) {
+// filter('test>3&number<9|what==123') => 'test gt 3 and number lt 9 or what eq 12'
+export function filterStringConvert (str) {
     const sign2key = {
         '==': 'eq',
         '!=': 'ne',
@@ -83,6 +104,12 @@ export const cities = {
     連江縣: 'LienchiangCounty',
     馬祖地區: 'LienchiangCounty',
 }
+
+/**
+ * 取得城市 API key值
+ * @param {String} text 城市名稱
+ * @returns {String} API key值
+ */
 export const getCityParam = (text) => {
     if (text === '') return undefined
     try {

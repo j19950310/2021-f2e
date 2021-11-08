@@ -10,7 +10,7 @@ import {
     getRestaurantSpot
 } from '@/api/getTourism'
 
-import paramsFormat, { cities, getCityParam } from '@/api/paramsFormat'
+import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import { onMounted, computed, ref } from 'vue'
 // dev
 onMounted(() => {

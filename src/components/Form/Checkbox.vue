@@ -3,8 +3,8 @@
         <input
             :id="id"
             type="checkbox"
-            :name="name"
-            :value="value"
+            :name="prefix+name"
+            :checked="value"
             @input="$emit('update', $event.target.checked)"
         >
         <label
@@ -18,6 +18,10 @@ export default {
     name: 'FornCheckbox',
     inheritAttrs: false,
     props: {
+        prefix: {
+            type: String,
+            default: '',
+        },
         name: {
             type: String,
             default: '',

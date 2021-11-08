@@ -1,7 +1,9 @@
 <template>
     <form
         class="form-filter"
-        :style="{'pointer-events': pendding ? 'none':''}"
+        :class="{
+            '-pendding' :pendding
+        }"
     >
         <div class="form-filter__row">
             <SearchKeywords v-model="search" />
@@ -37,36 +39,34 @@
                     活動
                 </ButtonCategory>
             </div>
+            <!-- 類別同步資料 -->
+            <input
+                v-for="(cat, catName) in category"
+                :id="catName"
+                :key="catName"
+                hidden
+                type="checkbox"
+                :name="`category/${catName}`"
+                :checked="cat"
+            >
         </div>
-        <!-- 地區 -->
-        <div class="form-filter__row">
-            <Dropdown title="地區">
-                <div class="form-filter__dropdown-checkboxs">
-                    <div
-                        v-for="option in regionOptions"
-                        :key="option.id"
-                        class="form-filter__dropdown-checkboxs-item"
-                    >
-                        <FormCheckbox
-                            v-bind="option"
-                            :value="region[option.id]"
-                            @update="region[option.id] = $event"
-                        />
-                    </div>
-                </div>
-                <div class="form-filter__dropdown-all">
-                    <ButtonMin icon="check">
-                        全選
-                    </ButtonMin>
-                    <ButtonMin icon="close-default">
-                        清除
-                    </ButtonMin>
-                </div>
-            </Dropdown>
-        </div>
-        <!-- 縣市 -->
+        <!-- 地區 / 縣市 -->
         <div class="form-filter__row">
             <Dropdown title="縣市">
+                <div class="form-filter__dropdown-category">
+                    <div
+                        v-for="(regionValue, regionKey) in region"
+                        :key="regionKey"
+                        class="form-filter__dropdown-category-item"
+                    >
+                        <ButtonCategory
+                            :active="regionValue && regionButtonState.includes(regionKey)"
+                            @click="updateSelectedRegion(regionKey, regionValue)"
+                        >
+                            {{ regionLabels[regionKey] }}
+                        </ButtonCategory>
+                    </div>
+                </div>
                 <div class="form-filter__dropdown-checkboxs">
                     <div
                         v-for="option in coutiesOptions"
@@ -75,6 +75,7 @@
                     >
                         <FormCheckbox
                             v-bind="option"
+                            prefix="county/"
                             :value="couties[option.id]"
                             @update="updateSelectedCounty(option.id, $event)"
                         />
@@ -95,9 +96,21 @@
                     </ButtonMin>
                 </div>
             </Dropdown>
+            <!-- 全選縣市同步資料 -->
+            <input
+                v-for="county in countySelectedAllTowns"
+                :id="`countyAll/${county}`"
+                :key="`countyAll/${county}`"
+                hidden
+                type="checkbox"
+                :name="`countyAll/${county}`"
+                :checked="!!countySelectedAllTowns.length"
+            >
         </div>
-        <!-- 縣市 -->
-        <div class="form-filter__row">
+        <!-- 鄉鎮 -->
+        <div
+            class="form-filter__row"
+        >
             <Dropdown title="縣市">
                 <transition-group
                     name="fade"
@@ -118,7 +131,10 @@
                         </ButtonCategory>
                     </div>
                 </transition-group>
-                <div class="form-filter__dropdown-checkboxs -town">
+                <!-- :class="{'-empty': selectedTown.length === 0}" -->
+                <div
+                    class="form-filter__dropdown-checkboxs -town"
+                >
                     <template v-for="(county, countyName, index) in selectedTownList">
                         <div
                             v-for="town in county"
@@ -129,6 +145,7 @@
                             <!-- :value="selectedTown.includes(town.name)" -->
                             <FormCheckbox
                                 v-bind="town"
+                                :prefix="`town/${countyName}/`"
                                 :value="selectedTown.includes(countyName+town.name)"
                                 @update="updateSelectedTown(town.name, countyName)"
                             />
@@ -151,60 +168,32 @@
                 </div>
             </Dropdown>
         </div>
+        <!-- 送出/返回 -->
+        <div class="form-filter__row">
+            <div class="form-filter__submit">
+                <ButtonSecondary>
+                    返回
+                </ButtonSecondary>
+                <ButtonPrimary
+                    icon="search"
+                    @click="submit"
+                >
+                    送出
+                </ButtonPrimary>
+            </div>
+        </div>
     </form>
 </template>
 <script>
 import { mapGetters, mapActions } from 'vuex'
-const regionLabels = {
-    north: '北部',
-    center: '中部',
-    east: '東部',
-    south: '南部',
-    outlyingIslands: '離島',
-}
-
-const coutiesLabels = {
-    Taipei: '台北市',
-    NewTaipei: '新北市',
-    Taoyuan: '桃園市',
-    Taichung: '台中市',
-    Tainan: '台南市',
-    Kaohsiung: '高雄市',
-    Keelung: '基隆市',
-    Hsinchu: '新竹市',
-    HsinchuCounty: '新竹縣',
-    MiaoliCounty: '苗栗縣',
-    ChanghuaCounty: '彰化縣',
-    NantouCounty: '南投縣',
-    YunlinCounty: '雲林縣',
-    ChiayiCounty: '嘉義縣',
-    Chiayi: '嘉義市',
-    PingtungCounty: '屏東縣',
-    YilanCounty: '宜蘭縣',
-    HualienCounty: '花蓮縣',
-    TaitungCounty: '台東縣',
-    KinmenCounty: '金門縣',
-    PenghuCounty: '澎湖縣',
-    LienchiangCounty: '連江縣',
-}
-
-// 正反收錄好查詢
-const coutiesMap = new Map(Object.entries(coutiesLabels))
-Object.keys(coutiesLabels).forEach(key => {
-    coutiesMap.set(coutiesLabels[key], key)
-})
-
-// ＃＃＃＃＃＃校正簡體繁體名稱＃＃＃＃＃＃
-const countySimpleNameMap = {
-    台北市: '臺北市',
-    臺北市: '台北市',
-    台中市: '臺中市',
-    臺中市: '台中市',
-    台南市: '臺南市',
-    臺南市: '台南市',
-    台東縣: '臺東縣',
-    臺東縣: '台東縣',
-}
+import {
+    regionLabels,
+    getRegionCounty,
+    getCountyRegion,
+    coutiesLabels,
+    coutiesMap,
+    countySimpleNameMap
+} from '@/api/taiwanCountyData'
 
 export default {
     name: 'FormFilter',
@@ -212,7 +201,7 @@ export default {
         const region = Object.keys(regionLabels).reduce((obj, key) => {
             obj[key] = false
             return obj
-        }, {})
+        }, {}) // => {'北部': false}
         const couties = Object.keys(coutiesLabels).reduce((obj, key) => {
             obj[key] = false
             return obj
@@ -231,17 +220,11 @@ export default {
             selectedTown: [],
             countySelectedAllTowns: [], // 選擇全鄉鎮的 縣市
             pendding: false,
+            regionLabels,
         }
     },
     computed: {
-        regionOptions () {
-            return Object.entries(this.region).map(([key, value]) => {
-                return {
-                    name: regionLabels[key],
-                    id: key,
-                }
-            })
-        },
+        // 還原縣市/直轄市 名稱/值
         coutiesOptions () {
             return Object.entries(this.couties).map(([key, value]) => {
                 return {
@@ -250,6 +233,7 @@ export default {
                 }
             })
         },
+        // 打API撈取現在選取縣市底下 所有鄉鎮
         selectedTownList () {
             const zhCountyList = Object.entries(this.couties).reduce((list, [key, value]) => {
                 const countyKey = coutiesMap.get(key)
@@ -259,6 +243,17 @@ export default {
                 return list
             }, [])
             return this.getSelectedTownListByCounties()(zhCountyList)
+        },
+        // 區域按鈕狀態
+        regionButtonState () {
+            return Object.entries(this.couties).reduce((arr, [key, value]) => {
+                const countyName = coutiesLabels[key]
+                const regionKey = getCountyRegion(countyName)
+                if (regionKey && value && !arr.includes(regionKey)) {
+                    arr.push(regionKey)
+                }
+                return arr
+            }, [])
         },
     },
     watch: {
@@ -296,7 +291,7 @@ export default {
         },
     },
     mounted () {
-        // 建立(快取)監聽查詢鄉鎮市區
+        // 建立(快取)監聽查詢鄉鎮市區，首次點擊查詢API
         Object.keys(this.couties).forEach(key => {
             const killWatch = this.$watch(`couties.${key}`, (isActive) => {
                 this.pendding = true // prevent bug
@@ -314,9 +309,14 @@ export default {
         })
     },
     methods: {
-        // 政府查詢鄉鎮API
-        ...mapActions({ getTownsByCountyName: 'admin/getTownsByCountyName' }),
+        ...mapActions({
+            // 政府查詢鄉鎮API
+            getTownsByCountyName: 'admin/getTownsByCountyName',
+            // 景點 API
+            submitQuery: 'tour/query',
+        }),
         ...mapGetters({
+            // 取得選取縣市的鄉鎮
             getSelectedTownListByCounties: 'admin/getSelectedTownListByCounties',
         }),
         countyNameSimpleConvert (name) {
@@ -331,8 +331,19 @@ export default {
             }
             return name
         },
+        updateSelectedRegion (regionName, currentValue) {
+            const isCheck = !currentValue
+            console.log({ regionName, isCheck })
+            this.region[regionName] = isCheck // 反向
+            getRegionCounty(regionName).forEach((countyName) => {
+                const simpleCountyName = this.countyNameSimpleConvert(countyName)
+                this.updateSelectedCounty(coutiesMap.get(simpleCountyName), isCheck)
+            })
+        },
         updateSelectedCounty (key, event) {
-            this.couties[key] = event
+            if (this.couties[key] !== undefined) {
+                this.couties[key] = event
+            }
         },
         updateSelectedTown (town, county) {
             if (this.selectedTown.includes(county + town)) { this.removeTownFromList(town, county) } else { this.addTownToList(town, county) }
@@ -349,6 +360,16 @@ export default {
                 }
             })
             this.countySelectedAllTowns = list
+        },
+        clearRegion () {
+            Object.keys(this.region).forEach(key => {
+                this.region[key] = false
+            })
+        },
+        selectAllRegion () {
+            Object.keys(this.region).forEach(key => {
+                this.region[key] = true
+            })
         },
         clearSelectedCouties () {
             Object.keys(this.couties).forEach(key => {
@@ -382,15 +403,64 @@ export default {
             if (this.selectedTown.includes(`${countyName}${townName}`)) return
             this.selectedTown.push(`${countyName}${townName}`)
         },
+        convertCountyNameToApiKey (county) {
+            const countyName = countySimpleNameMap[county] || county
+            return coutiesMap.get(countyName)
+        },
+        submit () {
+            const data = new FormData(this.$el)
+            console.log('submit', [...data.keys()])
+            this.submitQuery(data)
+        },
     },
 }
 </script>
 <style lang="scss">
 .form-filter {
+    position: relative;
     padding: 40px;
     text-align: left;
     background-color: color('White');
     border-radius: 24px;
+
+    // block loading
+    &::after {
+        content: '.';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        font-size: 200px;
+        opacity: 0;
+        z-index: 100;
+        line-height: 2;
+        pointer-events: none;
+        @include size(100%);
+    }
+
+    &.-pendding {
+        &::after {
+            background-color: rgba(color('Black'), 0.5);
+            opacity: 1;
+            transition: opacity 1s ease 0.3s;
+            pointer-events: all;
+            animation: dotLoading 1s steps(3) infinite;
+            @keyframes dotLoading {
+                0% {
+                    content: '.  ';
+                }
+
+                50% {
+                    content: '.. ';
+                }
+
+                100% {
+                    content: '...';
+                }
+            }
+        }
+    }
 
     &__row {
         padding-bottom: 32px;
@@ -421,8 +491,14 @@ export default {
             flex-wrap: wrap;
             align-content: flex-start;
 
-            &.-town { // TODO: 切換高度會震動
-                min-height: 500px;
+            &.-town {
+                transition: height 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
+            }
+
+            &.-empty {
+                margin: 0;
+                padding: 0;
+                height: 0;
             }
 
             &-item {
@@ -452,9 +528,18 @@ export default {
             }
 
             &.-inside {
-                flex: 1 0 100%;
                 padding: 8px;
+                flex: 1 0 100%;
             }
+        }
+    }
+
+    &__submit {
+        display: flex;
+        justify-content: center;
+
+        .button-main {
+            margin: 4px 12px;
         }
     }
 }
