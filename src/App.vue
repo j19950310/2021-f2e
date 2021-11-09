@@ -8,16 +8,39 @@ store.dispatch('admin/init')
 
 <template>
     <div class="app">
-        <router-link to="/dev">
+        <router-link
+            class="dev-link"
+            to="/dev"
+        >
             DEV
         </router-link>
-        <router-link to="/components">
+        <router-link
+            class="dev-link"
+            to="/components"
+        >
             Component
+        </router-link>
+        <router-link
+            class="dev-link"
+            to="/tour"
+        >
+            旅遊景點
+        </router-link>
+        <router-link
+            class="dev-link"
+            to="/tour/no-result"
+        >
+            旅遊景點（搜不到)
         </router-link>
         <router-view />
     </div>
 </template>
 
 <style lang="scss">
-
+    .dev-link {
+        display: inline-block;
+        margin-right: 10px;
+        padding: 20px;
+        border: 1px solid #cccccc;
+    }
 </style>

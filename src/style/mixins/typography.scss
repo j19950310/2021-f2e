@@ -10,10 +10,26 @@ $line-height-auto: 30/21;
 $typos:(
     'ZH/Minimal_12px_Medium':(
         font-size:12px,
-        letter-spacing:0,
+        letter-spacing:0.01em,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/Display_52px_Bold':(
+        font-size:52px,
+        letter-spacing:-0.01em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'ZH/D/Display-Small_18px_Bold':(
+        font-size:18px,
+        letter-spacing:1.2em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/D/H1_48px_Bold':(
@@ -21,7 +37,7 @@ $typos:(
         letter-spacing:-0.01em,
         font-family:'Noto Sans TC',
         font-weight:700,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/D/H2_21px_Medium':(
@@ -29,7 +45,7 @@ $typos:(
         letter-spacing:0,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/D/H3_16px_Medium':(
@@ -37,15 +53,31 @@ $typos:(
         letter-spacing:0.005em,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/D/H4_14px_Medium':(
         font-size:14px,
-        letter-spacing:0,
+        letter-spacing:0.01em,
         font-family:'Noto Sans TC',
         font-weight:500,
         line-height:1.4,
+        text-indent:0
+    ),
+    'ZH/M/Display_28px_Bold':(
+        font-size:28px,
+        letter-spacing:-0.01em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'ZH/M/Display-Small_14px_Bold':(
+        font-size:14px,
+        letter-spacing:1.2em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/M/H1_24px_Bold':(
@@ -53,7 +85,7 @@ $typos:(
         letter-spacing:-0.01em,
         font-family:'Noto Sans TC',
         font-weight:700,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/M/H2_17px_Medium':(
@@ -61,7 +93,7 @@ $typos:(
         letter-spacing:0.005em,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
     ),
     'ZH/M/H3_15px_Medium':(
@@ -69,7 +101,7 @@ $typos:(
         letter-spacing:0.005em,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:1.5,
         text-indent:0
     ),
     'ZH/M/H4_14px_Medium':(
@@ -77,84 +109,141 @@ $typos:(
         letter-spacing:0,
         font-family:'Noto Sans TC',
         font-weight:500,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/Minimal_12px_Semi-Bold_Superscript':(
+    ),'EN/Minimal_12px_Semi-Bold_Superscript':(
         font-size:12px,
         letter-spacing:0,
-        font-family:'Inter',
-        line-height: $line-height-auto,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/Display_80px_Bold':(
+    ),'EN/D/Display_72px_Bold':(
+        font-size:72px,
+        letter-spacing:0,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:1,
+        text-indent:0
+    ),'EN/D/Display-Small_18px_Bold':(
+        font-size:18px,
+        letter-spacing:0,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),'EN/D/Number_80px_Bold':(
         font-size:80px,
         letter-spacing:-0.01em,
-        font-family:'Inter',
+        font-family:'Asap',
         font-weight:700,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/H1_48px_Bold':(
+    ),'EN/D/H1_48px_Bold':(
         font-size:48px,
         letter-spacing:-0.01em,
-        font-family:'Inter',
+        font-family:'Asap',
         font-weight:700,
-        line-height: $line-height-auto,
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/H2_21px_Semi-Bold':(
+    ),'EN/D/H2_21px_Semi-Bold':(
         font-size:21px,
         letter-spacing:0,
-        font-family:'Inter',
-        line-height: $line-height-auto,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/H3_16px_Semi-Bold':(
+    ),'EN/D/H3_16px_Semi-Bold':(
         font-size:16px,
         letter-spacing:0,
-        font-family:'Inter',
-        line-height: $line-height-auto,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/H4_14_Semi-Bold':(
+    ),'EN/D/H4_14_Semi-Bold':(
         font-size:14px,
         letter-spacing:0,
-        font-family:'Inter',
-        line-height: $line-height-auto,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/D/Minimal_12px_Semi-Bold':(
+    ),'EN/D/Minimal_12px_Semi-Bold':(
         font-size:12px,
         letter-spacing:0,
-        font-family:'Inter',
-        font-weight:600,
-        line-height: 13.75px,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    ),
-    'EN/M/Display_40px_Bold':(
+    ),'EN/M/Display_40px_Bold':(
         font-size:40px,
-        letter-spacing:-0.01em,
-        font-family:'Inter',
+        letter-spacing:0,
+        font-family:'Asap',
         font-weight:700,
-        line-height: $line-height-auto,
+        line-height:0.95,
         text-indent:0
-    ),
-    'EN/M/H4_14_Semi-Bold':(
+    ),'EN/M/Display_Small_12px_Bold':(
+        font-size:12px,
+        letter-spacing:0,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),'EN/M/Number_40px_Bold':(
+        font-size:40px,
+        letter-spacing:0,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),'EN/M/H1_24px_Bold':(
+        font-size:24px,
+        letter-spacing:-0.01em,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),'EN/M/H4_14_Semi-Bold':(
         font-size:14px,
         letter-spacing:0,
-        font-family:'Inter',
-        line-height: $line-height-auto,
+        font-family:'Asap',
+        line-height:$line-height-auto,
         text-indent:0
-    )
-);
+    ));
 
 @mixin typo($index) {
+    @if not map-get($typos, #{$index}) {
+        @debug "Typography #{$index} not found";
+    }
+
     @each $style-key, $style-value in map-get($typos, #{$index}) {
         #{$style-key}: #{$style-value};
     }
 }
 
+@mixin typo-display {
+    @include typo('ZH/D/Display_52px_Bold');
+
+    &:lang(en) {
+        @include typo('EN/D/Display_72px_Bold');
+    }
+    @include media-breakpoint-down('desktop') {
+        @include typo('ZH/M/Display_28px_Bold');
+
+        &:lang(en) {
+            @include typo('EN/M/Display_40px_Bold');
+        }
+    }
+}
+
+@mixin typo-h1 {
+    @include typo('ZH/D/H1_48px_Bold');
+
+    &:lang(en) {
+        @include typo('EN/D/H1_48px_Bold');
+    }
+    @include media-breakpoint-down('desktop') {
+        @include typo('ZH/M/H1_24px_Bold');
+
+        &:lang(en) {
+            @include typo('EN/M/H1_24px_Bold');
+        }
+    }
+}
 @mixin typo-h2() {
     @include typo('ZH/D/H2_21px_Medium');
 
@@ -163,7 +252,7 @@ $typos:(
     }
 
     @include media-breakpoint-down('desktop') {
-        @include typo('EN/M/H2_17px_Medium');
+        @include typo('ZH/M/H2_17px_Medium');
 
         &:lang(en) {
             @include typo('EN/M/H4_14_Semi-Bold');
