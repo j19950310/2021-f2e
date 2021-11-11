@@ -4,6 +4,10 @@ defineProps({
         type: String,
         default: null,
     },
+    src: {
+        type: String,
+        default: null,
+    },
     tags: {
         type: Array,
         default: null,
@@ -14,7 +18,7 @@ defineProps({
 <template>
     <div class="save-card">
         <div
-            v-bg="'https://source.unsplash.com/random/1024x768'"
+            v-bg="src"
             class="save-card__image"
         />
         <div class="save-card__main">

@@ -12,6 +12,10 @@ defineProps({
         type: String,
         default: null,
     },
+    src: {
+        type: String,
+        default: null,
+    },
     tags: {
         type: Array,
         default: null,
@@ -23,7 +27,7 @@ defineEmits(['on-add-favorite'])
 <template>
     <div class="default-card">
         <div
-            v-bg="'https://source.unsplash.com/random/1024x768'"
+            v-bg="src"
             class="default-card__image"
         >
             <div
