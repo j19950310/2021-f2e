@@ -52,6 +52,7 @@ pre {
 }
 
 a {
+    display: inline-block;
     text-decoration: none;
     color: inherit;
 
@@ -72,4 +73,5 @@ button {
     @include size(1em);
 
     fill: currentColor;
+    transition: color .3s;
 }

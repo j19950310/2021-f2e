@@ -175,13 +175,19 @@ getTownsByCountycode('A').then(res => {
                     {{ activity }}
                 </div>
             </div>
+            <DefaultCard
+                title="關渡碼頭"
+                desc="關渡原名甘豆門，因背倚觀音山和大屯山，面向淡水河，成為一處地勢險要的港口，早年先民由關渡碼頭進入移居臺…"
+                :tags="['景點', '台北市']"
+                @on-add-favorite="() => {}"
+            />
         </div>
     </div>
 </template>
 
 <style lang="scss">
 .page-components {
-    text-align: center;
+    padding-bottom: 100px;
     background-color: #eeeeee;
 }
 </style>
