@@ -181,6 +181,10 @@ getTownsByCountycode('A').then(res => {
                 :tags="['景點', '台北市']"
                 @on-add-favorite="() => {}"
             />
+            <SaveCard
+                title="關渡碼頭"
+                :tags="['景點', '台北市']"
+            />
         </div>
     </div>
 </template>
