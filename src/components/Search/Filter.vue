@@ -29,6 +29,7 @@
                 tabindex="0"
                 @blur="setBlur"
                 @focus="setFocus"
+                @click="$emit('click', 'filter')"
             >
                 <Icon name="filter" />
             </div>
@@ -39,6 +40,7 @@
                 tabindex="0"
                 @blur="setBlur"
                 @focus="setFocus"
+                @click="$emit('click', 'shuffle')"
             >
                 <Icon name="shuffle" />
             </div>
@@ -47,7 +49,7 @@
 </template>
 <script>
 export default {
-    emits: ['update:modelValue', 'submit'],
+    emits: ['update:modelValue', 'submit', 'click'],
     data () {
         return {
             state: '',

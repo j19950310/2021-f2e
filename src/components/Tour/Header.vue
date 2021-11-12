@@ -12,6 +12,40 @@
             台灣觀光懶人包
             <router-link to="/tour" />
         </div>
+        <transition
+            name="flip"
+            mode="out-in"
+        >
+            <div
+                v-if="!isSearchBar"
+                class="tour-header__search"
+            >
+                <div
+                    class="tour-header__search-item"
+                    @click="isSearchBar = true"
+                >
+                    <Icon name="search" /><span>搜尋</span>
+                </div>
+                <div
+                    class="tour-header__search-item"
+                    @click="$emit('search','filter')"
+                >
+                    <Icon name="filter" /><span>篩選</span>
+                </div>
+                <div
+                    class="tour-header__search-item"
+                    @click="$emit('search','shuffle')"
+                >
+                    <Icon name="shuffle" /><span>探索</span>
+                </div>
+            </div>
+            <div
+                v-else
+                class="tour-header__search-bar"
+            >
+                <SearchFilter @click="SearchFilterClickHandler" />
+            </div>
+        </transition>
         <div class="tour-header__tool">
             <div class="tour-header__tool-item tour-header__tool-saved">
                 <Icon name="like-default" /><span>收藏項目</span>
@@ -22,55 +56,137 @@
         </div>
     </header>
 </template>
+<script>
+export default {
+    name: 'TourHeader',
+    inject: ['scrollInstace'],
+    emits: ['search'],
+    data () {
+        return {
+            isClickSearch: false,
+            isSearchBar: false,
+        }
+    },
+    computed: {
+        transitionName () {
+            return this.isSearch ? 'tour-header-search' : 'tour-header-search-bar'
+        },
+    },
+    watch: {
+        'scrollInstace.direction' (value) {
+            this.isSearchBar = value === -1
+        },
+    },
+    mounted () {
+
+    },
+    methods: {
+        SearchFilterClickHandler (method) {
+            this.$emit('search', method)
+        },
+    },
+}
+</script>
 <style lang="scss">
-    $class-name: '.tour-header';
-    #{$class-name} {
+$class-name: '.tour-header';
+#{$class-name} {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    display: flex;
+    padding: 20px;
+    color: color('White');
+    background-color: color('Black');
+    @include typo-h4;
+
+    z-index: map-get($z-index, header);
+
+    &__home {
+        position: relative;
         display: flex;
-        padding: 20px;
-        color: color('White');
-        background-color: color('Black');
+        padding: 12px 24px;
+        cursor: pointer;
+        flex: 0 0 auto;
+        user-select: none;
+
+        img {
+            margin-right: 10px;
+        }
+
+        a {
+            @include link;
+        }
+    }
+
+    &__search {
         @include typo-h4;
 
-        &__home {
-            position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: -2px;
+        transition: transform 0.3s ease;
+        flex: 1 0 auto;
+        transform-style: preserve-3d;
+
+        &-item {
             display: flex;
-            padding: 12px 24px;
+            align-items: center;
+            margin: 0 8px;
+            padding: 10px;
             cursor: pointer;
-            flex: 0 0 auto;
-            user-select: none;
 
-            img {
-                margin-right: 10px;
-            }
-
-            a {
-                @include link;
+            span {
+                padding-bottom: 2px;
             }
         }
 
-        &__tool {
+        .icon {
+            margin-right: 4px;
+            font-size: 24px;
+            color: color('Primary');
+        }
+    }
+
+    &__search-bar {
+        display: flex;
+        justify-content: center;
+        margin: -6px 0;
+        padding: 0 40px;
+        transition: transform 0.3s ease;
+        flex: 1 0 auto;
+        transform-style: preserve-3d;
+        transform: perspective(500px);
+
+        .search-filter {
+            flex: 0 1 480px;
+        }
+    }
+
+    &__tool {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: auto;
+        flex: 0 0 auto;
+
+        &-item {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: auto;
-            flex: 0 0 auto;
+            padding: 10px 8px;
+            cursor: pointer;
 
-            &-item {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 10px 8px;
-                cursor: pointer;
-
-                span {
-                    padding-bottom: 2px;
-                }
-            }
-
-            .icon {
-                margin-right: 4px;
-                font-size: 24px;
+            span {
+                padding-bottom: 2px;
             }
         }
+
+        .icon {
+            margin-right: 4px;
+            font-size: 24px;
+        }
     }
+}
 </style>

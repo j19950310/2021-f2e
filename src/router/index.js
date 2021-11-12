@@ -39,11 +39,11 @@ const routes = [
         component: TourSpot,
         children: [
             {
-                path: '/search',
+                path: 'search',
                 name: 'TourSpotSearch',
                 component: TourSpotSearch,
             }, {
-                path: '/saved',
+                path: 'saved',
                 name: 'TourSpotSaved',
                 component: TourSpotSaved,
             },

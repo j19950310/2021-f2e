@@ -141,6 +141,9 @@ function pushActivityQuery (config) {
 export default {
     namespaced: true,
     state: () => ({
+        popUp: {
+            isShow: false,
+        },
         page: 1,
         currentQuery: {
             scenic: [],
@@ -159,6 +162,12 @@ export default {
         getSkip: state => state.page * baseQueryConfig.top,
     },
     mutations: {
+        showPopUp (state) {
+            state.popUp.isShow = true
+        },
+        hidePopUp (state) {
+            state.popUp.isShow = false
+        },
         setQueryResult (state, result) {
             const { list, type, length } = result
             state.currentQuery[type] = list

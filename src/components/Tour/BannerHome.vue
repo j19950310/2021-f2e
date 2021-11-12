@@ -1,5 +1,18 @@
 <script setup>
 import bannerImgUrl from '@/assets/tourBannerHome.png'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const openPopUp = () => store.commit('tour/showPopUp')
+const hidePopUp = () => store.commit('tour/hidePopUp')
+const headSearchHandler = (e) => {
+    console.log(e)
+    if (e === 'filter') {
+        openPopUp()
+    } else {
+        // TODO
+    }
+}
 </script>
 <template>
     <div
@@ -15,7 +28,7 @@ import bannerImgUrl from '@/assets/tourBannerHome.png'
                     台灣觀光懶人包
                 </div>
                 <div class="tour-banner-home__search">
-                    <SearchFilter />
+                    <SearchFilter @click="headSearchHandler" />
                 </div>
             </div>
         </div>
