@@ -116,13 +116,12 @@ const handleCopy = () => {
                                     v-for="num in 5"
                                     :key="num"
                                 >
-                                    <div
-                                        v-bg="'https://source.unsplash.com/random/1024x768'"
-                                        class="tour-spot-popup__gallery-image"
+                                    <DescCard
+                                        title="關渡碼頭"
+                                        src="https://source.unsplash.com/random/1024x768"
                                     />
                                 </SwiperSlide>
                             </Swiper>
-                            <p>關渡碼頭</p>
                         </div>
                         <div class="tour-spot-popup__map">
                             map
@@ -328,19 +327,6 @@ const handleCopy = () => {
             &-slide {
                 flex: 0 0 calc((100% - #{$padding} * 3 * 2) / 2.5);
             }
-        }
-
-        &-image {
-            @include aspect(240 / 420);
-
-            border-radius: 24px;
-        }
-
-        > p {
-            @include typo-min;
-
-            margin-top: $padding;
-            color: color('Dark-Gray');
         }
     }
 
