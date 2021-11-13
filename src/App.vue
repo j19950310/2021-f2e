@@ -78,7 +78,14 @@ provide('scrollInstance', scrollInstance)
                 收藏
             </router-link>
         </div>
-        <router-view />
+        <router-view v-slot="{ Component }">
+            <transition
+                name="fade"
+                mode="out-in"
+            >
+                <component :is="Component" />
+            </transition>
+        </router-view>
         <div id="portalTarget" />
     </div>
 </template>

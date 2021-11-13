@@ -10,7 +10,10 @@ defineEmits(['on-close'])
 
 <template>
     <teleport to="#portalTarget">
-        <transition name="fade">
+        <transition
+            name="fade"
+            appear
+        >
             <div
                 v-show="isActive"
                 class="popup"

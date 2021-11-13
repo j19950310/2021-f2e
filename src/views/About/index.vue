@@ -28,7 +28,11 @@ import Base from '@/views/Tour/Base.vue'
                     </div>
                 </div>
             </div>
-            <router-view />
+            <router-view v-slot="{ Component }">
+                <transition name="fade">
+                    <component :is="Component" />
+                </transition>
+            </router-view>
         </div>
     </Base>
 </template>

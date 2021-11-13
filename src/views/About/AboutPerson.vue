@@ -110,6 +110,16 @@ const close = () => {
 </template>
 
 <style lang="scss">
+.app.-AboutPerson {
+    .popup {
+        &__main {
+            > * {
+                pointer-events: none;
+            }
+        }
+    }
+}
+
 .about-person {
     &__main {
         position: relative;
