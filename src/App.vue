@@ -10,7 +10,7 @@ const store = useStore()
 store.dispatch('admin/init')
 
 // registerPlugin gsap
-const scrollInstace = reactive({
+const scrollInstance = reactive({
     scrollTop: ref(0),
     progress: ref(0),
     direction: 1,
@@ -22,14 +22,14 @@ const scrollTriggerInstance = ScrollTrigger.create({
     start: 'top top',
     end: 'bottom bottom',
     onUpdate: (self) => {
-        scrollInstace.progress = self.progress
-        scrollInstace.scrollTop = self.progress * self.end
-        scrollInstace.direction = self.direction
-        scrollInstace.end = self.end
+        scrollInstance.progress = self.progress
+        scrollInstance.scrollTop = self.progress * self.end
+        scrollInstance.direction = self.direction
+        scrollInstance.end = self.end
     },
 })
 
-provide('scrollInstace', scrollInstace)
+provide('scrollInstance', scrollInstance)
 
 </script>
 
@@ -64,13 +64,13 @@ provide('scrollInstace', scrollInstace)
                 class="dev-link"
                 to="/tour/spot/search"
             >
-                旅遊景點（搜不到)
+                搜尋結果
             </router-link>
             <router-link
                 class="dev-link"
                 to="/tour/spot/saved"
             >
-                旅遊景點（搜不到)
+                收藏
             </router-link>
         </div>
         <router-view />
@@ -88,7 +88,7 @@ provide('scrollInstace', scrollInstace)
 
     &__wrap {
         position: fixed;
-        top: 90px;
+        top: 50px;
         right: 0;
         left: 0;
         z-index: 100;
