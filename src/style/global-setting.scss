@@ -4,7 +4,7 @@
 
 ::selection {
     color: color('White');
-    background: color('Dark-Gray');
+    background: color('Primary');
 }
 
 @include get-container();
@@ -33,6 +33,7 @@ body {
     min-width: 320px;
     overscroll-behavior: none;
     scroll-behavior: smooth;
+    color: color('Black');
 }
 
 input,

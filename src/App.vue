@@ -2,10 +2,12 @@
 // This starter template is using Vue 3 <script setup> SFCs
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
 import { ref, reactive, provide } from 'vue'
 // scroll
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+const $route = useRoute()
 const store = useStore()
 store.dispatch('admin/init')
 
@@ -34,7 +36,10 @@ provide('scrollInstance', scrollInstance)
 </script>
 
 <template>
-    <div class="app">
+    <div
+        class="app"
+        :class="`-${$route.name}`"
+    >
         <div class="dev-link__wrap">
             <router-link
                 class="dev-link"
@@ -73,7 +78,16 @@ provide('scrollInstance', scrollInstance)
                 收藏
             </router-link>
         </div>
-        <router-view />
+        <router-view v-slot="{ Component }">
+            <transition
+                name="fade"
+                mode="out-in"
+            >
+                <component :is="Component" />
+            </transition>
+        </router-view>
+        <div id="portalTarget" />
+        <CursorApp />
     </div>
 </template>
 

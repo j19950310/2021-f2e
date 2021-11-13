@@ -189,6 +189,15 @@ getTownsByCountycode('A').then(res => {
                     :tags="['景點', '台北市']"
                 />
             </router-link>
+            <PersonCard
+                title="Jay Wu"
+                desc="Front End Developer"
+                src="https://source.unsplash.com/random/1024x768"
+            />
+            <DescCard
+                title="Jay Wu"
+                src="https://source.unsplash.com/random/1024x768"
+            />
         </div>
     </div>
 </template>
