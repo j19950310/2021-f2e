@@ -5,12 +5,22 @@ import { Swiper, SwiperSlide } from 'swiper/vue'
 const $router = useRouter()
 
 const isOpen = ref(true)
+const isShareOpen = ref(false)
+const isCopy = ref(false)
+let copyTimer
 
 const close = () => {
     isOpen.value = false
     setTimeout(() => {
         $router.push({ path: '/tour/spot' })
     }, 300) // 300ms popup transition-duration
+}
+const handleCopy = () => {
+    isCopy.value = true
+    clearTimeout(copyTimer)
+    copyTimer = setTimeout(() => {
+        isCopy.value = false
+    }, 1000)
 }
 </script>
 
@@ -63,9 +73,35 @@ const close = () => {
                             <ButtonThird icon="info">
                                 <p>資訊</p>
                             </ButtonThird>
-                            <ButtonThird icon="share">
-                                <p>分享</p>
-                            </ButtonThird>
+                            <div
+                                v-blur="() => isShareOpen = false"
+                                class="tour-spot-popup__shares"
+                            >
+                                <ButtonThird
+                                    icon="share"
+                                    @click="isShareOpen = !isShareOpen"
+                                >
+                                    <p>分享</p>
+                                </ButtonThird>
+                                <div
+                                    class="tour-spot-popup__shares-main"
+                                    :class="{'-active': isShareOpen}"
+                                >
+                                    <Share social-type="facebook" />
+                                    <Share social-type="line" />
+                                    <Share social-type="twitter" />
+                                    <Copy @on-copy="handleCopy" />
+                                    <div
+                                        class="tour-spot-popup__copy-done"
+                                        :class="{'-active': isCopy}"
+                                    >
+                                        <div>
+                                            <Icon name="check" />
+                                        </div>
+                                        <p>連結已複製！</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <p class="tour-spot-popup__desc">
                             關渡原名甘豆門，因背倚觀音山和大屯山，面向淡水河，成為一處地勢險要的港口，早年先民由關渡碼頭進入移居臺灣北部開墾，因此關渡的開發甚早，後因兩河(基隆河、淡水河)河口泥沙淤積，水運才逐漸沒落。關渡碼頭位於關渡自然公園及關渡宮旁，每當假日或夜晚均可見遊客駐足關渡碼頭週邊散步休息，亦有許多單車族由八里經關渡大橋前來，或由淡水前來，沿途風光明媚，是一處極佳的賞景地點。
@@ -214,6 +250,70 @@ const close = () => {
 
         > * {
             margin-right: $padding * 1.5;
+        }
+    }
+
+    &__shares {
+        position: relative;
+
+        &-main {
+            position: absolute;
+            top: -$padding * 1.5;
+            left: 0;
+            display: flex;
+            align-items: center;
+            padding: $padding * 2;
+            background: color('White');
+            border-radius: 24px;
+            opacity: 0;
+            box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+            transition: opacity .3s;
+            transform: translate(0, -100%);
+            pointer-events: none;
+
+            &.-active {
+                opacity: 1;
+                pointer-events: auto;
+            }
+
+            > * {
+                margin-right: $padding / 2;
+            }
+        }
+    }
+
+    &__copy-done {
+        @include size(auto, 100%);
+        @include typo-h4;
+
+        position: absolute;
+        top: 0;
+        right: -$padding * 1.5;
+        display: flex;
+        align-items: center;
+        padding: $padding * 2;
+        background: color('White');
+        border-radius: 24px;
+        opacity: 0;
+        box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+        transform: translate(100%, 0);
+        pointer-events: none;
+        transition: opacity .3s;
+        user-select: none;
+
+        &.-active {
+            opacity: 1;
+        }
+
+        > div {
+            @include size(18px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: $padding;
+            background-color: color('Primary');
+            border-radius: 50%;
         }
     }
 
