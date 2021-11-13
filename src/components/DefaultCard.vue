@@ -30,6 +30,8 @@ defineEmits(['on-add-favorite'])
             v-bg="src"
             class="default-card__image"
         >
+            <!-- link -->
+            <slot />
             <div
                 class="default-card__favorite"
                 @click.stop="$emit('on-add-favorite')"
@@ -107,6 +109,10 @@ defineEmits(['on-add-favorite'])
             left: 0;
             z-index: -1;
             transition: background-color .3s;
+        }
+
+        a {
+            @include link;
         }
     }
 

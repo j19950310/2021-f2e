@@ -177,6 +177,12 @@ export default {
             hotel: 0,
             activity: 0,
         },
+        savedQuery: {
+            scenic: [],
+            restaurant: [],
+            hotel: [],
+            activity: [],
+        },
     }),
     getters: {
         getSkip: state => (state.page - 1) * baseQueryConfig.top,
@@ -201,6 +207,10 @@ export default {
                 max: total ? Math.ceil(total / baseQueryConfig.top) : 0,
                 now: state.page,
             }
+        },
+        getSingleSpotByQuery: state => (spot, category) => {
+            const list = state.currentQuery[category] || []
+            return list.find(item => item.id === spot) || null
         },
     },
     mutations: {
@@ -249,6 +259,9 @@ export default {
         },
     },
     actions: {
+        init ({ commit, dispatch }) {
+            // TODO 串 loaclStorage
+        },
         resetAll ({ commit }) {
             commit('resetResultCurrent')
             commit('resetResultTotal')
