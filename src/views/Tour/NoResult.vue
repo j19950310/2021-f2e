@@ -2,7 +2,7 @@
     <div class="tour-no-result">
         <div class="tour-no-result__main container">
             <div class="tour-no-result__title">
-                哎呀！找不到你的搜尋結果...
+                哎呀！找不到你的搜尋結果 ...
             </div>
             <div class="tour-no-result__desc">
                 小精靈環島了好幾圈仍未找到你的應許之地 😭 <br>
@@ -12,8 +12,19 @@
     </div>
 </template>
 <script>
+import gsap from 'gsap/dist/gsap'
 export default {
-    name: 'TourBase',
+    name: 'TourNoResult',
+    beforeRouteEnter (to, from, next) {
+        if (from.name === 'Tour' && to.name === 'TourNoResult') {
+            next((vm) => {
+                gsap.fromTo(vm.$el, { height: 0 },
+                    { overwrite: true, duration: 0.5, height: 'auto' })
+            })
+        } else {
+            next()
+        }
+    },
 }
 </script>
 <style lang="scss">
@@ -38,7 +49,10 @@ export default {
 
         span {
             position: relative;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            @include size(20px);
 
             &::before {
                 content: '';

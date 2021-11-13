@@ -53,8 +53,9 @@ export default class TourSpot {
     }
 
     get class () {
-        // 景點分類 ,
-        return this.Class
+        // 景點分類
+        const { Class, Class1, Class2, Class3 } = this
+        return [Class, Class1, Class2, Class3].filter(Boolean)
     }
 
     get mapUrl () {
