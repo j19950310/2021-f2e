@@ -102,7 +102,7 @@ const pagination = computed(() => store.getters['tour/getCurrentQueryPagination'
             >
                 <div
                     v-for="post in posts"
-                    :key="post.ID"
+                    :key="post.id"
                     class="tour-spot-search__card col-4"
                 >
                     <DefaultCard
@@ -111,13 +111,22 @@ const pagination = computed(() => store.getters['tour/getCurrentQueryPagination'
                         :src="post.picture.src"
                         :tags="post.class"
                         @on-add-favorite="() => {}"
-                    />
+                    >
+                        <router-link
+                            :to="{
+                                name: 'TourSpotSearchPopup',
+                                query: route.query,
+                                params: {spot: post.id}}"
+                        />
+                    </DefaultCard>
                 </div>
             </transition-group>
             <div class="tour-spot-search__pagination row">
                 <Pagination v-bind="pagination" />
             </div>
         </div>
+        <!-- pop up -->
+        <router-view />
     </div>
 </template>
 <style lang="scss">

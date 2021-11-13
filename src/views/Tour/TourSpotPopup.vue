@@ -1,18 +1,33 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, getCurrentInstance } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 const $router = useRouter()
-
+const $route = useRoute()
+const $store = useStore()
+//
 const isOpen = ref(true)
 const isShareOpen = ref(false)
 const isCopy = ref(false)
+const instance = getCurrentInstance() // works
 let copyTimer
+const post = computed(() => {
+    const { params: { spot }, query: { category } } = $route
+    return $store.getters['tour/getSingleSpotByQuery'](spot, category)
+})
+if (!post.value) {
+    $router.push({
+        name: 'Tour',
+        query: $route.query,
+    })
+}
 
 const close = () => {
     isOpen.value = false
     setTimeout(() => {
-        $router.push({ path: '/tour/spot' })
+        // $router.push({ path: '/tour/spot' })
+        $router.back()
     }, 300) // 300ms popup transition-duration
 }
 const handleCopy = () => {
@@ -39,36 +54,49 @@ const handleCopy = () => {
                         <Icon name="close-default" />
                     </div>
                     <div class="tour-spot-popup__header">
-                        <div>
-                            <p class="tour-spot-popup__title">
-                                關渡碼頭
-                            </p>
-                            <div class="tour-spot-popup__tags">
-                                <Tag
-                                    v-for="name in ['景點', '遊憩類', '台北市', '大安區', '非古蹟']"
-                                    :key="name"
-                                    :name="name"
-                                />
-                            </div>
-                        </div>
-                        <div>
-                            <div class="tour-spot-popup__info">
-                                <p>開放時間：全天候開放</p>
-                                <p>連絡電話：886-2-27208889</p>
-                                <p>地址：台北市新興區民生一路495號14樓</p>
-                            </div>
-                            <div class="tour-spot-popup__info">
-                                <p>主辦單位：臺北市政府觀光傳播局</p>
-                                <p>停車資訊：小客車35輛、機車0輛、大客車0輛</p>
-                                <p>房型資訊：雙人房 $10,000、單人房 $10,000、單人房(無障礙客房) $7,500</p>
-                                <p>服務資訊：餐廳、會議場所、無線網路、國民旅遊卡、停車場、無障礙、客房、自助洗衣 (收費)、上網電腦 、(免費)洗衣服務、郵電服務、貴重物品保管專櫃、接送服務、AED、外幣兌換、自行車友善旅宿 </p>
-                            </div>
-                        </div>
-                        <div>
-                            <div
-                                v-bg="'https://source.unsplash.com/random/1024x768'"
-                                class="tour-spot-popup__image"
+                        <p class="tour-spot-popup__title">
+                            {{ post.name }}
+                        </p>
+                        <div class="tour-spot-popup__tags">
+                            <Tag
+                                v-for="name in post.class"
+                                :key="name"
+                                :name="name"
                             />
+                        </div>
+                        <div class="tour-spot-popup__info">
+                            <p v-if="post.openTime">
+                                開放時間：{{ post.openTime }}
+                            </p>
+                            <p v-if="post.phone">
+                                {{ post.phone.label }}：{{ post.phone.value }}
+                            </p>
+                            <p v-if="post.address">
+                                地址：{{ post.address }}
+                            </p>
+                        </div>
+                        <div class="tour-spot-popup__info">
+                            <p v-if="post.organizer">
+                                主辦單位：{{ post.organizer }}
+                            </p>
+                            <p v-if="post.parkingInfo">
+                                停車資訊：{{ post.parkingInfo }}
+                            </p>
+                            <p v-if="post.spec">
+                                房型資訊：{{ post.spec }}
+                            </p>
+                            <p v-if="post.serverInfo">
+                                服務資訊：{{ post.serverInfo }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="tour-spot-popup__content">
+                        <div
+                            v-if="post.picture.url"
+                            v-bg="post.picture.url"
+                            class="tour-spot-popup__image"
+                        />
+                        <div class="tour-spot-popup__control">
                             <div class="tour-spot-popup__control">
                                 <ButtonThird icon="like-default">
                                     <p>收藏</p>
@@ -107,12 +135,16 @@ const handleCopy = () => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="tour-spot-popup__content">
-                        <p class="tour-spot-popup__desc">
-                            關渡原名甘豆門，因背倚觀音山和大屯山，面向淡水河，成為一處地勢險要的港口，早年先民由關渡碼頭進入移居臺灣北部開墾，因此關渡的開發甚早，後因兩河(基隆河、淡水河)河口泥沙淤積，水運才逐漸沒落。關渡碼頭位於關渡自然公園及關渡宮旁，每當假日或夜晚均可見遊客駐足關渡碼頭週邊散步休息，亦有許多單車族由八里經關渡大橋前來，或由淡水前來，沿途風光明媚，是一處極佳的賞景地點。
+                        <p
+                            v-if="post.descriptionDetail"
+                            class="tour-spot-popup__desc"
+                        >
+                            {{ post.descriptionDetail }}
                         </p>
-                        <div class="tour-spot-popup__gallery">
+                        <div
+                            v-if="post.picture.length"
+                            class="tour-spot-popup__gallery"
+                        >
                             <Swiper
                                 slides-per-view="auto"
                                 :space-between="8"
@@ -124,18 +156,21 @@ const handleCopy = () => {
                                 }"
                             >
                                 <SwiperSlide
-                                    v-for="num in 5"
-                                    :key="num"
+                                    v-for="(url, index) in post.picture.all"
+                                    :key="url"
                                 >
                                     <DescCard
-                                        title="關渡碼頭"
-                                        src="https://source.unsplash.com/random/1024x768"
+                                        :title="post.picture.desc[index]||''"
+                                        :src="url"
                                     />
                                 </SwiperSlide>
                             </Swiper>
                         </div>
-                        <div class="tour-spot-popup__map">
-                            map
+                        <div
+                            v-if="post.Position"
+                            class="tour-spot-popup__map"
+                        >
+                            <GoogleMap v-bind="post.Position" />
                         </div>
                         <div class="tour-spot-popup__buttons">
                             <ButtonSecondary icon="like-default">

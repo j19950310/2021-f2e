@@ -57,19 +57,28 @@ const routes = [
         component: TourSpot,
         children: [
             {
-                path: ':spot',
-                name: 'TourSpotPopup',
-                component: TourSpotPopup,
-            },
-            {
                 path: 'search',
                 name: 'TourSpotSearch',
                 component: TourSpotSearch,
+                children: [
+                    {
+                        path: ':spot',
+                        name: 'TourSpotSearchPopup',
+                        component: TourSpotPopup,
+                    },
+                ],
             },
             {
                 path: 'saved',
                 name: 'TourSpotSaved',
                 component: TourSpotSaved,
+                children: [
+                    {
+                        path: ':spot',
+                        name: 'TourSpotSavedPopup',
+                        component: TourSpotPopup,
+                    },
+                ],
             },
         ],
     },

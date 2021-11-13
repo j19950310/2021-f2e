@@ -156,7 +156,7 @@ export class HotelSpot extends TourSpot {
     }
 
     get spec () {
-        // 旅宿特色 ,
+        // 旅宿房型、價目及數量 ,
         return this.Spec
     }
 
@@ -238,6 +238,10 @@ class TourismPicture {
         return this.pictures
     }
 
+    get desc () {
+        return this.descriptions
+    }
+
     get length () {
         return this.pictures.length
     }
@@ -249,7 +253,16 @@ class TourismPicture {
 
 class PointType {
     constructor (config) {
-        Object(this, config)
+        const {
+            GeoHash,
+            PositionLat,
+            PositionLon,
+        } = config
+        Object(this, {
+            GeoHash,
+            PositionLat,
+            PositionLon,
+        })
     }
 
     get lat () {
