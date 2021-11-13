@@ -2,6 +2,7 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
 import Dev from '@/views/Dev.vue'
+import About from '@/views/About.vue'
 import TourHome from '@/views/Tour/Index.vue'
 import TourNoResult from '@/views/Tour/NoResult.vue'
 import TourSpot from '@/views/Tour/Spot.vue'
@@ -12,7 +13,13 @@ import TourSpotPopup from '@/views/Tour/TourSpotPopup.vue'
 const routes = [
     {
         path: '/',
+        name: 'Home',
         component: Home,
+    },
+    {
+        path: '/about',
+        name: 'About',
+        component: About,
     },
     {
         path: '/dev',
