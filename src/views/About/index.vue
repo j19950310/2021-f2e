@@ -14,16 +14,21 @@ import Base from '@/views/Tour/Base.vue'
                         十字元是一個備受迫害的地方族群，需要你的立即協助！！
                     </p>
                     <div class="about__cards">
-                        <PersonCard
+                        <router-link
                             v-for="num in 4"
                             :key="num"
-                            title="Jay Wu"
-                            desc="Front End Developer"
-                            src="https://source.unsplash.com/random/1024x768"
-                        />
+                            :to="{name:'AboutPerson', params: {person: 'test'}}"
+                        >
+                            <PersonCard
+                                title="Jay Wu"
+                                desc="Front End Developer"
+                                src="https://source.unsplash.com/random/1024x768"
+                            />
+                        </router-link>
                     </div>
                 </div>
             </div>
+            <router-view />
         </div>
     </Base>
 </template>
@@ -60,6 +65,9 @@ import Base from '@/views/Tour/Base.vue'
             @include media-breakpoint-down(desktop) {
                 flex: 0 0 calc((100% - #{$padding * 3}) / 2);
                 margin-bottom: $padding * 3;
+            }
+            @include media-breakpoint-down(tablet) {
+                width: 100%;
             }
         }
     }
