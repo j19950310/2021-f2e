@@ -12,11 +12,11 @@ import TourSpotSearch from '@/views/Tour/SpotSearch.vue'
 import TourSpotPopup from '@/views/Tour/TourSpotPopup.vue'
 
 const routes = [
-    {
-        path: '/',
-        name: 'Home',
-        component: Home,
-    },
+    // {
+    //     path: '/',
+    //     name: 'Home',
+    //     component: Home,
+    // },
     {
         path: '/about',
         name: 'About',
@@ -75,7 +75,7 @@ const routes = [
     },
     {
         path: '/:pathMatch(.*)*',
-        redirect: '/',
+        redirect: '/tour',
     },
 ]
 
