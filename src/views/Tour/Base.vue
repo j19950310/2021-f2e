@@ -23,7 +23,9 @@ const headSearchHandler = (e) => {
             :is-search="$route.name !== 'Tour'"
             @search="headSearchHandler"
         />
-        <slot />
+        <div class="tour-base__slot">
+            <slot />
+        </div>
         <TourFooter />
         <div
             class="tour-base__pop-up"
@@ -44,7 +46,14 @@ const headSearchHandler = (e) => {
 $header-height: 84px;
 
 .tour-base {
+    display: flex;
     padding-top: $header-height;
+    flex-direction: column;
+    min-height: 100vh;
+
+    &__slot {
+        flex: 1 1 auto;
+    }
 
     &__pop-up {
         $duration: 0.4s;
