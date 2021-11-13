@@ -6,7 +6,12 @@
         }"
     >
         <div class="form-filter__row">
-            <SearchKeywords v-model="search" />
+            <SearchKeywords
+                v-model="search"
+                :input-attrs="{
+                    name: 'keywords',
+                }"
+            />
         </div>
         <!-- 搜尋類別 -->
         <div class="form-filter__row">
@@ -171,7 +176,9 @@
         <!-- 送出/返回 -->
         <div class="form-filter__row">
             <div class="form-filter__submit">
-                <ButtonSecondary>
+                <ButtonSecondary
+                    @click="$emit('back')"
+                >
                     返回
                 </ButtonSecondary>
                 <ButtonPrimary
@@ -197,6 +204,7 @@ import {
 
 export default {
     name: 'FormFilter',
+    emits: ['back', 'submit'],
     data () {
         const region = Object.keys(regionLabels).reduce((obj, key) => {
             obj[key] = false
@@ -361,14 +369,19 @@ export default {
             })
             this.countySelectedAllTowns = list
         },
-        clearRegion () {
-            Object.keys(this.region).forEach(key => {
-                this.region[key] = false
-            })
-        },
         selectAllRegion () {
             Object.keys(this.region).forEach(key => {
                 this.region[key] = true
+            })
+        },
+        clearAll () {
+            this.clearRegion()
+            this.clearSelectedCouties()
+            this.selectedTown = []
+        },
+        clearRegion () {
+            Object.keys(this.region).forEach(key => {
+                this.region[key] = false
             })
         },
         clearSelectedCouties () {
@@ -410,7 +423,29 @@ export default {
         submit () {
             const data = new FormData(this.$el)
             console.log('submit', [...data.keys()])
-            this.submitQuery(data)
+            this.submitQuery(data).then((category) => {
+                // 成功，清除所有選取
+                this.$emit('submit')
+                this.$router.push({
+                    name: 'TourSpotSearch',
+                    query: {
+                        keyword: this.searchValue,
+                        category,
+                        page: 1,
+                    },
+                })
+                this.clearAll()
+            }).catch(err => {
+                // 失敗，無收尋內容
+                console.log(err)
+                this.$emit('submit')
+                this.$router.push({
+                    name: 'TourNoResult',
+                    params: {
+                        messages: err.message || '查無結果',
+                    },
+                })
+            })
         },
     },
 }

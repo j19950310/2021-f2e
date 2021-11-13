@@ -1,57 +1,66 @@
 
 <template>
-    <header class="tour-header">
-        <div class="tour-header__home">
-            <img
-                width="31"
-                height="20"
-                class="tour-header__logo"
-                src="@/assets/logo.png"
-                alt="十字元Logo"
-            >
-            台灣觀光懶人包
-            <router-link to="/tour" />
-        </div>
-        <transition
-            name="flip"
-            mode="out-in"
-        >
-            <div
-                v-if="!isSearchBar"
-                class="tour-header__search"
+    <header
+        class="tour-header"
+        :class="{'-hide': scrollInstance.direction === 1 && scrollInstance.scrollTop > 84}"
+    >
+        <div class="tour-header__wrap">
+            <div class="tour-header__home">
+                <img
+                    width="31"
+                    height="20"
+                    class="tour-header__logo"
+                    src="@/assets/logo.png"
+                    alt="十字元Logo"
+                >
+                台灣觀光懶人包
+                <router-link to="/tour" />
+            </div>
+            <transition
+                name="flip"
+                mode="out-in"
             >
                 <div
-                    class="tour-header__search-item"
-                    @click="isSearchBar = true"
+                    v-if="!isSearchBar && isSearch"
+                    class="tour-header__search"
                 >
-                    <Icon name="search" /><span>搜尋</span>
+                    <div
+                        class="tour-header__search-item"
+                        @click="isSearchBar = true"
+                    >
+                        <Icon name="search" /><span>搜尋</span>
+                    </div>
+                    <div
+                        class="tour-header__search-item"
+                        @click="$emit('search','filter')"
+                    >
+                        <Icon name="filter" /><span>篩選</span>
+                    </div>
+                    <div
+                        class="tour-header__search-item"
+                        @click="$emit('search','shuffle')"
+                    >
+                        <Icon name="shuffle" /><span>探索</span>
+                    </div>
                 </div>
                 <div
-                    class="tour-header__search-item"
-                    @click="$emit('search','filter')"
+                    v-else-if="isSearch"
+                    class="tour-header__search-bar"
                 >
-                    <Icon name="filter" /><span>篩選</span>
+                    <SearchFilter
+                        v-model="searchValue"
+                        @submit="submit"
+                        @click="SearchFilterClickHandler"
+                    />
                 </div>
-                <div
-                    class="tour-header__search-item"
-                    @click="$emit('search','shuffle')"
-                >
-                    <Icon name="shuffle" /><span>探索</span>
+            </transition>
+            <div class="tour-header__tool">
+                <div class="tour-header__tool-item tour-header__tool-saved">
+                    <Icon name="like-default" /><span>收藏項目</span>
                 </div>
-            </div>
-            <div
-                v-else
-                class="tour-header__search-bar"
-            >
-                <SearchFilter @click="SearchFilterClickHandler" />
-            </div>
-        </transition>
-        <div class="tour-header__tool">
-            <div class="tour-header__tool-item tour-header__tool-saved">
-                <Icon name="like-default" /><span>收藏項目</span>
-            </div>
-            <div class="tour-header__tool-item tour-header__tool-info">
-                <Icon name="info" /><span>使用說明</span>
+                <div class="tour-header__tool-item tour-header__tool-info">
+                    <Icon name="info" /><span>使用說明</span>
+                </div>
             </div>
         </div>
     </header>
@@ -59,22 +68,25 @@
 <script>
 export default {
     name: 'TourHeader',
-    inject: ['scrollInstace'],
+    inject: ['scrollInstance'],
+    props: {
+        isSearch: {
+            type: Boolean,
+            default: false,
+        },
+    },
     emits: ['search'],
     data () {
         return {
             isClickSearch: false,
             isSearchBar: false,
+            searchValue: '',
+            scrollHide: false,
         }
     },
     computed: {
         transitionName () {
             return this.isSearch ? 'tour-header-search' : 'tour-header-search-bar'
-        },
-    },
-    watch: {
-        'scrollInstace.direction' (value) {
-            this.isSearchBar = value === -1
         },
     },
     mounted () {
@@ -83,6 +95,14 @@ export default {
     methods: {
         SearchFilterClickHandler (method) {
             this.$emit('search', method)
+        },
+        submit () {
+            this.$router.push({
+                name: 'TourSpotSearch',
+                query: {
+                    keyword: this.searchValue,
+                },
+            })
         },
     },
 }
@@ -94,13 +114,22 @@ $class-name: '.tour-header';
     top: 0;
     right: 0;
     left: 0;
-    display: flex;
-    padding: 20px;
-    color: color('White');
-    background-color: color('Black');
+    overflow: hidden;
+    z-index: map-get($z-index, header);
     @include typo-h4;
 
-    z-index: map-get($z-index, header);
+    &__wrap {
+        display: flex;
+        padding: 20px;
+        color: color('White');
+        background-color: color('Black');
+        transition: transform 0.3s ease-in-out;
+
+        .-hide > & {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+    }
 
     &__home {
         position: relative;

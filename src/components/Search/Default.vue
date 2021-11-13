@@ -1,6 +1,7 @@
 <template>
     <div class="search-default">
         <input
+            v-bind="inputAttrs"
             :value="modelValue"
             type="text"
             :placeholder="placeholder"
@@ -23,6 +24,10 @@ export default {
         modelValue: {
             type: String,
             default: '',
+        },
+        inputAttrs: {
+            type: Object,
+            default: () => ({}),
         },
     },
     emits: ['update:modelValue', 'focus', 'blur', 'submit'],

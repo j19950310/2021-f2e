@@ -1,8 +1,12 @@
 <script setup>
 import bannerImgUrl from '@/assets/tourBannerHome.png'
+import { ref } from 'vue'
 import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
 
 const store = useStore()
+const router = useRouter()
+const searchValue = ref('')
 const openPopUp = () => store.commit('tour/showPopUp')
 const hidePopUp = () => store.commit('tour/hidePopUp')
 const headSearchHandler = (e) => {
@@ -12,6 +16,14 @@ const headSearchHandler = (e) => {
     } else {
         // TODO
     }
+}
+const submit = () => {
+    router.push({
+        name: 'TourSpotSearch',
+        query: {
+            keyword: searchValue.value,
+        },
+    })
 }
 </script>
 <template>
@@ -28,7 +40,11 @@ const headSearchHandler = (e) => {
                     台灣觀光懶人包
                 </div>
                 <div class="tour-banner-home__search">
-                    <SearchFilter @click="headSearchHandler" />
+                    <SearchFilter
+                        v-model="searchValue"
+                        @submit="submit"
+                        @click="headSearchHandler"
+                    />
                 </div>
             </div>
         </div>
