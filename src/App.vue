@@ -74,6 +74,7 @@ provide('scrollInstace', scrollInstace)
             </router-link>
         </div>
         <router-view />
+        <div id="portalTarget" />
     </div>
 </template>
 
