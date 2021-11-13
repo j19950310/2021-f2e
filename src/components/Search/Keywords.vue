@@ -2,6 +2,7 @@
     <SearchDefault
         class="search-keywords"
         :class="className"
+        :input-attrs="inputAttrs"
         @update:modelValue="$emit('update:modelValue', $event)"
         @submit="$emit('submit')"
         @focus="state = 'focus'"
@@ -17,6 +18,12 @@
 </template>
 <script>
 export default {
+    props: {
+        inputAttrs: {
+            type: Object,
+            default: () => ({}),
+        },
+    },
     emits: ['update:modelValue', 'submit'],
     data () {
         return {
