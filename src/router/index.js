@@ -7,6 +7,7 @@ import TourNoResult from '@/views/Tour/NoResult.vue'
 import TourSpot from '@/views/Tour/Spot.vue'
 import TourSpotSaved from '@/views/Tour/SpotSaved.vue'
 import TourSpotSearch from '@/views/Tour/SpotSearch.vue'
+import TourSpotPopup from '@/views/Tour/TourSpotPopup.vue'
 
 const routes = [
     {
@@ -17,11 +18,13 @@ const routes = [
         path: '/dev',
         name: 'Develope',
         component: Dev,
-    }, {
+    },
+    {
         path: '/components',
         name: 'Components',
         component: Components,
-    }, {
+    },
+    {
         path: '/tour',
         name: 'Tour',
         component: TourHome,
@@ -39,10 +42,16 @@ const routes = [
         component: TourSpot,
         children: [
             {
+                path: ':spot',
+                name: 'TourSpotPopup',
+                component: TourSpotPopup,
+            },
+            {
                 path: 'search',
                 name: 'TourSpotSearch',
                 component: TourSpotSearch,
-            }, {
+            },
+            {
                 path: 'saved',
                 name: 'TourSpotSaved',
                 component: TourSpotSaved,
