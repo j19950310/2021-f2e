@@ -39,11 +39,15 @@ export default {
     cursor: pointer;
 
     .icon {
+        @include size(1.5rem);
+
         margin-right: 4px;
-        font-size: 24px;
         color: color('Black');
         opacity: 1;
         transition: color 0.2s ease-in-out, width 0.2s linear, opacity 0.2s 0.2s, margin 0.2s linear;
+        @include media-breakpoint-down(tablet) {
+            @include size(1rem);
+        }
     }
 
     @include hover {
