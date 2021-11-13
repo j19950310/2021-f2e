@@ -87,6 +87,7 @@ provide('scrollInstance', scrollInstance)
             </transition>
         </router-view>
         <div id="portalTarget" />
+        <CursorApp />
     </div>
 </template>
 

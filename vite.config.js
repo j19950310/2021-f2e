@@ -17,18 +17,13 @@ export default ({ mode }) => {
         },
         server: {
             port: process.env.VITE_APP_PORT,
-            proxy: {
-                '^/assets': {
-                    target: process.env.VITE_APP_URL + 'src/',
-                },
-            },
         },
         plugins: [
             vue(),
             vueComponents({
                 directoryAsNamespace: true,
             }),
-            eslintPlugin(),
+            // eslintPlugin(),
             viteSvgIcons({
                 iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
                 symbolId: '[name]',
