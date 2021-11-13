@@ -39,78 +39,89 @@ const handleCopy = () => {
                         <Icon name="close-default" />
                     </div>
                     <div class="tour-spot-popup__header">
-                        <p class="tour-spot-popup__title">
-                            關渡碼頭
-                        </p>
-                        <div class="tour-spot-popup__tags">
-                            <Tag
-                                v-for="name in ['景點', '遊憩類', '台北市', '大安區', '非古蹟']"
-                                :key="name"
-                                :name="name"
-                            />
+                        <div>
+                            <p class="tour-spot-popup__title">
+                                關渡碼頭
+                            </p>
+                            <div class="tour-spot-popup__tags">
+                                <Tag
+                                    v-for="name in ['景點', '遊憩類', '台北市', '大安區', '非古蹟']"
+                                    :key="name"
+                                    :name="name"
+                                />
+                            </div>
                         </div>
-                        <div class="tour-spot-popup__info">
-                            <p>開放時間：全天候開放</p>
-                            <p>連絡電話：886-2-27208889</p>
-                            <p>地址：台北市新興區民生一路495號14樓</p>
+                        <div>
+                            <div class="tour-spot-popup__info">
+                                <p>開放時間：全天候開放</p>
+                                <p>連絡電話：886-2-27208889</p>
+                                <p>地址：台北市新興區民生一路495號14樓</p>
+                            </div>
+                            <div class="tour-spot-popup__info">
+                                <p>主辦單位：臺北市政府觀光傳播局</p>
+                                <p>停車資訊：小客車35輛、機車0輛、大客車0輛</p>
+                                <p>房型資訊：雙人房 $10,000、單人房 $10,000、單人房(無障礙客房) $7,500</p>
+                                <p>服務資訊：餐廳、會議場所、無線網路、國民旅遊卡、停車場、無障礙、客房、自助洗衣 (收費)、上網電腦 、(免費)洗衣服務、郵電服務、貴重物品保管專櫃、接送服務、AED、外幣兌換、自行車友善旅宿 </p>
+                            </div>
                         </div>
-                        <div class="tour-spot-popup__info">
-                            <p>主辦單位：臺北市政府觀光傳播局</p>
-                            <p>停車資訊：小客車35輛、機車0輛、大客車0輛</p>
-                            <p>房型資訊：雙人房 $10,000、單人房 $10,000、單人房(無障礙客房) $7,500</p>
-                            <p>服務資訊：餐廳、會議場所、無線網路、國民旅遊卡、停車場、無障礙、客房、自助洗衣 (收費)、上網電腦 、(免費)洗衣服務、郵電服務、貴重物品保管專櫃、接送服務、AED、外幣兌換、自行車友善旅宿 </p>
-                        </div>
-                    </div>
-                    <div class="tour-spot-popup__content">
-                        <div
-                            v-bg="'https://source.unsplash.com/random/1024x768'"
-                            class="tour-spot-popup__image"
-                        />
-                        <div class="tour-spot-popup__control">
-                            <ButtonThird icon="like-default">
-                                <p>收藏</p>
-                            </ButtonThird>
-                            <ButtonThird icon="info">
-                                <p>資訊</p>
-                            </ButtonThird>
+                        <div>
                             <div
-                                v-blur="() => isShareOpen = false"
-                                class="tour-spot-popup__shares"
-                            >
-                                <ButtonThird
-                                    icon="share"
-                                    @click="isShareOpen = !isShareOpen"
-                                >
-                                    <p>分享</p>
+                                v-bg="'https://source.unsplash.com/random/1024x768'"
+                                class="tour-spot-popup__image"
+                            />
+                            <div class="tour-spot-popup__control">
+                                <ButtonThird icon="like-default">
+                                    <p>收藏</p>
+                                </ButtonThird>
+                                <ButtonThird icon="info">
+                                    <p>資訊</p>
                                 </ButtonThird>
                                 <div
-                                    class="tour-spot-popup__shares-main"
-                                    :class="{'-active': isShareOpen}"
+                                    v-blur="() => isShareOpen = false"
+                                    class="tour-spot-popup__shares"
                                 >
-                                    <Share social-type="facebook" />
-                                    <Share social-type="line" />
-                                    <Share social-type="twitter" />
-                                    <Copy @on-copy="handleCopy" />
-                                    <div
-                                        class="tour-spot-popup__copy-done"
-                                        :class="{'-active': isCopy}"
+                                    <ButtonThird
+                                        icon="share"
+                                        @click="isShareOpen = !isShareOpen"
                                     >
-                                        <div>
-                                            <Icon name="check" />
+                                        <p>分享</p>
+                                    </ButtonThird>
+                                    <div
+                                        class="tour-spot-popup__shares-main"
+                                        :class="{'-active': isShareOpen}"
+                                    >
+                                        <Share social-type="facebook" />
+                                        <Share social-type="line" />
+                                        <Share social-type="twitter" />
+                                        <Copy @on-copy="handleCopy" />
+                                        <div
+                                            class="tour-spot-popup__copy-done"
+                                            :class="{'-active': isCopy}"
+                                        >
+                                            <div>
+                                                <Icon name="check" />
+                                            </div>
+                                            <p>連結已複製！</p>
                                         </div>
-                                        <p>連結已複製！</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="tour-spot-popup__content">
                         <p class="tour-spot-popup__desc">
                             關渡原名甘豆門，因背倚觀音山和大屯山，面向淡水河，成為一處地勢險要的港口，早年先民由關渡碼頭進入移居臺灣北部開墾，因此關渡的開發甚早，後因兩河(基隆河、淡水河)河口泥沙淤積，水運才逐漸沒落。關渡碼頭位於關渡自然公園及關渡宮旁，每當假日或夜晚均可見遊客駐足關渡碼頭週邊散步休息，亦有許多單車族由八里經關渡大橋前來，或由淡水前來，沿途風光明媚，是一處極佳的賞景地點。
                         </p>
                         <div class="tour-spot-popup__gallery">
                             <Swiper
                                 slides-per-view="auto"
-                                :space-between="24"
+                                :space-between="8"
                                 :touch-start-prevent-default="false"
+                                :breakpoints="{
+                                    768: {
+                                        spaceBetween: 24
+                                    }
+                                }"
                             >
                                 <SwiperSlide
                                     v-for="num in 5"
@@ -160,6 +171,10 @@ const handleCopy = () => {
         background-color: color('White');
         border-radius: 24px;
         pointer-events: auto;
+        @include media-breakpoint-down(tablet) {
+            margin: $padding * 4 0;
+            padding: $padding * 2;
+        }
     }
 
     &__close {
@@ -187,6 +202,24 @@ const handleCopy = () => {
 
     &__header {
         margin-bottom: $padding * 3;
+        @include media-breakpoint-down(tablet) {
+            display: flex;
+            flex-direction: column;
+
+            > * {
+                &:nth-of-type(1) {
+                    order: -1;
+                }
+
+                &:nth-of-type(2) {
+                    order: 1;
+                }
+
+                &:nth-of-type(3) {
+                    order: 0;
+                }
+            }
+        }
     }
 
     &__title {
@@ -200,6 +233,9 @@ const handleCopy = () => {
         align-items: flex-start;
         flex-wrap: wrap;
         margin-bottom: $padding * 3;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
 
         > * {
             margin-right: $padding * 1.5;
@@ -215,11 +251,17 @@ const handleCopy = () => {
         flex-wrap: wrap;
         border-top: 1px solid color('Light-Gray');
         border-bottom: 1px solid color('Light-Gray');
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 1.5 0 $padding * 0.5;
+        }
 
         > * {
             display: flex;
             align-items: flex-start;
             margin-bottom: $padding * 1.5;
+            @include media-breakpoint-down(tablet) {
+                margin-bottom: $padding;
+            }
 
             &:not(:last-of-type)::after {
                 @include size(1px, 1em);
@@ -227,6 +269,9 @@ const handleCopy = () => {
                 content: '';
                 margin: 0.25em $padding * 1.5 0;
                 background-color: color('Light-Gray');
+                @include media-breakpoint-down(tablet) {
+                    display: none;
+                }
             }
         }
 
@@ -240,9 +285,15 @@ const handleCopy = () => {
 
         border-radius: 24px;
         margin-bottom: $padding * 4;
+        @include media-breakpoint-down(tablet) {
+            @include aspect(170 / 290);
+
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__control {
+        position: relative;
         display: flex;
         flex-wrap: wrap;
         margin-bottom: $padding * 3;
@@ -254,6 +305,9 @@ const handleCopy = () => {
 
     &__shares {
         position: relative;
+        @include media-breakpoint-down(tablet) {
+            position: static;
+        }
 
         &-main {
             position: absolute;
@@ -269,6 +323,11 @@ const handleCopy = () => {
             transition: opacity .3s;
             transform: translate(0, -100%);
             pointer-events: none;
+            @include media-breakpoint-down(tablet) {
+                left: -$padding * 1.5;
+                padding: $padding;
+                border-radius: 16px;
+            }
 
             &.-active {
                 opacity: 1;
@@ -287,7 +346,7 @@ const handleCopy = () => {
 
         position: absolute;
         top: 0;
-        right: -$padding * 1.5;
+        right: -$padding * 2;
         display: flex;
         align-items: center;
         padding: $padding * 2;
@@ -299,6 +358,11 @@ const handleCopy = () => {
         pointer-events: none;
         transition: opacity .3s;
         user-select: none;
+        @include media-breakpoint-down(tablet) {
+            right: -$padding;
+            padding: $padding;
+            border-radius: 16px;
+        }
 
         &.-active {
             opacity: 1;
@@ -318,14 +382,23 @@ const handleCopy = () => {
 
     &__desc {
         margin-bottom: $padding * 6;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 4;
+        }
     }
 
     &__gallery {
         margin-bottom: $padding * 6;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 4;
+        }
 
         .swiper {
             &-slide {
                 flex: 0 0 calc((100% - #{$padding} * 3 * 2) / 2.5);
+                @include media-breakpoint-down(tablet) {
+                    flex: 0 0 calc((100% - #{$padding}) / 1.5);
+                }
             }
         }
     }
@@ -335,6 +408,9 @@ const handleCopy = () => {
 
         position: relative;
         margin-bottom: $padding * 3;
+        @include media-breakpoint-down(tablet) {
+            @include aspect(290 / 240);
+        }
 
         > * {
             @include size(100%);
@@ -347,11 +423,16 @@ const handleCopy = () => {
 
     &__buttons {
         display: flex;
+        flex-wrap: wrap;
         align-items: flex-start;
         justify-content: center;
 
         > * {
             margin: 0 $padding * 3;
+            @include media-breakpoint-down(tablet) {
+                margin: 0 0 $padding * 2;
+                width: 100%;
+            }
         }
     }
 }
