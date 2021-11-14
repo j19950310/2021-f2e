@@ -179,26 +179,45 @@ export default {
             hotel: 0,
             activity: 0,
         },
-        // savedQuery, savedQueryIds
+        // currentQueryConfig, currentQuery, savedQuery, savedQueryIds
         ...(() => {
+            const localCurrentQueryConfig = localStorage.getItem('currentQueryConfig') || '{}'
+            const localCurrentQuery = localStorage.getItem('currentQuery') || '{}'
+            const localCurrentTotal = localStorage.getItem('currentTotal') || '{}'
             const localSavedQuery = localStorage.getItem('savedQuery') || '{}'
-            const { // savedQuery
+
+            const currentTotal = JSON.parse(localCurrentTotal)
+            const currentQueryConfig = JSON.parse(localCurrentQueryConfig)
+            const { // currentQuery
                 scenic = [],
                 restaurant = [],
                 hotel = [],
                 activity = [],
-            } = JSON.parse(localSavedQuery.trim())
-            const savedQuery = {
+            } = JSON.parse(localCurrentQuery)
+            const { // savedQuery
+                scenic: scenicSaved = [],
+                restaurant: restaurantSaved = [],
+                hotel: hotelSaved = [],
+                activity: activitySaved = [],
+            } = JSON.parse(localSavedQuery)
+
+            const currentQuery = {
                 scenic: scenic.map((spot) => (new ScenicSpot(spot))),
                 restaurant: restaurant.map((spot) => (new RestaurantSpot(spot))),
                 hotel: hotel.map((spot) => (new HotelSpot(spot))),
                 activity: activity.map((spot) => (new ActivitySpot(spot))),
             }
-            const savedQueryIds = [scenic, restaurant, hotel, activity].reduce((acc, cur) => {
+            const savedQuery = {
+                scenic: scenicSaved.map((spot) => (new ScenicSpot(spot))),
+                restaurant: restaurantSaved.map((spot) => (new RestaurantSpot(spot))),
+                hotel: hotelSaved.map((spot) => (new HotelSpot(spot))),
+                activity: activitySaved.map((spot) => (new ActivitySpot(spot))),
+            }
+            const savedQueryIds = [scenicSaved, restaurantSaved, hotelSaved, activitySaved].reduce((acc, cur) => {
                 cur.forEach(item => { acc.push(item.ID) })
                 return acc
             }, [])
-            return { savedQuery, savedQueryIds }
+            return { currentTotal, currentQuery, currentQueryConfig, savedQuery, savedQueryIds }
         })(),
     }),
     getters: {
@@ -232,7 +251,7 @@ export default {
         },
         getSavedSpotPreview: state => {
             const { savedQuery, savedQueryIds } = state
-            const ids = savedQueryIds.slice(0, 5)
+            const ids = savedQueryIds.slice(0, 5) // 取前五筆
             const list = []
             ids.forEach(id => {
                 Object.keys(savedQuery).forEach(category => {
@@ -262,6 +281,7 @@ export default {
         saveQueryConfig (state, { config, category }) {
             console.log('saveQueryConfig', category, config)
             state.currentQueryConfig[category] = config
+            localStorage.setItem('currentQueryConfig', JSON.stringify({ ...state.currentQueryConfig }))
         },
         resetResultCurrent (state) {
             state.currentQuery = {
@@ -270,6 +290,7 @@ export default {
                 hotel: [],
                 activity: [],
             }
+            localStorage.setItem('currentQuery', JSON.stringify({ ...state.currentQuery }))
         },
         resetResultTotal (state) {
             state.currentTotal = {
@@ -278,6 +299,7 @@ export default {
                 hotel: 0,
                 activity: 0,
             }
+            localStorage.setItem('currentTotal', JSON.stringify({ ...state.currentTotal }))
         },
         resetQueryConfig (state) {
             state.page = 1
@@ -287,6 +309,7 @@ export default {
                 hotel: {},
                 activity: {},
             }
+            localStorage.setItem('currentQueryConfig', JSON.stringify({ ...state.currentQueryConfig }))
         },
         setQueryResult (state, result) {
             const { list, type, length } = result
@@ -455,6 +478,8 @@ export default {
                                 categoryQuery.push(value.type) // 撈取預設查詢類別
                             }
                         })
+                        localStorage.setItem('currentQuery', JSON.stringify({ ...context.state.currentQuery }))
+                        localStorage.setItem('currentTotal', JSON.stringify({ ...context.state.currentTotal }))
                         resolve(categoryQuery[0])
                     }
                 })

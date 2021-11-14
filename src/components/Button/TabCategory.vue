@@ -72,8 +72,13 @@ export default {
         &__num {
             @include typo('EN/D/Minimal_12px_Semi-Bold');
 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-left: 4px;
             padding: 4px;
+            min-width: 24px;
+            min-height: 24px;
             color: color('White');
             background-color: color('Primary');
             border-radius: 80px;

@@ -18,7 +18,6 @@ const loadingConfig = computed(() => $store.state.loadingConfig)
 const post = computed(() => {
     const { name, params: { spot }, query: { category } } = $route
     const isSaved = name === 'TourSpotSavedPopup' // 判斷來源
-    console.log({ isSaved, name })
     return $store.getters['tour/getSingleSpotByQuery'](spot, category, isSaved)
 })
 

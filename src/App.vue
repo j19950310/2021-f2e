@@ -7,6 +7,8 @@ import { ref, reactive, provide, computed, watch, onMounted } from 'vue'
 // scroll
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
+// viewport
+import Viewport from '@/plugins/viewport'
 const $route = useRoute()
 const $store = useStore()
 $store.dispatch('admin/init')
@@ -30,10 +32,15 @@ const scrollTriggerInstance = ScrollTrigger.create({
         scrollInstance.end = self.end
     },
 })
+const viewport = reactive(new Viewport())
 
 const loadingConfig = computed(() => $store.state.loadingConfig)
+window.addEventListener('resize', () => { // 待其他合併
+    viewport.update()
+})
 
 provide('scrollInstance', scrollInstance)
+provide('viewport', viewport)
 
 onMounted(() => {
     $store.dispatch('WAIT_LOADING')

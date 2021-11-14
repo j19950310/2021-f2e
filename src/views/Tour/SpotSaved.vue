@@ -10,6 +10,7 @@ const route = useRoute()
 
 const title = 'Spot Search' // TODO
 const subtitle = 'Search for a spot by name or by location' // TODO
+const perPage = 12
 const page = ref(1)
 const scrollInstance = inject('scrollInstance')
 const toggleSaveSpot = (spot) => {
@@ -19,15 +20,14 @@ const toggleSaveSpot = (spot) => {
     })
 }
 
-watch(route, (to) => {
-    const { query: { page: toPage } } = to
-    if (toPage !== page.value) {
-        page.value = toPage
-        store.dispatch('tour/dispatchPageQuery', to.query).then(() => {
-            console.log(scrollInstance)
-        })
-    }
-})
+if (!route.query.category) { // 預設category
+    router.push({
+        query: {
+            category: 'scenic',
+            page: 1,
+        },
+    })
+}
 
 const category = reactive({
     now: 'scenic',
@@ -48,12 +48,25 @@ const createCatButton = (key, name) => (reactive({
     },
 }))
 const tags = ref([])
-const posts = computed(() => {
+const totalPosts = computed(() => {
     const category = route.query.category || 'scenic'
     return store.state.tour.savedQuery[category]
 })
-const pagination = ref({ max: 1, now: 1 }) // TODO: slice savedQuery
+const posts = computed(() => {
+    return totalPosts.value.slice((page.value - 1) * perPage, page.value * perPage)
+})
+const pagination = computed(() => {
+    const max = totalPosts.value.length ? Math.ceil(totalPosts.value.length / perPage) : 0
+    const now = page.value
+    return { max, now }
+})
 const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
+watch(route, (to) => {
+    const { query: { page: toPage } } = to
+    if (toPage !== page.value) {
+        page.value = +toPage
+    }
+})
 </script>
 <template>
     <div class="tour-spot-saved">
@@ -119,7 +132,8 @@ const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
                     >
                         <router-link
                             :to="{
-                                name: 'TourSpotSearchPopup',
+                                name: route.name === 'TourSpotSaved' ? 'TourSpotSavedPopup'
+                                    : 'TourSpotSearchPopup',
                                 query: route.query,
                                 params: {spot: post.id}}"
                         />

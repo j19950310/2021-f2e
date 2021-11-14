@@ -4,7 +4,7 @@ import getAxios from '@/api/getAxios'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 
 // Request URL: https://ptx.transportdata.tw/MOTC/v2/Tourism
-const axios = getAxios('Tourism')
+const { axios, refreshHeader } = getAxios('Tourism')
 const simpleQueryNumConfig = {
     top: 10000,
     skip: 0,
@@ -42,6 +42,8 @@ export const getScenicSpot = async (config = {}) => {
         }
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -65,6 +67,8 @@ export const getScenicSpotByCity = async (queryCity, config = {}) => {
         return data.map(item => (new ScenicSpot(item)))
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -95,6 +99,8 @@ export const getRestaurantSpot = async (config = {}) => {
         }
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -118,6 +124,8 @@ export const getRestaurantSpotByCity = async (queryCity, config = {}) => {
         return data.map(item => (new RestaurantSpot(item)))
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -146,6 +154,8 @@ export const getHotelSpot = async (config = {}) => {
         }
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -170,6 +180,8 @@ export const getHotelSpotByCity = async (queryCity, config = {}) => {
         return data.map(item => (new HotelSpot(item)))
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -201,6 +213,8 @@ export const getActivitySpot = async (config = {}) => {
         }
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
@@ -224,6 +238,8 @@ export const getActivitySpotByCity = async (queryCity, config = {}) => {
         return data.map(item => (new ActivitySpot(item)))
     } catch (e) {
         return errorHandler(e)
+    } finally {
+        refreshHeader()
     }
 }
 
