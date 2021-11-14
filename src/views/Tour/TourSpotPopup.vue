@@ -217,7 +217,7 @@ const handleCopy = () => {
 
         &-content {
             position: relative;
-            margin: 25% 0;
+            margin: 10% 0;
             padding: $padding * 5 $padding * 7;
             background-color: color('White');
             border-radius: 24px;
