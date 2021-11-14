@@ -47,13 +47,17 @@ const headSearchHandler = (e) => {
     </div>
 </template>
 <style lang="scss">
-$header-height: 84px;
 
 .tour-base {
     display: flex;
-    padding-top: $header-height;
-    flex-direction: column;
+    padding-top: map-get($header-height, large);
     min-height: 100vh;
+    flex-direction: column;
+    @each $breakpoint, $top in $header-height {
+        @include media-breakpoint-down($breakpoint) {
+            padding-top: $top;
+        }
+    }
 
     &__slot {
         flex: 1 1 auto;
