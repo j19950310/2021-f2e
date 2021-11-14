@@ -1,5 +1,7 @@
 <script setup>
 import Base from '@/views/Tour/Base.vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+
 </script>
 
 <template>
@@ -14,17 +16,32 @@ import Base from '@/views/Tour/Base.vue'
                         十字元是一個備受迫害的地方族群，需要你的立即協助！！
                     </p>
                     <div class="about__cards">
-                        <router-link
-                            v-for="num in 4"
-                            :key="num"
-                            :to="{name:'AboutPerson', params: {person: 'test'}}"
+                        <Swiper
+                            slides-per-view="auto"
+                            :space-between="8"
+                            :touch-start-prevent-default="false"
+                            :breakpoints="{
+                                768: {
+                                    spaceBetween: 24
+                                }
+                            }"
                         >
-                            <PersonCard
-                                title="Jay Wu"
-                                desc="Front End Developer"
-                                src="https://source.unsplash.com/random/1024x768"
-                            />
-                        </router-link>
+                            <SwiperSlide
+                                v-for="num in 4"
+                                :key="num"
+                            >
+                                <router-link
+                                    :to="{name:'AboutPerson', params: {person: 'test'}}"
+                                    data-cursor="swipe"
+                                >
+                                    <PersonCard
+                                        title="Jay Wu"
+                                        desc="Front End Developer"
+                                        src="https://source.unsplash.com/random/1024x768"
+                                    />
+                                </router-link>
+                            </SwiperSlide>
+                        </Swiper>
                     </div>
                 </div>
             </div>
@@ -41,6 +58,9 @@ import Base from '@/views/Tour/Base.vue'
 .about {
     &__main {
         padding: $padding * 15 0 $padding * 17;
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 5 0;
+        }
     }
 
     &__title {
@@ -54,24 +74,25 @@ import Base from '@/views/Tour/Base.vue'
 
         color: color('Dark-Gray');
         margin-bottom: $padding * 10;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 5;
+        }
     }
 
     &__cards {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        @include media-breakpoint-down(tablet) {
-            display: block;
-        }
+        .swiper {
+            &-slide {
+                flex: 0 0 calc((100% - #{$padding * 3 * 3}) / 4);
+                @include media-breakpoint-down(desktop) {
+                    flex: 0 0 calc((100% - #{$padding * 3}) / 1.5);
+                }
+                @include media-breakpoint-down(tablet) {
+                    flex: 0 0 calc((100% - #{$padding}) / 1.5);
+                }
 
-        > * {
-            flex: 0 0 calc((100% - #{$padding * 3 * 3}) / 4);
-            @include media-breakpoint-down(desktop) {
-                flex: 0 0 calc((100% - #{$padding * 3}) / 2);
-                margin-bottom: $padding * 3;
-            }
-            @include media-breakpoint-down(tablet) {
-                width: 100%;
+                > * {
+                    display: block;
+                }
             }
         }
     }

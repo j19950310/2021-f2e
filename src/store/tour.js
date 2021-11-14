@@ -103,7 +103,6 @@ function getConfigQueryTowns (config) {
 }
 
 function pushScenicQuery (config) {
-    console.log('tour/queryScenic', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_SCENIC_BY_CITY,
@@ -117,7 +116,6 @@ function pushScenicQuery (config) {
 }
 
 function pushRestaurantQuery (config) {
-    console.log('tour/queryRestaurant', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_RESTAURANT_BY_CITY,
@@ -131,7 +129,6 @@ function pushRestaurantQuery (config) {
 }
 
 function pushHotelQuery (config) {
-    console.log('tour/queryHotel', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_HOTEL_BY_CITY,
@@ -145,7 +142,6 @@ function pushHotelQuery (config) {
 }
 
 function pushActivityQuery (config) {
-    console.log('tour/queryActivity', config)
     // 純縣市查詢
     config.queryList.push({
         category: QUERY_ACTIVITY_BY_CITY,

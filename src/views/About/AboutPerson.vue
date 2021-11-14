@@ -1,17 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 const $router = useRouter()
+const $store = useStore()
 
 const isOpen = ref(true)
 const isInfoOpen = ref(false)
+
+const loadingConfig = computed(() => $store.state.loadingConfig)
 
 const close = () => {
     isOpen.value = false
     setTimeout(() => {
         $router.push({ path: '/about' })
-    }, 300) // 300ms popup transition-duration
+    }, loadingConfig.value.minTime / 2) // 300ms popup transition-duration
 }
 </script>
 
@@ -94,6 +98,7 @@ const close = () => {
                                 <DescCard
                                     title="看及應啦業去墳正一字科施中起到應十患唾把秉縛指章也的只嗎我昀稱十"
                                     src="https://source.unsplash.com/random/1024x768"
+                                    data-cursor="swipe"
                                 />
                             </SwiperSlide>
                         </Swiper>
@@ -161,6 +166,9 @@ const close = () => {
         display: flex;
         align-items: center;
         margin-bottom: $padding * 3;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__image {
@@ -169,12 +177,19 @@ const close = () => {
         flex: 0 0 160px;
         margin-right: $padding * 3;
         border-radius: 50%;
+        @include media-breakpoint-down(tablet) {
+            flex: 0 0 80px;
+            margin-right: $padding * 1.5;
+        }
     }
 
     &__title {
         @include typo-h1;
 
         margin-bottom: $padding;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding / 2;
+        }
     }
 
     &__job {
@@ -241,12 +256,15 @@ const close = () => {
 
     &__desc {
         margin-bottom: $padding * 6;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__gallery {
         margin-bottom: $padding * 6;
         @include media-breakpoint-down(tablet) {
-            margin-bottom: $padding * 4;
+            margin-bottom: $padding * 3;
         }
 
         .swiper {
@@ -261,6 +279,11 @@ const close = () => {
 
     &__back {
         text-align: center;
+        @include media-breakpoint-down(tablet) {
+            > * {
+                width: 100%;
+            }
+        }
     }
 }
 </style>

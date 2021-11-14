@@ -43,7 +43,7 @@ export default {
                 } else if (state.county[countyName]) {
                     resolve(state.county[countyName].towns)
                 } else {
-                    console.log(`沒有${countyName}`)
+                    // console.log(`沒有${countyName}`)
                     resolve([])
                 }
             })
