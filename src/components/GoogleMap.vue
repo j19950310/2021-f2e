@@ -37,7 +37,7 @@ export default {
             version: 'weekly',
         })
         loader.load().then((google) => {
-            console.log('google map')
+            // console.log('google map')
             this.map = new google.maps.Map(this.$el, {
                 mapId,
                 center: {

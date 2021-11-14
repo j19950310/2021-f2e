@@ -86,7 +86,7 @@ onMounted(async () => {
             '--loading-duration': `${loadingConfig.minTime / 1000}s`
         }"
     >
-        <div class="dev-link__wrap">
+        <!-- <div class="dev-link__wrap">
             <router-link
                 class="dev-link"
                 to="/dev"
@@ -123,7 +123,7 @@ onMounted(async () => {
             >
                 收藏
             </router-link>
-        </div>
+        </div> -->
         <router-view v-slot="{ Component }">
             <transition
                 name="fade"

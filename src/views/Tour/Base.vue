@@ -9,7 +9,7 @@ const hidePopUp = () => $store.commit('tour/hidePopUp')
 const scrollInstance = inject('scrollInstance')
 
 const headSearchHandler = (e) => {
-    console.log(e)
+    // console.log(e)
     if (e === 'filter') {
         openPopUp()
     } else {

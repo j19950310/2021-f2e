@@ -10,7 +10,7 @@ const searchValue = ref('')
 const openPopUp = () => store.commit('tour/showPopUp')
 const hidePopUp = () => store.commit('tour/hidePopUp')
 const headSearchHandler = (e) => {
-    console.log(e)
+    // console.log(e)
     if (e === 'filter') {
         openPopUp()
     } else {

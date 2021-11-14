@@ -28,7 +28,7 @@ watch(route, (to) => {
     if (toPage !== page.value) {
         page.value = toPage
         store.dispatch('tour/dispatchPageQuery', to.query).then(() => {
-            console.log(scrollInstance)
+            // console.log(scrollInstance)
         })
     }
 })

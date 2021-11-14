@@ -422,7 +422,7 @@ export default {
         },
         submit () {
             const data = new FormData(this.$el)
-            console.log('submit', [...data.keys()])
+            // console.log('submit', [...data.keys()])
             this.submitQuery(data).then((category) => {
                 // 成功，清除所有選取
                 this.$emit('submit')
@@ -437,7 +437,7 @@ export default {
                 this.clearAll()
             }).catch(err => {
                 // 失敗，無收尋內容
-                console.log(err)
+                // console.log(err)
                 this.$emit('submit')
                 this.$router.push({
                     name: 'TourNoResult',

@@ -8,8 +8,7 @@ module.exports = {
         '@vue/standard',
     ],
     rules: {
-        // TODO: 正式輸出後後開啟
-        // 'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+        'no-console': 'error',
         'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
         indent: ['error', 4, { SwitchCase: 1 }],
         'vue/html-indent': ['error', 4, { baseIndent: 1 }],

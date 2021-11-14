@@ -279,7 +279,7 @@ export default {
             state.popUp.isShow = false
         },
         saveQueryConfig (state, { config, category }) {
-            console.log('saveQueryConfig', category, config)
+            // console.log('saveQueryConfig', category, config)
             state.currentQueryConfig[category] = config
             localStorage.setItem('currentQueryConfig', JSON.stringify({ ...state.currentQueryConfig }))
         },
@@ -320,7 +320,7 @@ export default {
             state.page = page
         },
         toggleSaveSpot (state, { spot, category }) {
-            console.log({ spot, category })
+            // console.log({ spot, category })
             const id = spot.id
             const list = state.savedQuery[category] || []
             const index = list.findIndex(item => item.id === id)
@@ -346,7 +346,7 @@ export default {
         },
         // ------------ 0: 分類別 (OR) ------------
         query (context, formDate) {
-            console.log('tour/query', formDate)
+            // console.log('tour/query', formDate)
             context.commit('resetQueryConfig') // 重置查詢設定
 
             const config = {
@@ -448,7 +448,7 @@ export default {
                     } else if (category === 'activity') { // 活動沒有ZipCode
                         queryFilter = `(${filter[QUERY_ACTIVITY_BY_CITY]})`
                     }
-                    console.log({ category, query: `${queryString} & ${queryFilter}` })
+                    // console.log({ category, query: `${queryString} & ${queryFilter}` })
                     const queryConfig = Object.assign({ ...baseQueryConfig }, {
                         filter: `${queryString} & ${queryFilter}`, // 關鍵字 & 地區
                         skip: context.getters.getSkip, // 跳過幾筆
@@ -463,7 +463,7 @@ export default {
                 Promise.allSettled(requestStacks).then(res => {
                     context.commit('resetResultCurrent')
                     const ifNoResult = res.every(item => {
-                        console.log(item)
+                        // console.log(item)
                         return item.status === 'fulfilled' && item.value.length === 0
                     })
                     if (ifNoResult) {
