@@ -230,6 +230,14 @@ $typos:(
     }
 }
 
+@mixin typo-display-small {
+    @include typo('ZH/D/Display-Small_18px_Bold');
+
+    @include media-breakpoint-down('desktop') {
+        @include typo('ZH/M/Display-Small_14px_Bold');
+    }
+}
+
 @mixin typo-h1 {
     @include typo('ZH/D/H1_48px_Bold');
 

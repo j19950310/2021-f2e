@@ -32,19 +32,26 @@ const submit = () => {
         class="tour-banner-home"
     >
         <div class="tour-banner-home__main">
-            <div class="tour-banner-home__info">
-                <div class="tour-banner-home__display">
-                    FORMOSA <br>Travel Guide
-                </div>
-                <div class="tour-banner-home__desc">
-                    台灣觀光懶人包
-                </div>
-                <div class="tour-banner-home__search">
-                    <SearchFilter
-                        v-model="searchValue"
-                        @submit="submit"
-                        @click="headSearchHandler"
-                    />
+            <div class="container">
+                <div class="col-desktop-8">
+                    <div class="tour-banner-home__info">
+                        <div
+                            class="tour-banner-home__display"
+                            lang="en"
+                        >
+                            FORMOSA <br>Travel Guide
+                        </div>
+                        <div class="tour-banner-home__desc">
+                            台灣觀光懶人包
+                        </div>
+                        <div class="tour-banner-home__search">
+                            <SearchFilter
+                                v-model="searchValue"
+                                @submit="submit"
+                                @click="headSearchHandler"
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -53,50 +60,50 @@ const submit = () => {
 <style lang="scss">
     $class-name: '.tour-banner-home';
     #{$class-name} {
+        @include size(100%);
+        @include aspect(580 / 1440);
+
         position: relative;
         overflow: hidden;
-        width: 100%;
-        height: 100%;
-        background-color: #ffffff;
-
-        &::before {
-            content: '';
-            display: block;
-            padding-bottom: percentage(580/1440);
-            width: 100%;
+        background-color: color('White');
+        @include media-breakpoint-down(desktop) {
+            @include aspect(400 / 360);
         }
 
         &__main {
+            @include size(100%);
+
             position: absolute;
             top: 0;
             left: 0;
-            @include size(100%);
+            padding-top: $padding * 15;
+
+            .col-desktop-8 {
+                margin: auto;
+            }
         }
 
         &__info {
-            margin-right: auto;
-            margin-left: auto;
-            padding: 20px;
-            padding-top: percentage(100px/1440px);
-            width: 800px;
-            max-width: 100%;
             text-align: center;
             color: color('White');
         }
 
         &__display {
-            @include typo('EN/D/Display_72px_Bold');
+            @include typo-display;
 
             text-transform: uppercase;
             text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
         }
 
         &__desc {
-            @include typo('ZH/D/Display-Small_18px_Bold');
+            @include typo-display-small;
 
             padding-top: 4px;
             text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
             margin-bottom: 24px;
+            @include media-breakpoint-down(tablet) {
+                margin-bottom: $padding * 2;
+            }
         }
     }
 </style>

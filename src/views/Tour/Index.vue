@@ -33,20 +33,22 @@ export default {
     <Base class="tour-index">
         <router-view ref="child" />
         <TourBannerHome />
-        <div
-            ref="main"
-            class="tour-index__main container"
-        >
-            <div class="row tour-index__title">
-                <p><span>毫無頭緒？試試</span><span lang="en">Near Me!</span></p>
-            </div>
-            <div class="row tour-index__desc">
-                不論是想讓腦袋休息片刻，或陷入選擇障礙，透過 Near Me「就近探索」來點驚喜吧！
-            </div>
-            <div class="row tour-index__shuffle">
-                <ButtonPrimary icon="shuffle">
-                    Near Me
-                </ButtonPrimary>
+        <div class="container">
+            <div
+                ref="main"
+                class="tour-index__main"
+            >
+                <div class="row tour-index__title">
+                    <p><span>毫無頭緒？試試</span><span lang="en">Near Me!</span></p>
+                </div>
+                <div class="row tour-index__desc">
+                    不論是想讓腦袋休息片刻，或陷入選擇障礙，透過 Near Me「就近探索」來點驚喜吧！
+                </div>
+                <div class="row tour-index__shuffle">
+                    <ButtonPrimary icon="shuffle">
+                        Near Me
+                    </ButtonPrimary>
+                </div>
             </div>
         </div>
     </Base>
@@ -56,8 +58,11 @@ export default {
 .tour-index {
     &__main {
         overflow: hidden;
-        padding: 80px;
+        padding: $padding * 10 0;
         text-align: center;
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 4 0;
+        }
     }
 
     &__title {
@@ -77,10 +82,13 @@ export default {
     }
 
     &__shuffle {
-        @include typo('EN/D/H3_16px_Semi-Bold');
+        @include typo-h3;
 
         justify-content: center;
-        padding-top: 32px;
+        margin-top: $padding * 4;
+        @include media-breakpoint-down(tablet) {
+            margin-top: $padding * 3;
+        }
 
         .button-primary {
             display: flex;
