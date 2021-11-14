@@ -56,150 +56,152 @@ const handleCopy = () => {
             :is-active="isOpen"
             @on-close="close"
         >
-            <div class="container">
-                <div class="tour-spot-popup__main">
-                    <div
-                        class="tour-spot-popup__close"
-                        @click="close"
-                    >
-                        <Icon name="close-default" />
-                    </div>
-                    <div class="tour-spot-popup__header">
-                        <p
-                            v-if="post.name"
-                            class="tour-spot-popup__title"
-                        >
-                            {{ post.name }}
-                        </p>
+            <div class="tour-spot-popup__main">
+                <div class="container">
+                    <div class="tour-spot-popup__main-content">
                         <div
-                            v-if="post.class && post.class.length"
-                            class="tour-spot-popup__tags"
+                            class="tour-spot-popup__close"
+                            @click="close"
                         >
-                            <Tag
-                                v-for="name in post.class"
-                                :key="name"
-                                :name="name"
+                            <Icon name="close-default" />
+                        </div>
+                        <div class="tour-spot-popup__header">
+                            <p
+                                v-if="post.name"
+                                class="tour-spot-popup__title"
+                            >
+                                {{ post.name }}
+                            </p>
+                            <div
+                                v-if="post.class && post.class.length"
+                                class="tour-spot-popup__tags"
+                            >
+                                <Tag
+                                    v-for="name in post.class"
+                                    :key="name"
+                                    :name="name"
+                                />
+                            </div>
+                            <div class="tour-spot-popup__info">
+                                <p v-if="post.openTime">
+                                    開放時間：{{ post.openTime }}
+                                </p>
+                                <p v-if="post.phone">
+                                    {{ post.phone.label }}：{{ post.phone.value }}
+                                </p>
+                                <p v-if="post.address">
+                                    地址：{{ post.address }}
+                                </p>
+                            </div>
+                            <div class="tour-spot-popup__info">
+                                <p v-if="post.organizer">
+                                    主辦單位：{{ post.organizer }}
+                                </p>
+                                <p v-if="post.parkingInfo">
+                                    停車資訊：{{ post.parkingInfo }}
+                                </p>
+                                <p v-if="post.spec">
+                                    房型資訊：{{ post.spec }}
+                                </p>
+                                <p v-if="post.serverInfo">
+                                    服務資訊：{{ post.serverInfo }}
+                                </p>
+                            </div>
+                        </div>
+                        <div class="tour-spot-popup__content">
+                            <div
+                                v-if="post.picture.url"
+                                v-bg="post.picture.url"
+                                class="tour-spot-popup__image"
                             />
-                        </div>
-                        <div class="tour-spot-popup__info">
-                            <p v-if="post.openTime">
-                                開放時間：{{ post.openTime }}
-                            </p>
-                            <p v-if="post.phone">
-                                {{ post.phone.label }}：{{ post.phone.value }}
-                            </p>
-                            <p v-if="post.address">
-                                地址：{{ post.address }}
-                            </p>
-                        </div>
-                        <div class="tour-spot-popup__info">
-                            <p v-if="post.organizer">
-                                主辦單位：{{ post.organizer }}
-                            </p>
-                            <p v-if="post.parkingInfo">
-                                停車資訊：{{ post.parkingInfo }}
-                            </p>
-                            <p v-if="post.spec">
-                                房型資訊：{{ post.spec }}
-                            </p>
-                            <p v-if="post.serverInfo">
-                                服務資訊：{{ post.serverInfo }}
-                            </p>
-                        </div>
-                    </div>
-                    <div class="tour-spot-popup__content">
-                        <div
-                            v-if="post.picture.url"
-                            v-bg="post.picture.url"
-                            class="tour-spot-popup__image"
-                        />
-                        <div class="tour-spot-popup__control">
                             <div class="tour-spot-popup__control">
-                                <ButtonThird icon="like-default">
-                                    <p>收藏</p>
-                                </ButtonThird>
-                                <ButtonThird icon="info">
-                                    <p>資訊</p>
-                                </ButtonThird>
-                                <div
-                                    v-blur="() => isShareOpen = false"
-                                    class="tour-spot-popup__shares"
-                                >
-                                    <ButtonThird
-                                        icon="share"
-                                        @click="isShareOpen = !isShareOpen"
-                                    >
-                                        <p>分享</p>
+                                <div class="tour-spot-popup__control">
+                                    <ButtonThird icon="like-default">
+                                        <p>收藏</p>
+                                    </ButtonThird>
+                                    <ButtonThird icon="info">
+                                        <p>資訊</p>
                                     </ButtonThird>
                                     <div
-                                        class="tour-spot-popup__shares-main"
-                                        :class="{'-active': isShareOpen}"
+                                        v-blur="() => isShareOpen = false"
+                                        class="tour-spot-popup__shares"
                                     >
-                                        <Share social-type="facebook" />
-                                        <Share social-type="line" />
-                                        <Share social-type="twitter" />
-                                        <Copy @on-copy="handleCopy" />
-                                        <div
-                                            class="tour-spot-popup__copy-done"
-                                            :class="{'-active': isCopy}"
+                                        <ButtonThird
+                                            icon="share"
+                                            @click="isShareOpen = !isShareOpen"
                                         >
-                                            <div>
-                                                <Icon name="check" />
+                                            <p>分享</p>
+                                        </ButtonThird>
+                                        <div
+                                            class="tour-spot-popup__shares-main"
+                                            :class="{'-active': isShareOpen}"
+                                        >
+                                            <Share social-type="facebook" />
+                                            <Share social-type="line" />
+                                            <Share social-type="twitter" />
+                                            <Copy @on-copy="handleCopy" />
+                                            <div
+                                                class="tour-spot-popup__copy-done"
+                                                :class="{'-active': isCopy}"
+                                            >
+                                                <div>
+                                                    <Icon name="check" />
+                                                </div>
+                                                <p>連結已複製！</p>
                                             </div>
-                                            <p>連結已複製！</p>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <p
-                            v-if="post.descriptionDetail"
-                            class="tour-spot-popup__desc"
-                        >
-                            {{ post.descriptionDetail }}
-                        </p>
-                        <div
-                            v-if="post.picture.length"
-                            class="tour-spot-popup__gallery"
-                        >
-                            <Swiper
-                                slides-per-view="auto"
-                                :space-between="8"
-                                :touch-start-prevent-default="false"
-                                :breakpoints="{
-                                    768: {
-                                        spaceBetween: 24
-                                    }
-                                }"
+                            <p
+                                v-if="post.descriptionDetail"
+                                class="tour-spot-popup__desc"
                             >
-                                <SwiperSlide
-                                    v-for="(url, index) in post.picture.all"
-                                    :key="url"
+                                {{ post.descriptionDetail }}
+                            </p>
+                            <div
+                                v-if="post.picture.length"
+                                class="tour-spot-popup__gallery"
+                            >
+                                <Swiper
+                                    slides-per-view="auto"
+                                    :space-between="8"
+                                    :touch-start-prevent-default="false"
+                                    :breakpoints="{
+                                        768: {
+                                            spaceBetween: 24
+                                        }
+                                    }"
                                 >
-                                    <DescCard
-                                        :title="post.picture.desc[index]||''"
-                                        :src="url"
-                                        data-cursor="swipe"
-                                    />
-                                </SwiperSlide>
-                            </Swiper>
-                        </div>
-                        <div
-                            v-if="post.Position"
-                            class="tour-spot-popup__map"
-                        >
-                            <GoogleMap v-bind="post.Position" />
-                        </div>
-                        <div class="tour-spot-popup__buttons">
-                            <ButtonSecondary
-                                :icon="isPostSaved ? 'like-active' : 'like-default'"
-                                @click="toggleSaveSpot"
+                                    <SwiperSlide
+                                        v-for="(url, index) in post.picture.all"
+                                        :key="url"
+                                    >
+                                        <DescCard
+                                            :title="post.picture.desc[index]||''"
+                                            :src="url"
+                                            data-cursor="swipe"
+                                        />
+                                    </SwiperSlide>
+                                </Swiper>
+                            </div>
+                            <div
+                                v-if="post.Position"
+                                class="tour-spot-popup__map"
                             >
-                                收藏
-                            </ButtonSecondary>
-                            <ButtonSecondary @click="close">
-                                返回
-                            </ButtonSecondary>
+                                <GoogleMap v-bind="post.Position" />
+                            </div>
+                            <div class="tour-spot-popup__buttons">
+                                <ButtonSecondary
+                                    :icon="isPostSaved ? 'like-active' : 'like-default'"
+                                    @click="toggleSaveSpot"
+                                >
+                                    收藏
+                                </ButtonSecondary>
+                                <ButtonSecondary @click="close">
+                                    返回
+                                </ButtonSecondary>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -209,27 +211,21 @@ const handleCopy = () => {
 </template>
 
 <style lang="scss">
-.app.-TourSpotPopup {
-    .popup {
-        &__main {
-            > * {
-                pointer-events: none;
-            }
-        }
-    }
-}
-
 .tour-spot-popup {
     &__main {
-        position: relative;
-        margin: 25% 0;
-        padding: $padding * 5 $padding * 7;
-        background-color: color('White');
-        border-radius: 24px;
-        pointer-events: auto;
-        @include media-breakpoint-down(tablet) {
-            margin: $padding * 4 0;
-            padding: $padding * 2;
+        pointer-events: none;
+
+        &-content {
+            position: relative;
+            margin: 25% 0;
+            padding: $padding * 5 $padding * 7;
+            background-color: color('White');
+            border-radius: 24px;
+            pointer-events: auto;
+            @include media-breakpoint-down(tablet) {
+                margin: $padding * 4 0;
+                padding: $padding * 2;
+            }
         }
     }
 

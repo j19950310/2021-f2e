@@ -25,88 +25,90 @@ const close = () => {
             :is-active="isOpen"
             @on-close="close"
         >
-            <div class="container">
-                <div class="about-person__main">
-                    <div
-                        class="about-person__close"
-                        @click="close"
-                    >
-                        <Icon name="close-default" />
-                    </div>
-                    <div class="about-person__header">
+            <div class="about-person__main">
+                <div class="container">
+                    <div class="about-person__main-content">
                         <div
-                            v-bg="'https://source.unsplash.com/random/1024x768'"
-                            class="about-person__image"
-                        />
-                        <div>
-                            <p class="about-person__title">
-                                Jay Wu
-                            </p>
-                            <p class="about-person__job">
-                                Front End Developer/ Visual Designer/ UI Designer
-                            </p>
-                        </div>
-                    </div>
-                    <div class="about-person__control">
-                        <div
-                            v-blur="() => isInfoOpen = false"
-                            class="about-person__info"
+                            class="about-person__close"
+                            @click="close"
                         >
-                            <ButtonThird
-                                icon="share"
-                                @click="isInfoOpen = !isInfoOpen"
-                            >
-                                <p>資訊</p>
-                            </ButtonThird>
+                            <Icon name="close-default" />
+                        </div>
+                        <div class="about-person__header">
                             <div
-                                class="about-person__info-main"
-                                :class="{'-active': isInfoOpen}"
-                            >
-                                <a href="">
-                                    <Icon name="linkedin" />
-                                </a>
-                                <a href="">
-                                    <Icon name="linkedin" />
-                                </a>
-                                <a href="">
-                                    <Icon name="linkedin" />
-                                </a>
+                                v-bg="'https://source.unsplash.com/random/1024x768'"
+                                class="about-person__image"
+                            />
+                            <div>
+                                <p class="about-person__title">
+                                    Jay Wu
+                                </p>
+                                <p class="about-person__job">
+                                    Front End Developer/ Visual Designer/ UI Designer
+                                </p>
                             </div>
                         </div>
-                        <ButtonThird icon="share">
-                            <p>分享</p>
-                        </ButtonThird>
-                    </div>
-                    <p class="about-person__desc">
-                        反蜥爸由事禦處城將原？我近中科氣沒他沒省氓的蟻片比祈希營涂主難原用平從？的原…不丰到活本眾的從毀人了要櫻芒間妳，年三錯的要定，老一相義。間在洲士謝版的計將一同樣其在人相樂罐…和藝大會，分吧正氓的到戊個。
-                    </p>
-                    <div class="about-person__gallery">
-                        <Swiper
-                            slides-per-view="auto"
-                            :space-between="8"
-                            :touch-start-prevent-default="false"
-                            :breakpoints="{
-                                768: {
-                                    spaceBetween: 24
-                                }
-                            }"
-                        >
-                            <SwiperSlide
-                                v-for="num in 5"
-                                :key="num"
+                        <div class="about-person__control">
+                            <div
+                                v-blur="() => isInfoOpen = false"
+                                class="about-person__info"
                             >
-                                <DescCard
-                                    title="看及應啦業去墳正一字科施中起到應十患唾把秉縛指章也的只嗎我昀稱十"
-                                    src="https://source.unsplash.com/random/1024x768"
-                                    data-cursor="swipe"
-                                />
-                            </SwiperSlide>
-                        </Swiper>
-                    </div>
-                    <div class="about-person__back">
-                        <ButtonSecondary @click="close">
-                            返回
-                        </ButtonSecondary>
+                                <ButtonThird
+                                    icon="share"
+                                    @click="isInfoOpen = !isInfoOpen"
+                                >
+                                    <p>資訊</p>
+                                </ButtonThird>
+                                <div
+                                    class="about-person__info-main"
+                                    :class="{'-active': isInfoOpen}"
+                                >
+                                    <a href="">
+                                        <Icon name="linkedin" />
+                                    </a>
+                                    <a href="">
+                                        <Icon name="linkedin" />
+                                    </a>
+                                    <a href="">
+                                        <Icon name="linkedin" />
+                                    </a>
+                                </div>
+                            </div>
+                            <ButtonThird icon="share">
+                                <p>分享</p>
+                            </ButtonThird>
+                        </div>
+                        <p class="about-person__desc">
+                            反蜥爸由事禦處城將原？我近中科氣沒他沒省氓的蟻片比祈希營涂主難原用平從？的原…不丰到活本眾的從毀人了要櫻芒間妳，年三錯的要定，老一相義。間在洲士謝版的計將一同樣其在人相樂罐…和藝大會，分吧正氓的到戊個。
+                        </p>
+                        <div class="about-person__gallery">
+                            <Swiper
+                                slides-per-view="auto"
+                                :space-between="8"
+                                :touch-start-prevent-default="false"
+                                :breakpoints="{
+                                    768: {
+                                        spaceBetween: 24
+                                    }
+                                }"
+                            >
+                                <SwiperSlide
+                                    v-for="num in 5"
+                                    :key="num"
+                                >
+                                    <DescCard
+                                        title="看及應啦業去墳正一字科施中起到應十患唾把秉縛指章也的只嗎我昀稱十"
+                                        src="https://source.unsplash.com/random/1024x768"
+                                        data-cursor="swipe"
+                                    />
+                                </SwiperSlide>
+                            </Swiper>
+                        </div>
+                        <div class="about-person__back">
+                            <ButtonSecondary @click="close">
+                                返回
+                            </ButtonSecondary>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -115,27 +117,22 @@ const close = () => {
 </template>
 
 <style lang="scss">
-.app.-AboutPerson {
-    .popup {
-        &__main {
-            > * {
-                pointer-events: none;
-            }
-        }
-    }
-}
 
 .about-person {
     &__main {
-        position: relative;
-        margin: 15% 0;
-        padding: $padding * 5 $padding * 7;
-        background-color: color('White');
-        border-radius: 24px;
-        pointer-events: auto;
-        @include media-breakpoint-down(tablet) {
-            margin: $padding * 4 0;
-            padding: $padding * 2;
+        pointer-events: none;
+
+        &-content {
+            position: relative;
+            margin: 25% 0;
+            padding: $padding * 5 $padding * 7;
+            background-color: color('White');
+            border-radius: 24px;
+            pointer-events: auto;
+            @include media-breakpoint-down(tablet) {
+                margin: $padding * 4 0;
+                padding: $padding * 2;
+            }
         }
     }
 
