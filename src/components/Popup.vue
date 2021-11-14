@@ -1,5 +1,9 @@
 <script setup>
 defineProps({
+    transition: {
+        type: String,
+        default: 'fade',
+    },
     isActive: {
         type: Boolean,
         default: true,
@@ -11,7 +15,7 @@ defineEmits(['on-close'])
 <template>
     <teleport to="#portalTarget">
         <transition
-            name="fade"
+            :name="transition"
             appear
         >
             <div

@@ -133,3 +133,43 @@
         }
     }
 }
+
+.popup-fade-up {
+    &-enter {
+        &-from {
+            opacity: 0;
+
+            .popup__main {
+                opacity: 0;
+                transform: translateY(15%);
+            }
+        }
+
+        &-active {
+            transition: opacity 0.3s, transform 0.55s;
+
+            .popup__main {
+                transition: transform 0.3s 0.25s, opacity 0.3s 0.25s;
+            }
+        }
+    }
+
+    &-leave {
+        &-to {
+            opacity: 0;
+
+            .popup__main {
+                opacity: 0;
+                transform: translateY(15%);
+            }
+        }
+
+        &-active {
+            transition: opacity 0.4s 0.25s;
+
+            .popup__main {
+                transition: transform 0.3s, opacity 0.3s;
+            }
+        }
+    }
+}
