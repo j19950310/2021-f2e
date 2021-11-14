@@ -166,6 +166,8 @@ export default {
             this.$router.push({
                 name: 'TourSpotSearch',
                 query: {
+                    category: 'scenic',
+                    page: 1,
                     keyword: this.searchValue,
                 },
             })
