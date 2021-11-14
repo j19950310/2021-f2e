@@ -163,13 +163,27 @@ export default {
             this.$emit('search', method)
         },
         submit () {
-            this.$router.push({
-                name: 'TourSpotSearch',
-                query: {
-                    category: 'scenic',
-                    page: 1,
-                    keyword: this.searchValue,
-                },
+            const data = new FormData()
+            data.append('keywords', this.searchValue)
+
+            this.$store.dispatch('tour/query', data).then((category) => {
+                this.$router.push({
+                    name: 'TourSpotSearch',
+                    query: {
+                        keyword: this.searchValue,
+                        category,
+                        page: 1,
+                    },
+                })
+            }).catch(err => {
+                this.$router.push({
+                    name: 'TourNoResult',
+                    params: {
+                        messages: err.message || '查無結果',
+                    },
+                })
+            }).finally(() => {
+                this.searchValue = null
             })
         },
         getClass (spot) { // TODO

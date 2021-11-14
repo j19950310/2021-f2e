@@ -4,6 +4,7 @@
         :class="{
             '-pendding' :pendding
         }"
+        @submit.prevent="submit"
     >
         <div class="form-filter__row">
             <SearchKeywords
@@ -429,7 +430,7 @@ export default {
                 this.$router.push({
                     name: 'TourSpotSearch',
                     query: {
-                        keyword: this.searchValue,
+                        keyword: this.search,
                         category,
                         page: 1,
                     },
@@ -445,6 +446,8 @@ export default {
                         messages: err.message || '查無結果',
                     },
                 })
+            }).finally(() => {
+                this.search = null
             })
         },
     },
