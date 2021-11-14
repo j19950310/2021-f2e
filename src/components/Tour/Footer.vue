@@ -6,7 +6,7 @@
             <span>十字元</span>
             <span>All Rights Reserved.</span>
         </div>
-        <div class="tour-footer__tool">
+        <!-- <div class="tour-footer__tool">
             <div class="tour-footer__tool-item">
                 關於我們
             </div>
@@ -16,7 +16,7 @@
             <div class="tour-footer__tool-item">
                 <Icon name="info" /><span>使用說明</span>
             </div>
-        </div>
+        </div> -->
     </footer>
 </template>
 <style lang="scss">
@@ -25,9 +25,12 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        padding: 40px 40px;
+        padding: $padding * 8.5 $padding * 10;
         color: color('White');
         background-color: color('Black');
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 6 $padding * 3;
+        }
 
         &__copyright {
             display: flex;
