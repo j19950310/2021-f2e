@@ -358,6 +358,10 @@ $class-name: '.tour-header';
                     }
                 }
 
+                > a {
+                    display: block;
+                }
+
                 > p {
                     text-align: center;
                     color: color('Dark-Gray');
