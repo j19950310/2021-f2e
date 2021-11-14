@@ -118,6 +118,7 @@
         >
             <Dropdown title="縣市">
                 <transition-group
+                    v-if="selectedTownList.length"
                     name="fade"
                     class="form-filter__dropdown-category"
                     tag="div"
@@ -452,10 +453,13 @@ export default {
 <style lang="scss">
 .form-filter {
     position: relative;
-    padding: 40px;
+    padding: $padding * 5;
     text-align: left;
     background-color: color('White');
     border-radius: 24px;
+    @include media-breakpoint-down(tablet) {
+        padding: $padding * 3;
+    }
 
     // block loading
     &::after {
@@ -497,7 +501,10 @@ export default {
     }
 
     &__row {
-        padding-bottom: 32px;
+        margin-bottom: $padding * 4;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__title {
@@ -508,7 +515,7 @@ export default {
         padding-top: 12px;
 
         .button-category {
-            margin-right: 8px;
+            margin: 0 $padding $padding 0;
         }
     }
 
@@ -524,6 +531,9 @@ export default {
             padding-bottom: 18px;
             flex-wrap: wrap;
             align-content: flex-start;
+            @include media-breakpoint-down(tablet) {
+                padding-bottom: 4px;
+            }
 
             &.-town {
                 transition: height 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
@@ -548,6 +558,9 @@ export default {
             margin: 0 #{-$space};
             padding: 16px $space;
             flex-wrap: nowrap;
+            @include media-breakpoint-down(tablet) {
+                padding: 12px $space;
+            }
 
             &-item {
                 display: inline-block;
@@ -571,9 +584,16 @@ export default {
     &__submit {
         display: flex;
         justify-content: center;
+        @include media-breakpoint-down(tablet) {
+            flex-direction: column-reverse;
+        }
 
         .button-main {
             margin: 4px 12px;
+            @include media-breakpoint-down(tablet) {
+                margin: 0 0 12px 0;
+                width: 100%;
+            }
         }
     }
 }
