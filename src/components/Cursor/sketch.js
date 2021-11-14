@@ -44,7 +44,7 @@ export default class {
         let { type, src, name, options } = payload
 
         if (!src.match(/^(http|https):\/\//)) {
-            src = require(`@/assets/${src}`)
+            src = new URL(`../../assets/${src}`, import.meta.url).href
         }
 
         const resource = {
@@ -52,6 +52,7 @@ export default class {
             name: name || src,
             resource: null,
         }
+
         if (type === 'image') {
             const data = await this.loadImage(src, options)
             resource.resource = data
@@ -92,6 +93,7 @@ export default class {
     loadImage (url) {
         const image = new Image()
         image.src = url
+
         return new Promise((resolve) => {
             image.onload = () => {
                 resolve(image)

@@ -22,6 +22,12 @@ onBeforeUnmount(() => {
 </template>
 
 <style lang="scss">
+button, a, [href], [data-cursor] {
+    > * {
+        pointer-events: none;
+    }
+}
+
 .cursor-effect {
     @include size(100vw, 100%);
 
