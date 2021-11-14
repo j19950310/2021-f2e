@@ -56,5 +56,6 @@ jobs:
         with:
           target_branch: gh-page
           build_dir: ./dist
+          fqdn: 10-char.com
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
