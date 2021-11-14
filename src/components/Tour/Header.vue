@@ -84,19 +84,33 @@
                         <p v-if="!savedSpotPreview.length">
                             尚無收藏項目
                         </p>
-                        <SaveCard
+                        <router-link
                             v-for="card in savedSpotPreview"
                             v-else
                             :key="card.id"
-                            :title="card.Name"
-                            :src="card.picture.src || defaultImage"
-                            :tags="getClass(card)"
-                        />
+                            class="tour-header__tool-pop-up-item"
+                            :to="{
+                                name: 'TourSpotSavedPopup',
+                                query: {
+                                    category: card.category,
+                                },
+                                params: {
+                                    spot: card.id,
+                                },
+                            }"
+                        >
+                            <SaveCard
+
+                                :title="card.Name"
+                                :src="card.picture.src || defaultImage"
+                                :tags="getClass(card)"
+                            />
+                        </router-link>
                         <ButtonThird>
                             查看全部
                             <router-link
                                 :to="{
-                                    name: 'TourSpotSaved'
+                                    name: 'TourSpotSaved',
                                 }"
                             />
                         </ButtonThird>
@@ -348,6 +362,11 @@ $class-name: '.tour-header';
                     text-align: center;
                     color: color('Dark-Gray');
                 }
+            }
+
+            &-item {
+                display: block;
+                padding-top: 8px;
             }
         }
     }

@@ -90,9 +90,10 @@ export default class TourSpot {
 }
 
 export class ScenicSpot extends TourSpot {
-    // constructor (config) {
-    //     super(config)
-    // }
+    constructor (config) {
+        super(config)
+        this.category = 'scenic'
+    }
 
     get descriptionDetail () {
         // 景點特色詳細說明 ,
@@ -136,15 +137,18 @@ export class ScenicSpot extends TourSpot {
 }
 
 export class RestaurantSpot extends TourSpot {
-    // constructor (config) {
-    //     super(config)
-    // }
+    constructor (config) {
+        super(config)
+        this.category = 'restaurant'
+    }
 }
 
 export class HotelSpot extends TourSpot {
-    // constructor (config) {
-    //     super(config)
-    // }
+    constructor (config) {
+        super(config)
+        this.category = 'hotel'
+    }
+
     get grade () {
         // 旅宿星級 ,
         return this.Grade
@@ -167,9 +171,11 @@ export class HotelSpot extends TourSpot {
 }
 
 export class ActivitySpot extends TourSpot {
-    // constructor (config) {
-    //     super(config)
-    // }
+    constructor (config) {
+        super(config)
+        this.category = 'activity'
+    }
+
     get particpation () {
         // 活動參與對象 ,
         return this.Particpation
