@@ -35,6 +35,8 @@ const scrollTriggerInstance = ScrollTrigger.create({
 const viewport = reactive(new Viewport())
 
 const loadingConfig = computed(() => $store.state.loadingConfig)
+const isFirstEnter = computed(() => $store.state.isFirstEnter)
+
 window.addEventListener('resize', () => { // 待其他合併
     viewport.update()
 })
@@ -99,7 +101,10 @@ onMounted(() => {
                 name="fade"
                 mode="out-in"
             >
-                <component :is="Component" />
+                <component
+                    :is="Component"
+                    v-show="!isFirstEnter"
+                />
             </transition>
         </router-view>
         <div id="portalTarget" />
