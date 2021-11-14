@@ -42,12 +42,16 @@ export default {
         @include typo-h3;
 
         input {
+            @include typo-h3;
+
             display: block;
             padding: 16px 24px;
             width: 100%;
             background-color: transparent;
             caret-color: color('Primary');
-            @include typo-h3;
+            @include media-breakpoint-down(tablet) {
+                padding: $padding * 1.5 $padding * 2;
+            }
 
             &::placeholder {
                 color: color('Dark-Gray');

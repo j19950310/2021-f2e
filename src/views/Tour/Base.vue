@@ -64,11 +64,14 @@ const headSearchHandler = (e) => {
     }
 
     &__filter {
-        @include size(100%);
-
         display: flex;
         align-items: center;
+        margin: 5% 0;
+        width: 100%;
         pointer-events: none;
+        @include media-breakpoint-down(tablet) {
+            margin: $padding * 4 0;
+        }
 
         .col-desktop-8 {
             margin: auto;
