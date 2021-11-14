@@ -1,10 +1,12 @@
-<script setup>
-import Base from './Base.vue'
-</script>
 <script>
+import Base from './Base.vue'
 import gsap from 'gsap/dist/gsap'
+
 export default {
     name: 'TourHome',
+    components: {
+        Base,
+    },
     watch: {
         '$route' (to, from) {
             if (to.name === 'TourNoResult') {
@@ -26,6 +28,7 @@ export default {
     },
 }
 </script>
+
 <template>
     <Base class="tour-index">
         <router-view ref="child" />
@@ -48,6 +51,7 @@ export default {
         </div>
     </Base>
 </template>
+
 <style lang="scss">
 .tour-index {
     &__main {
