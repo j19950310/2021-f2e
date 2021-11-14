@@ -162,6 +162,9 @@ const close = () => {
         display: flex;
         align-items: center;
         margin-bottom: $padding * 3;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__image {
@@ -170,12 +173,19 @@ const close = () => {
         flex: 0 0 160px;
         margin-right: $padding * 3;
         border-radius: 50%;
+        @include media-breakpoint-down(tablet) {
+            flex: 0 0 80px;
+            margin-right: $padding * 1.5;
+        }
     }
 
     &__title {
         @include typo-h1;
 
         margin-bottom: $padding;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding / 2;
+        }
     }
 
     &__job {
@@ -242,12 +252,15 @@ const close = () => {
 
     &__desc {
         margin-bottom: $padding * 6;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
     }
 
     &__gallery {
         margin-bottom: $padding * 6;
         @include media-breakpoint-down(tablet) {
-            margin-bottom: $padding * 4;
+            margin-bottom: $padding * 3;
         }
 
         .swiper {
@@ -262,6 +275,11 @@ const close = () => {
 
     &__back {
         text-align: center;
+        @include media-breakpoint-down(tablet) {
+            > * {
+                width: 100%;
+            }
+        }
     }
 }
 </style>
