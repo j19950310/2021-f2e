@@ -87,6 +87,7 @@ const submit = () => {
         &__display {
             @include typo('EN/D/Display_72px_Bold');
 
+            text-transform: uppercase;
             text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
         }
 
