@@ -7,13 +7,15 @@ import JsSHA from 'jssha'
 export default (theme) => {
     // ex.GET /v2/Tourism
     const baseURL = `https://ptx.transportdata.tw/MOTC/v2/${theme}`
-    const headers = {
-        'Content-Type': 'application/json',
-        ...getAuthorizationHeader(),
+    const headers = { ...getAuthorizationHeader() }
+    const themAxios = axios.create({ baseURL })
+    Object.assign(themAxios.defaults.headers.common, headers)
+    return {
+        axios: themAxios,
+        refreshHeader: () => {
+            themAxios.defaults.headers.common = { ...getAuthorizationHeader() }
+        },
     }
-    const tourismAxios = axios.create({ baseURL })
-    Object.assign(tourismAxios.defaults.headers.common, headers)
-    return tourismAxios
 }
 
 // --header 'Authorization: hmac username="FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF", algorithm="hmac-sha1", headers="x-date", signature="b1hM9sTd9pngCi92D4wUrucjteE="'
@@ -32,5 +34,5 @@ function getAuthorizationHeader () {
     ShaObj.update('x-date: ' + GMTString)
     const HMAC = ShaObj.getHMAC('B64')
     const Authorization = `hmac username="${AppID}", algorithm="hmac-sha1", headers="x-date", signature="${HMAC}"`
-    return { Authorization: Authorization, 'X-Date': GMTString }
+    return { Authorization: Authorization, 'X-Date': GMTString, 'Content-Type': 'application/json' }
 }
