@@ -21,6 +21,8 @@ const submit = () => {
     router.push({
         name: 'TourSpotSearch',
         query: {
+            category: 'scenic',
+            page: 1,
             keyword: searchValue.value,
         },
     })
