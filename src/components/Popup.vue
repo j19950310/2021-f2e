@@ -36,7 +36,7 @@ defineEmits(['on-close'])
 
 <style lang="scss">
 .popup {
-    @include size(100%);
+    @include size(100vw, 100%);
     @include css-performance;
 
     position: fixed;
