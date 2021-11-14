@@ -76,7 +76,7 @@
                             v-for="card in savedSpotPreview"
                             :key="card.id"
                             :title="card.Name"
-                            :src="getPicture(card).src || defaultImage"
+                            :src="card.picture.src || defaultImage"
                             :tags="getClass(card)"
                         />
                         <ButtonThird>
@@ -96,7 +96,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import defaultImage from '@/assets/default.png'
-import { TourismPicture } from '@/api/TourSpot'
 export default {
     name: 'TourHeader',
     inject: ['scrollInstance'],
@@ -149,10 +148,7 @@ export default {
                 },
             })
         },
-        getPicture (spot) { // TODO 存Class有問題
-            return new TourismPicture(spot.Picture)
-        },
-        getClass (spot) { // TODO 存Class有問題
+        getClass (spot) { // TODO
             const { Class, Class1, Class2, Class3 } = spot
             return [Class, Class1, Class2, Class3].filter(Boolean)
         },
