@@ -4,6 +4,8 @@
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { ref, reactive, provide, computed, watch, onMounted } from 'vue'
+import ImagesLoaded from 'imagesloaded'
+
 // scroll
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
@@ -44,7 +46,33 @@ window.addEventListener('resize', () => { // 待其他合併
 provide('scrollInstance', scrollInstance)
 provide('viewport', viewport)
 
-onMounted(() => {
+const loadImage = () => {
+    return new Promise((resolve) => {
+        new ImagesLoaded('#app', { background: '[data-background]' }, (instance) => {
+            resolve()
+        })
+    })
+}
+const loadFont = () => {
+    new Promise((resolve) => {
+        import('webfontloader').then((WebFont) => {
+            WebFont.load({
+                google: {
+                    families: ['Noto Sans TC:500, 700', 'Asap:700'],
+                },
+                active () {
+                    resolve()
+                },
+            })
+        })
+    })
+}
+
+onMounted(async () => {
+    await $store.dispatch('ADD_LOADING_STACK', [
+        loadImage(),
+        loadFont(),
+    ])
     $store.dispatch('WAIT_LOADING')
 })
 
