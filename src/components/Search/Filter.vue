@@ -49,7 +49,7 @@
 </template>
 <script>
 export default {
-    emits: ['update:modelValue', 'submit', 'click'],
+    emits: ['update:modelValue', 'submit', 'click', 'focus', 'blur'],
     data () {
         return {
             state: '',
@@ -70,9 +70,11 @@ export default {
     methods: {
         setFocus () {
             this.state = 'focus'
+            this.$emit('focus')
         },
         setBlur () {
             this.state = ''
+            this.$emit('blur')
         },
         submit () {
             if (this.$attrs.modelValue) {

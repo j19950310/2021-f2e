@@ -1,79 +1,92 @@
-
 <template>
     <header
         class="tour-header"
-        :class="{'-hide': isHeaderHide}"
+        :class="{
+            '-hide': isHeaderHide,
+        }"
     >
         <div class="tour-header__wrap">
             <div class="tour-header__home">
-                <img
-                    width="31"
-                    height="20"
-                    class="tour-header__logo"
-                    src="@/assets/logo.png"
-                    alt="十字元Logo"
-                >
-                台灣觀光懶人包
+                <div class="tour-header__logo">
+                    <img
+                        src="@/assets/logo.png"
+                        alt="十字元Logo"
+                    >
+                </div>
+                <p>台灣觀光懶人包</p>
                 <router-link to="/tour" />
             </div>
-            <transition
+            <transition-group
+                v-if="isSearch"
+                class="tour-header__search"
                 name="flip"
-                mode="out-in"
+                tag="div"
             >
                 <div
-                    v-if="!isSearchBar && isSearch"
-                    class="tour-header__search"
+                    v-show="!isSearchBar"
+                    key="search"
+                    class="tour-header__search-main"
                 >
-                    <div
-                        class="tour-header__search-item"
-                        @click="isSearchBar = true"
-                    >
-                        <Icon name="search" /><span>搜尋</span>
-                    </div>
-                    <div
-                        class="tour-header__search-item"
-                        @click="$emit('search','filter')"
-                    >
-                        <Icon name="filter" /><span>篩選</span>
-                    </div>
-                    <div
-                        class="tour-header__search-item"
-                        @click="$emit('search','shuffle')"
-                    >
-                        <Icon name="shuffle" /><span>探索</span>
+                    <div>
+                        <div
+                            class="tour-header__search-item"
+                            @click="isSearchBar = true"
+                        >
+                            <Icon name="search" /><span>搜尋</span>
+                        </div>
+                        <div
+                            class="tour-header__search-item"
+                            @click="$emit('search','filter')"
+                        >
+                            <Icon name="filter" /><span>篩選</span>
+                        </div>
+                        <div
+                            class="tour-header__search-item"
+                            @click="$emit('search','shuffle')"
+                        >
+                            <Icon name="shuffle" /><span>探索</span>
+                        </div>
                     </div>
                 </div>
                 <div
-                    v-else-if="isSearch"
+                    v-show="isSearchBar"
+                    key="searchBar"
                     class="tour-header__search-bar"
                 >
-                    <SearchFilter
-                        v-model="searchValue"
-                        @submit="submit"
-                        @click="SearchFilterClickHandler"
-                    />
+                    <div>
+                        <SearchFilter
+                            v-model="searchValue"
+                            @submit="submit"
+                            @click="searchFilterClickHandler"
+                            @focus="isSearchFocus = true"
+                            @blur="isSearchFocus = false"
+                        />
+                    </div>
                 </div>
-            </transition>
+            </transition-group>
             <div class="tour-header__tool">
                 <div
+                    v-blur="() => isSavedPopUp = false"
                     class="tour-header__tool-item tour-header__tool-saved"
-                    @click="openSavePopUp"
+                    :class="{'-active': isSavedPopUp}"
+                    @click="isSavedPopUp = !isSavedPopUp"
                 >
-                    <Icon name="like-default" /><span>收藏項目</span>
-                </div>
-                <div class="tour-header__tool-item tour-header__tool-info">
-                    <Icon name="info" /><span>使用說明</span>
-                </div>
-                <transition name="fade">
-                    <div
-                        v-if="!isHeaderHide && isSavedPopUp"
-                        ref="savedPopUp"
-                        class="tour-header__tool-pop-up"
-                        tabindex="0"
-                        @blur="isSavedPopUp = false"
-                    >
+                    <Icon
+                        v-show="!isSavedPopUp"
+                        name="like-default"
+                    />
+                    <Icon
+                        v-show="isSavedPopUp"
+                        name="like-active"
+                    />
+                    <span>收藏項目</span>
+                    <div class="tour-header__tool-pop-up -saved">
+                        <p v-if="!savedSpotPreview.length">
+                            尚無收藏項目
+                        </p>
                         <SaveCard
                             v-for="card in savedSpotPreview"
+                            v-else
                             :key="card.id"
                             :title="card.Name"
                             :src="card.picture.src || defaultImage"
@@ -88,11 +101,15 @@
                             />
                         </ButtonThird>
                     </div>
-                </transition>
+                </div>
+                <!-- <div class="tour-header__tool-item tour-header__tool-info">
+                    <Icon name="info" /><span>使用說明</span>
+                </div> -->
             </div>
         </div>
     </header>
 </template>
+
 <script>
 import { mapGetters } from 'vuex'
 import defaultImage from '@/assets/default.png'
@@ -108,37 +125,28 @@ export default {
     emits: ['search'],
     data () {
         return {
-            isClickSearch: false,
-            isSearchBar: false,
-            searchValue: '',
-            scrollHide: false,
-            isSavedPopUp: false,
             defaultImage,
+            isSearchBar: false,
+            isSavedPopUp: false,
+            isSearchFocus: false,
+            searchValue: '',
         }
     },
     computed: {
+        ...mapGetters({
+            savedSpotPreview: 'tour/getSavedSpotPreview',
+        }),
         transitionName () {
             return this.isSearch ? 'tour-header-search' : 'tour-header-search-bar'
         },
         isHeaderHide () {
-            return this.scrollInstance.direction === 1 && this.scrollInstance.scrollTop > 84
+            const { direction, scrollTop } = this.scrollInstance
+            return !this.isSearchFocus && !this.isSavedPopUp && (scrollTop && direction > 0)
         },
-        ...mapGetters({
-            savedSpotPreview: 'tour/getSavedSpotPreview',
-        }),
-    },
-    mounted () {
-
     },
     methods: {
-        SearchFilterClickHandler (method) {
+        searchFilterClickHandler (method) {
             this.$emit('search', method)
-        },
-        openSavePopUp () {
-            this.isSavedPopUp = true
-            this.$nextTick(() => {
-                this.$refs.savedPopUp.focus()
-            })
         },
         submit () {
             this.$router.push({
@@ -155,23 +163,31 @@ export default {
     },
 }
 </script>
+
 <style lang="scss">
 $class-name: '.tour-header';
 #{$class-name} {
+    @include typo-h4;
+
     position: fixed;
     top: 0;
     right: 0;
     left: 0;
-    overflow: hidden;
     z-index: map-get($z-index, header);
-    @include typo-h4;
+
+    &.-hide {
+        pointer-events: none;
+    }
 
     &__wrap {
         display: flex;
-        padding: 20px;
+        padding: $padding * 4 $padding * 5;
         color: color('White');
         background-color: color('Black');
         transition: transform 0.3s ease-in-out;
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 2.5;
+        }
 
         .-hide > & {
             transform: translateY(-100%);
@@ -182,36 +198,54 @@ $class-name: '.tour-header';
     &__home {
         position: relative;
         display: flex;
-        padding: 12px 24px;
-        cursor: pointer;
-        flex: 0 0 auto;
+        align-items: center;
         user-select: none;
-
-        img {
-            margin-right: 10px;
-        }
 
         a {
             @include link;
         }
     }
 
+    &__logo {
+        margin-right: 10px;
+        width: 30px;
+
+        img {
+            width: 100%;
+        }
+    }
+
     &__search {
         @include typo-h4;
 
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: -2px;
-        transition: transform 0.3s ease;
-        flex: 1 0 auto;
-        transform-style: preserve-3d;
+        flex: 1 1 auto;
+        @include media-breakpoint-down(tablet) {
+            display: none;
+        }
+
+        .icon {
+            @include size(1.5rem);
+
+            margin-right: $padding / 2;
+            color: color('Primary');
+        }
+
+        &-main {
+            > * {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
 
         &-item {
             display: flex;
             align-items: center;
-            margin: 0 8px;
-            padding: 10px;
+            margin: 0 $padding * 1.5;
             cursor: pointer;
 
             span {
@@ -219,25 +253,12 @@ $class-name: '.tour-header';
             }
         }
 
-        .icon {
-            margin-right: 4px;
-            font-size: 24px;
-            color: color('Primary');
-        }
-    }
-
-    &__search-bar {
-        display: flex;
-        justify-content: center;
-        margin: -6px 0;
-        padding: 0 40px;
-        transition: transform 0.3s ease;
-        flex: 1 0 auto;
-        transform-style: preserve-3d;
-        transform: perspective(500px);
-
-        .search-filter {
-            flex: 0 1 480px;
+        &-bar {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 480px;
         }
     }
 
@@ -247,49 +268,85 @@ $class-name: '.tour-header';
         align-items: center;
         justify-content: center;
         margin-left: auto;
-        flex: 0 0 auto;
 
         &-item {
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 8px;
             cursor: pointer;
 
+            &.-active {
+                span {
+                    &::before {
+                        opacity: 1;
+                    }
+                }
+            }
+
             span {
-                padding-bottom: 2px;
+                position: relative;
+                padding-bottom: $padding / 2;
+
+                &::before {
+                    @include size(100%, 2px);
+
+                    content: '';
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    background-color: color('Primary');
+                    opacity: 0;
+                }
             }
         }
 
         .icon {
+            @include size(1.5rem);
+
             margin-right: 4px;
-            font-size: 24px;
         }
 
         &-pop-up {
-            position: fixed;
-            top: 72px;
-            right: 46px;
-            padding: 24px;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            overflow: auto;
+            padding: $padding * 3;
             width: 240px;
+            max-height: 485px;
             color: color('Black');
             background-color: color('White');
             border-radius: 24px;
-            z-index: 2;
+            opacity: 0;
             box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+            transition: opacity .3s;
+            transform: translate(0, 100%) translate(0, $padding * 2);
 
-            .save-card {
-                padding-top: 8px;
-            }
+            &.-saved {
+                .tour-header__tool-saved.-active & {
+                    opacity: 1;
+                }
 
-            .button-third {
-                position: relative;
-                margin-top: 24px;
-                width: 100%;
-                text-align: center;
+                .save-card {
+                    & ~ * {
+                        margin-top: $padding * 2;
+                    }
+                }
 
-                a {
-                    @include link;
+                .button-third {
+                    position: relative;
+                    margin-top: $padding * 2;
+                    width: 100%;
+                    text-align: center;
+
+                    a {
+                        @include link;
+                    }
+                }
+
+                > p {
+                    text-align: center;
+                    color: color('Dark-Gray');
                 }
             }
         }
