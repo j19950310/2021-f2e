@@ -2,10 +2,10 @@
 import { useStore } from 'vuex'
 import { computed, inject, watch } from 'vue'
 
-const store = useStore()
-const isPopUp = computed(() => store.state.tour.popUp.isShow)
-const openPopUp = () => store.commit('tour/showPopUp')
-const hidePopUp = () => store.commit('tour/hidePopUp')
+const $store = useStore()
+const isPopUp = computed(() => $store.state.tour.popUp.isShow)
+const openPopUp = () => $store.commit('tour/showPopUp')
+const hidePopUp = () => $store.commit('tour/hidePopUp')
 const scrollInstance = inject('scrollInstance')
 
 const headSearchHandler = (e) => {
@@ -16,6 +16,7 @@ const headSearchHandler = (e) => {
         // TODO
     }
 }
+
 </script>
 <template>
     <div class="tour-base">
@@ -27,19 +28,22 @@ const headSearchHandler = (e) => {
             <slot />
         </div>
         <TourFooter />
-        <div
-            class="tour-base__pop-up"
-            :class="{
-                '-show': isPopUp,
-                '-hide': !isPopUp,
-            }"
-            @click.self="hidePopUp"
+        <Popup
+            :is-active="isPopUp"
+            transition="popup-fade-up"
+            @on-close="hidePopUp"
         >
-            <FormFilter
-                @back="hidePopUp"
-                @submit="hidePopUp"
-            />
-        </div>
+            <div class="tour-base__filter">
+                <div class="container">
+                    <div class="col-desktop-8">
+                        <FormFilter
+                            @back="hidePopUp"
+                            @submit="hidePopUp"
+                        />
+                    </div>
+                </div>
+            </div>
+        </Popup>
     </div>
 </template>
 <style lang="scss">
@@ -55,40 +59,19 @@ $header-height: 84px;
         flex: 1 1 auto;
     }
 
-    &__pop-up {
-        @include css-performance;
-        $duration: 0.4s;
+    &__filter {
+        @include size(100%);
 
-        position: fixed;
-        top: 0;
-        left: 0;
-        padding: 80px;
-        width: 100%;
-        height: 100%;
-        background: rgba(44, 44, 44, 0.8);
-        z-index: map-get($z-index, pop-up);
-        transition: background-color $duration ease-in-out, backdrop-filter $duration/2 ease-in-out;
-        backdrop-filter: blur(30px);
+        display: flex;
+        align-items: center;
+        pointer-events: none;
 
-        .form-filter {
-            overflow: auto;
-            margin: 0 auto;
-            width: 800px;
-            max-height: 100%;
-            transition: transform $duration ease-in-out;
-            transform-origin: 50% 120%;
+        .col-desktop-8 {
+            margin: auto;
         }
 
-        &.-hide {
-            background: rgba(44, 44, 44, 0);
-            pointer-events: none;
-            backdrop-filter: blur(0);
-            transition-duration: $duration/2;
-
-            .form-filter {
-                pointer-events: none;
-                transform: scale(0) translateY(100%);
-            }
+        .form-filter {
+            pointer-events: auto;
         }
     }
 }
