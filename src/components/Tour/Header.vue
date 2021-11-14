@@ -2,7 +2,7 @@
 <template>
     <header
         class="tour-header"
-        :class="{'-hide': scrollInstance.direction === 1 && scrollInstance.scrollTop > 84}"
+        :class="{'-hide': isHeaderHide}"
     >
         <div class="tour-header__wrap">
             <div class="tour-header__home">
@@ -55,17 +55,48 @@
                 </div>
             </transition>
             <div class="tour-header__tool">
-                <div class="tour-header__tool-item tour-header__tool-saved">
+                <div
+                    class="tour-header__tool-item tour-header__tool-saved"
+                    @click="openSavePopUp"
+                >
                     <Icon name="like-default" /><span>收藏項目</span>
                 </div>
                 <div class="tour-header__tool-item tour-header__tool-info">
                     <Icon name="info" /><span>使用說明</span>
                 </div>
+                <transition name="fade">
+                    <div
+                        v-if="!isHeaderHide && isSavedPopUp"
+                        ref="savedPopUp"
+                        class="tour-header__tool-pop-up"
+                        tabindex="0"
+                        @blur="isSavedPopUp = false"
+                    >
+                        <SaveCard
+                            v-for="card in savedSpotPreview"
+                            :key="card.id"
+                            :title="card.Name"
+                            :src="getPicture(card).src || defaultImage"
+                            :tags="getClass(card)"
+                        />
+                        <ButtonThird>
+                            查看全部
+                            <router-link
+                                :to="{
+                                    name: 'TourSpotSaved'
+                                }"
+                            />
+                        </ButtonThird>
+                    </div>
+                </transition>
             </div>
         </div>
     </header>
 </template>
 <script>
+import { mapGetters } from 'vuex'
+import defaultImage from '@/assets/default.png'
+import { TourismPicture } from '@/api/TourSpot'
 export default {
     name: 'TourHeader',
     inject: ['scrollInstance'],
@@ -82,12 +113,20 @@ export default {
             isSearchBar: false,
             searchValue: '',
             scrollHide: false,
+            isSavedPopUp: false,
+            defaultImage,
         }
     },
     computed: {
         transitionName () {
             return this.isSearch ? 'tour-header-search' : 'tour-header-search-bar'
         },
+        isHeaderHide () {
+            return this.scrollInstance.direction === 1 && this.scrollInstance.scrollTop > 84
+        },
+        ...mapGetters({
+            savedSpotPreview: 'tour/getSavedSpotPreview',
+        }),
     },
     mounted () {
 
@@ -96,6 +135,12 @@ export default {
         SearchFilterClickHandler (method) {
             this.$emit('search', method)
         },
+        openSavePopUp () {
+            this.isSavedPopUp = true
+            this.$nextTick(() => {
+                this.$refs.savedPopUp.focus()
+            })
+        },
         submit () {
             this.$router.push({
                 name: 'TourSpotSearch',
@@ -103,6 +148,13 @@ export default {
                     keyword: this.searchValue,
                 },
             })
+        },
+        getPicture (spot) { // TODO 存Class有問題
+            return new TourismPicture(spot.Picture)
+        },
+        getClass (spot) { // TODO 存Class有問題
+            const { Class, Class1, Class2, Class3 } = spot
+            return [Class, Class1, Class2, Class3].filter(Boolean)
         },
     },
 }
@@ -194,6 +246,7 @@ $class-name: '.tour-header';
     }
 
     &__tool {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -215,6 +268,34 @@ $class-name: '.tour-header';
         .icon {
             margin-right: 4px;
             font-size: 24px;
+        }
+
+        &-pop-up {
+            position: fixed;
+            top: 72px;
+            right: 46px;
+            padding: 24px;
+            width: 240px;
+            color: color('Black');
+            background-color: color('White');
+            border-radius: 24px;
+            z-index: 2;
+            box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+
+            .save-card {
+                padding-top: 8px;
+            }
+
+            .button-third {
+                position: relative;
+                margin-top: 24px;
+                width: 100%;
+                text-align: center;
+
+                a {
+                    @include link;
+                }
+            }
         }
     }
 }
