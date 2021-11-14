@@ -3,7 +3,7 @@
 // Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { ref, reactive, provide } from 'vue'
+import { ref, reactive, provide, computed, watch, onMounted } from 'vue'
 // scroll
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
@@ -31,7 +31,13 @@ const scrollTriggerInstance = ScrollTrigger.create({
     },
 })
 
+const loadingConfig = computed(() => $store.state.loadingConfig)
+
 provide('scrollInstance', scrollInstance)
+
+onMounted(() => {
+    $store.dispatch('WAIT_LOADING')
+})
 
 </script>
 
@@ -39,6 +45,9 @@ provide('scrollInstance', scrollInstance)
     <div
         class="app"
         :class="`-${$route.name}`"
+        :style="{
+            '--loading-duration': `${loadingConfig.minTime / 1000}s`
+        }"
     >
         <div class="dev-link__wrap">
             <router-link

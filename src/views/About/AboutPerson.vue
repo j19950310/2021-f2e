@@ -1,17 +1,21 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { useStore } from 'vuex'
 import { useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 const $router = useRouter()
+const $store = useStore()
 
 const isOpen = ref(true)
 const isInfoOpen = ref(false)
+
+const loadingConfig = computed(() => $store.state.loadingConfig)
 
 const close = () => {
     isOpen.value = false
     setTimeout(() => {
         $router.push({ path: '/about' })
-    }, 300) // 300ms popup transition-duration
+    }, loadingConfig.value.minTime / 2) // 300ms popup transition-duration
 }
 </script>
 

@@ -12,10 +12,13 @@ const isShareOpen = ref(false)
 const isCopy = ref(false)
 const instance = getCurrentInstance() // works
 let copyTimer
+
+const loadingConfig = computed(() => $store.state.loadingConfig)
 const post = computed(() => {
     const { params: { spot }, query: { category } } = $route
     return $store.getters['tour/getSingleSpotByQuery'](spot, category)
 })
+
 if (!post.value) {
     $router.push({
         name: 'Tour',
@@ -28,7 +31,7 @@ const close = () => {
     setTimeout(() => {
         // $router.push({ path: '/tour/spot' })
         $router.back()
-    }, 300) // 300ms popup transition-duration
+    }, loadingConfig.value.minTime / 2) // 300ms popup transition-duration
 }
 const handleCopy = () => {
     isCopy.value = true
