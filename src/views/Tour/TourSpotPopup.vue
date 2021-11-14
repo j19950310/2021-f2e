@@ -57,7 +57,7 @@ const handleCopy = () => {
             :is-active="isOpen"
             @on-close="close"
         >
-            <!-- <div class="container">
+            <div class="container">
                 <div class="tour-spot-popup__main">
                     <div
                         class="tour-spot-popup__close"
@@ -204,7 +204,7 @@ const handleCopy = () => {
                         </div>
                     </div>
                 </div>
-            </div> -->
+            </div>
         </Popup>
     </div>
 </template>
