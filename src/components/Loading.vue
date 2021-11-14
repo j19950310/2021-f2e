@@ -23,7 +23,7 @@ const loadingDone = () => {
     >
         <div
             v-show="isLoading"
-            v-lock="isLoading"
+            v-lock="isFirstEnter || isLoading"
             class="loading"
         >
             <div class="loading__main">

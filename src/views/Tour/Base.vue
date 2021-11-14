@@ -56,6 +56,7 @@ $header-height: 84px;
     }
 
     &__pop-up {
+        @include css-performance;
         $duration: 0.4s;
 
         position: fixed;
