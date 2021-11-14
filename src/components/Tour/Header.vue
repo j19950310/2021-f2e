@@ -9,7 +9,7 @@
             <div class="tour-header__home">
                 <div class="tour-header__logo">
                     <img
-                        src="@/assets/logo.png"
+                        src="@/assets/logo.svg"
                         alt="十字元Logo"
                     >
                 </div>
