@@ -35,7 +35,7 @@ export default {
 </script>
 <style lang="scss">
     .search-default {
-        padding: 16px 24px;
+        padding-right: 24px;
         background-color: color('White');
         border: 1px solid transparent;
         border-radius: 80px;
@@ -43,7 +43,9 @@ export default {
 
         input {
             display: block;
+            padding: 16px 24px;
             width: 100%;
+            background-color: transparent;
             caret-color: color('Primary');
             @include typo-h3;
 

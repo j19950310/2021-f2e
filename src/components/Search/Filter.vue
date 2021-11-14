@@ -91,6 +91,7 @@ export default {
 .search-filter {
     position: relative;
     display: flex;
+    align-items: center;
     box-shadow: 0 0 24px 0 #0000001a;
 
     input:placeholder-shown {
