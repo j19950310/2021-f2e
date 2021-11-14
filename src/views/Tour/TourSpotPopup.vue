@@ -162,6 +162,7 @@ const handleCopy = () => {
                                     <DescCard
                                         :title="post.picture.desc[index]||''"
                                         :src="url"
+                                        data-cursor="swipe"
                                     />
                                 </SwiperSlide>
                             </Swiper>

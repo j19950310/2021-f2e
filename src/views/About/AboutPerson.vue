@@ -94,6 +94,7 @@ const close = () => {
                                 <DescCard
                                     title="看及應啦業去墳正一字科施中起到應十患唾把秉縛指章也的只嗎我昀稱十"
                                     src="https://source.unsplash.com/random/1024x768"
+                                    data-cursor="swipe"
                                 />
                             </SwiperSlide>
                         </Swiper>
