@@ -77,6 +77,7 @@ export default {
             justify-content: center;
             margin-left: 4px;
             padding: 4px;
+            transform: translateY(-3px);
             min-width: 24px;
             min-height: 24px;
             color: color('White');

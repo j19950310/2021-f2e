@@ -40,6 +40,14 @@ $typos:(
         line-height:$line-height-auto,
         text-indent:0
     ),
+    'ZH/D/H2_21px_Bold':(
+        font-size:21px,
+        letter-spacing:0,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
     'ZH/D/H2_21px_Medium':(
         font-size:21px,
         letter-spacing:0,
@@ -48,9 +56,17 @@ $typos:(
         line-height:$line-height-auto,
         text-indent:0
     ),
+    'ZH/D/H3_16px_Bold':(
+        font-size:16px,
+        letter-spacing:0.01em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
     'ZH/D/H3_16px_Medium':(
         font-size:16px,
-        letter-spacing:0.005em,
+        letter-spacing:0.01em,
         font-family:'Noto Sans TC',
         font-weight:500,
         line-height:$line-height-auto,
@@ -88,6 +104,14 @@ $typos:(
         line-height:$line-height-auto,
         text-indent:0
     ),
+    'ZH/M/H2_17px_Bold':(
+        font-size:17px,
+        letter-spacing:0.005em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
     'ZH/M/H2_17px_Medium':(
         font-size:17px,
         letter-spacing:0.005em,
@@ -96,8 +120,16 @@ $typos:(
         line-height:$line-height-auto,
         text-indent:0
     ),
+    'ZH/M/H3_16px_Bold':(
+        font-size:16px,
+        letter-spacing:0.005em,
+        font-family:'Noto Sans TC',
+        font-weight:700,
+        line-height:1.5,
+        text-indent:0
+    ),
     'ZH/M/H3_15px_Medium':(
-        font-size:15px,
+        font-size:16px,
         letter-spacing:0.005em,
         font-family:'Noto Sans TC',
         font-weight:500,
@@ -111,99 +143,137 @@ $typos:(
         font-weight:500,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/Minimal_12px_Semi-Bold_Superscript':(
+    ),
+    'EN/Minimal_12px_Semi-Bold_Superscript':(
         font-size:12px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/Display_72px_Bold':(
+    ),
+    'EN/D/Display_72px_Bold':(
         font-size:72px,
         letter-spacing:0,
         font-family:'Asap',
         font-weight:700,
         line-height:1,
         text-indent:0
-    ),'EN/D/Display-Small_18px_Bold':(
+    ),
+    'EN/D/Display-Small_18px_Bold':(
         font-size:18px,
         letter-spacing:0,
         font-family:'Asap',
         font-weight:700,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/Number_80px_Bold':(
+    ),
+    'EN/D/Number_80px_Bold':(
         font-size:80px,
         letter-spacing:-0.01em,
         font-family:'Asap',
         font-weight:700,
-        line-height:$line-height-auto,
+        line-height:0.93,
         text-indent:0
-    ),'EN/D/H1_48px_Bold':(
+    ),
+    'EN/D/H1_48px_Bold':(
         font-size:48px,
         letter-spacing:-0.01em,
         font-family:'Asap',
         font-weight:700,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/H2_21px_Semi-Bold':(
+    ),
+    'EN/D/H2_21px_Semi-Bold':(
         font-size:21px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/H3_16px_Semi-Bold':(
+    ),
+    'EN/D/H3_16px_Semi-Bold':(
         font-size:16px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/H4_14_Semi-Bold':(
+    ),
+    'EN/D/H4_14_Semi-Bold':(
         font-size:14px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/D/Minimal_12px_Semi-Bold':(
+    ),
+    'EN/D/Minimal_12px_Semi-Bold':(
         font-size:12px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/M/Display_40px_Bold':(
+    ),
+    'EN/M/Display_40px_Bold':(
         font-size:40px,
         letter-spacing:0,
         font-family:'Asap',
         font-weight:700,
         line-height:0.95,
         text-indent:0
-    ),'EN/M/Display_Small_12px_Bold':(
+    ),
+    'EN/M/Display_Small_12px_Bold':(
         font-size:12px,
         letter-spacing:0,
         font-family:'Asap',
         font-weight:700,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/M/Number_40px_Bold':(
+    ),
+    'EN/M/Number_40px_Bold':(
         font-size:40px,
         letter-spacing:0,
         font-family:'Asap',
         font-weight:700,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/M/H1_24px_Bold':(
+    ),
+    'EN/M/H1_24px_Bold':(
         font-size:24px,
         letter-spacing:-0.01em,
         font-family:'Asap',
         font-weight:700,
         line-height:$line-height-auto,
         text-indent:0
-    ),'EN/M/H4_14_Semi-Bold':(
+    ),
+    'EN/M/H2_18px_Semi-Bold':(
+        font-size:18px,
+        letter-spacing:-0.01em,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'EN/M/H3_16px_Bold':(
+        font-size:16px,
+        letter-spacing:0,
+        font-family:'Asap',
+        font-weight:700,
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'EN/M/H3_15px_Semi-Bold':(
+        font-size:15px,
+        letter-spacing:0,
+        font-family:'Asap',
+        line-height:$line-height-auto,
+        text-indent:0
+    ),
+    'EN/M/H4_14_Semi-Bold':(
         font-size:14px,
         letter-spacing:0,
         font-family:'Asap',
         line-height:$line-height-auto,
         text-indent:0
-    ));
+    ),
+);
 
 @mixin typo($index) {
     @if not map-get($typos, #{$index}) {

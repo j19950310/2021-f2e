@@ -10,15 +10,19 @@ const route = useRoute()
 
 const title = 'Spot Search' // TODO
 const subtitle = 'Search for a spot by name or by location' // TODO
-const page = ref(1)
+const page = ref(route.query.page || 1)
 const scrollInstance = inject('scrollInstance')
+const viewport = inject('viewport')
+
 const toggleSaveSpot = (spot) => {
     store.commit('tour/toggleSaveSpot', {
         spot,
         category: route.query.category,
     })
 }
-
+if (page.value !== store.state.tour.page) { // 重整page
+    store.dispatch('tour/dispatchPageQuery', route.query)
+}
 watch(route, (to) => {
     const { query: { page: toPage } } = to
     if (toPage !== page.value) {
@@ -32,6 +36,17 @@ watch(route, (to) => {
 const category = reactive({
     now: 'scenic',
     currentTotal: computed(() => store.state.tour.currentTotal),
+})
+const sumOfSpot = computed(() => {
+    function numberWithCommas (x) {
+        if (typeof x === 'number') {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+        }
+        return x
+    }
+    const { scenic, restaurant, hotel, activity } = category.currentTotal
+    const sum = scenic + restaurant + hotel + activity
+    return numberWithCommas(sum > 9999 ? '9,999+' : sum)
 })
 const createCatButton = (key, name) => (reactive({
     name,
@@ -65,12 +80,15 @@ const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
             class="tour-spot-search__banner"
         >
             <div class="tour-spot-search__banner-main">
-                <div class="tour-spot-search__banner-content">
-                    <div class="tour-spot-search__banner-content-title">
-                        {{ title }}
-                    </div>
-                    <div class="tour-spot-search__banner-content-subtitle">
-                        {{ subtitle }}
+                <div class="container">
+                    <div class="tour-spot-search__banner-content">
+                        <p class="large">
+                            找到了 <span class="primary">{{ sumOfSpot }}</span> 個地點！
+                        </p>
+                        <!-- TODO 第一個tag -->
+                        <!-- <p class="medium">
+                            太讚惹！在台北市找到 89 個地點  🏝
+                        </p> -->
                     </div>
                 </div>
             </div>
@@ -110,7 +128,12 @@ const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
                 <div
                     v-for="post in posts"
                     :key="post.id"
-                    class="tour-spot-search__card col-4"
+                    :class="{
+                        'col-4': viewport.isDesktop,
+                        'col-6': viewport.isTablet,
+                        'col-12': viewport.isMobile,
+                    }"
+                    class="tour-spot-search__card"
                 >
                     <DefaultCard
                         :is-favorite="isIdSaved(post.id)"
@@ -139,67 +162,5 @@ const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
 </template>
 <style lang="scss">
 $class-name: '.tour-spot-search';
-#{$class-name} {
-    &__banner {
-        position: relative;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-
-        &::before {
-            content: '';
-            display: block;
-            padding-bottom: percentage(580/1440);
-            width: 100%;
-        }
-
-        &__main {
-            position: absolute;
-            top: 0;
-            left: 0;
-            @include size(100%);
-        }
-    }
-
-    &__filter {
-        $space: 24px;
-
-        padding: $space 0;
-        background: color('White');
-        box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
-
-        &-cat {
-            display: flex;
-            border-bottom: 4px solid #383838;
-            padding: 0;
-            margin-bottom: $space;
-
-            .button-tab-category {
-                flex: 0 0 150px;
-                margin-bottom: -4px;
-            }
-        }
-
-        &-tag {
-            margin: -6px;
-
-            .button-min {
-                margin: 6px;
-            }
-        }
-    }
-
-    &__main {
-        padding-top: 64px;
-        padding-bottom: 64px;
-    }
-
-    &__list {
-        margin: -16px -12px;
-    }
-
-    &__card {
-        padding: 16px 12px;
-    }
-}
+@include spot-list($class-name);
 </style>

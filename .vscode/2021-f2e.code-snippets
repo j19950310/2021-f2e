@@ -17,14 +17,16 @@
 	// }
 
 
+    
     "Typo Select": {
         "scope": "scss, vue",
         "prefix": "typo",
         "body": [
-            "@include typo('${1|ZH/Minimal_12px_Medium,ZH/D/Display_52px_Bold,ZH/D/Display-Small_18px_Bold,ZH/D/H1_48px_Bold,ZH/D/H2_21px_Medium,ZH/D/H3_16px_Medium,ZH/D/H4_14px_Medium,ZH/M/Display_28px_Bold,ZH/M/Display-Small_14px_Bold,ZH/M/H1_24px_Bold,ZH/M/H2_17px_Medium,ZH/M/H3_15px_Medium,ZH/M/H4_14px_Medium,EN/Minimal_12px_Semi-Bold_Superscript,EN/D/Display_72px_Bold,EN/D/Display-Small_18px_Bold,EN/D/Number_80px_Bold,EN/D/H1_48px_Bold,EN/D/H2_21px_Semi-Bold,EN/D/H3_16px_Semi-Bold,EN/D/H4_14_Semi-Bold,EN/D/Minimal_12px_Semi-Bold,EN/M/Display_40px_Bold,EN/M/Display_Small_12px_Bold,EN/M/Number_40px_Bold,EN/M/H1_24px_Bold,EN/M/H4_14_Semi-Bold|}');",
+            "@include typo('${1|ZH/Minimal_12px_Medium,ZH/D/Display_52px_Bold,ZH/D/Display-Small_18px_Bold,ZH/D/H1_48px_Bold,ZH/D/H2_21px_Bold,ZH/D/H2_21px_Medium,ZH/D/H3_16px_Bold,ZH/D/H3_16px_Medium,ZH/D/H4_14px_Medium,ZH/M/Display_28px_Bold,ZH/M/Display-Small_14px_Bold,ZH/M/H1_24px_Bold,ZH/M/H2_17px_Bold,ZH/M/H2_17px_Medium,ZH/M/H3_16px_Bold,ZH/M/H3_15px_Medium,ZH/M/H4_14px_Medium,EN/Minimal_12px_Semi-Bold_Superscript,EN/D/Display_72px_Bold,EN/D/Display-Small_18px_Bold,EN/D/Number_80px_Bold,EN/D/H1_48px_Bold,EN/D/H2_21px_Semi-Bold,EN/D/H3_16px_Semi-Bold,EN/D/H4_14_Semi-Bold,EN/D/Minimal_12px_Semi-Bold,EN/M/Display_40px_Bold,EN/M/Display_Small_12px_Bold,EN/M/Number_40px_Bold,EN/M/H1_24px_Bold,EN/M/H2_18px_Semi-Bold,EN/M/H3_16px_Bold,EN/M/H3_15px_Semi-Bold,EN/M/H4_14_Semi-Bold|}');",
         ],
         "description": "與figma同步"
     },
+    
     
     
     "theme color": {
