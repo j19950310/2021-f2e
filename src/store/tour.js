@@ -9,6 +9,12 @@ import {
     getActivitySpotByCity
 } from '@/api/getTourism'
 import {
+    ScenicSpot,
+    RestaurantSpot,
+    HotelSpot,
+    ActivitySpot
+} from '@/api/TourSpot'
+import {
     regionLabels,
     regionKeys,
     getRegionCounty,
@@ -177,12 +183,27 @@ export default {
             hotel: 0,
             activity: 0,
         },
-        savedQuery: {
-            scenic: [],
-            restaurant: [],
-            hotel: [],
-            activity: [],
-        },
+        // savedQuery, savedQueryIds
+        ...(() => {
+            const localSavedQuery = localStorage.getItem('savedQuery') || '{}'
+            const { // savedQuery
+                scenic = [],
+                restaurant = [],
+                hotel = [],
+                activity = [],
+            } = JSON.parse(localSavedQuery.trim())
+            const savedQuery = {
+                scenic: scenic.map((spot) => (new ScenicSpot(spot))),
+                restaurant: restaurant.map((spot) => (new RestaurantSpot(spot))),
+                hotel: hotel.map((spot) => (new HotelSpot(spot))),
+                activity: activity.map((spot) => (new ActivitySpot(spot))),
+            }
+            const savedQueryIds = [scenic, restaurant, hotel, activity].reduce((acc, cur) => {
+                cur.forEach(item => { acc.push(item.ID) })
+                return acc
+            }, [])
+            return { savedQuery, savedQueryIds }
+        })(),
     }),
     getters: {
         getSkip: state => (state.page - 1) * baseQueryConfig.top,
@@ -208,10 +229,32 @@ export default {
                 now: state.page,
             }
         },
-        getSingleSpotByQuery: state => (spot, category) => {
-            const list = state.currentQuery[category] || []
+        getSingleSpotByQuery: state => (spot, category, isSaved = false) => {
+            const queryList = isSaved ? state.savedQuery : state.currentQuery
+            const list = queryList[category] || []
             return list.find(item => item.id === spot) || null
         },
+        getSavedSpotPreview: state => {
+            const { savedQuery, savedQueryIds } = state
+            const ids = savedQueryIds.slice(0, 5)
+            const list = []
+            ids.forEach(id => {
+                Object.keys(savedQuery).forEach(category => {
+                    savedQuery[category].forEach(item => {
+                        if (item.ID === id) list.push(item)
+                    })
+                })
+            })
+            return list
+        },
+        savedQueryTotal: state => {
+            const { savedQuery } = state
+            return Object.keys(savedQuery).reduce((total, cur) => {
+                total[cur] = savedQuery[cur].length
+                return total
+            }, {})
+        },
+        isIdSaved: state => id => state.savedQueryIds.includes(id),
     },
     mutations: {
         showPopUp (state) {
@@ -256,6 +299,22 @@ export default {
         },
         setPage (state, page) {
             state.page = page
+        },
+        toggleSaveSpot (state, { spot, category }) {
+            console.log({ spot, category })
+            const id = spot.id
+            const list = state.savedQuery[category] || []
+            const index = list.findIndex(item => item.id === id)
+            if (index > -1) {
+                list.splice(index, 1)
+                state.savedQueryIds.splice(state.savedQueryIds.indexOf(id), 1)
+            } else {
+                list.unshift(spot)
+                state.savedQueryIds.unshift(id)
+            }
+            localStorage.setItem('savedQuery', JSON.stringify({ ...state.savedQuery }))
+        },
+        destroy (state) {
         },
     },
     actions: {

@@ -1,5 +1,6 @@
 <script setup>
 import bannerImage from '@/assets/tourBanner.png'
+import defaultImage from '@/assets/default.png'
 import { ref, watch, computed, reactive, inject } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
@@ -11,12 +12,17 @@ const title = 'Spot Search' // TODO
 const subtitle = 'Search for a spot by name or by location' // TODO
 const page = ref(1)
 const scrollInstance = inject('scrollInstance')
+const toggleSaveSpot = (spot) => {
+    store.commit('tour/toggleSaveSpot', {
+        spot,
+        category: route.query.category,
+    })
+}
 
 watch(route, (to) => {
     const { query: { page: toPage } } = to
     if (toPage !== page.value) {
         page.value = toPage
-        window.scrollTo(0, 0)
         store.dispatch('tour/dispatchPageQuery', to.query).then(() => {
             console.log(scrollInstance)
         })
@@ -50,6 +56,7 @@ const tags = computed(() => {
 })
 const posts = computed(() => store.getters['tour/getCurrentQueryPostByCategory'](route.query.category))
 const pagination = computed(() => store.getters['tour/getCurrentQueryPagination'](route.query))
+const isIdSaved = computed(() => store.getters['tour/isIdSaved'])
 </script>
 <template>
     <div class="tour-spot-search">
@@ -106,11 +113,12 @@ const pagination = computed(() => store.getters['tour/getCurrentQueryPagination'
                     class="tour-spot-search__card col-4"
                 >
                     <DefaultCard
+                        :is-favorite="isIdSaved(post.id)"
                         :title="post.name"
                         :desc="post.description"
-                        :src="post.picture.src"
+                        :src="post.picture.src || defaultImage"
                         :tags="post.class"
-                        @on-add-favorite="() => {}"
+                        @on-add-favorite="toggleSaveSpot(post)"
                     >
                         <router-link
                             :to="{

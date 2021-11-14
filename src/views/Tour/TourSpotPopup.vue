@@ -3,6 +3,7 @@ import { ref, computed, onMounted, getCurrentInstance } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { Swiper, SwiperSlide } from 'swiper/vue'
+import TourSpot from '@/api/TourSpot'
 const $router = useRouter()
 const $route = useRoute()
 const $store = useStore()
@@ -13,8 +14,10 @@ const isCopy = ref(false)
 const instance = getCurrentInstance() // works
 let copyTimer
 const post = computed(() => {
-    const { params: { spot }, query: { category } } = $route
-    return $store.getters['tour/getSingleSpotByQuery'](spot, category)
+    const { name, params: { spot }, query: { category } } = $route
+    const isSaved = name === 'TourSpotSavedPopup' // 判斷來源
+    console.log({ isSaved, name })
+    return $store.getters['tour/getSingleSpotByQuery'](spot, category, isSaved)
 })
 if (!post.value) {
     $router.push({
@@ -22,7 +25,13 @@ if (!post.value) {
         query: $route.query,
     })
 }
-
+const toggleSaveSpot = () => {
+    const { query: { category } } = $route
+    $store.commit('tour/toggleSaveSpot', { spot: post.value, category })
+}
+const isPostSaved = computed(() => {
+    return $store.getters['tour/isIdSaved'](post.value.id)
+})
 const close = () => {
     isOpen.value = false
     setTimeout(() => {
@@ -45,7 +54,7 @@ const handleCopy = () => {
             :is-active="isOpen"
             @on-close="close"
         >
-            <div class="container">
+            <!-- <div class="container">
                 <div class="tour-spot-popup__main">
                     <div
                         class="tour-spot-popup__close"
@@ -54,10 +63,16 @@ const handleCopy = () => {
                         <Icon name="close-default" />
                     </div>
                     <div class="tour-spot-popup__header">
-                        <p class="tour-spot-popup__title">
+                        <p
+                            v-if="post.name"
+                            class="tour-spot-popup__title"
+                        >
                             {{ post.name }}
                         </p>
-                        <div class="tour-spot-popup__tags">
+                        <div
+                            v-if="post.class && post.class.length"
+                            class="tour-spot-popup__tags"
+                        >
                             <Tag
                                 v-for="name in post.class"
                                 :key="name"
@@ -173,7 +188,10 @@ const handleCopy = () => {
                             <GoogleMap v-bind="post.Position" />
                         </div>
                         <div class="tour-spot-popup__buttons">
-                            <ButtonSecondary icon="like-default">
+                            <ButtonSecondary
+                                :icon="isPostSaved ? 'like-active' : 'like-default'"
+                                @click="toggleSaveSpot"
+                            >
                                 收藏
                             </ButtonSecondary>
                             <ButtonSecondary @click="close">
@@ -182,7 +200,7 @@ const handleCopy = () => {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </Popup>
     </div>
 </template>
