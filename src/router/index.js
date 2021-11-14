@@ -1,4 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import store from '@/store/index'
+import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
 import Dev from '@/views/Dev.vue'
@@ -88,7 +90,15 @@ const routes = [
     },
 ]
 
-export default createRouter({
+const router = createRouter({
     history: createWebHashHistory(),
     routes,
 })
+
+router.afterEach((to, from) => {
+    setTimeout(() => {
+        ScrollTrigger.refresh(true)
+    }, store.state.loadingConfig.minTime * 2)
+})
+
+export default router
