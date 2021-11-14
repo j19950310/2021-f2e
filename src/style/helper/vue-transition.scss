@@ -16,6 +16,43 @@
         }
     }
 }
+
+.loading {
+    &-enter {
+        .loading {
+            &__first {
+                opacity: 1;
+            }
+        }
+
+        &-active {
+            .loading {
+                &__first {
+                    transition: opacity var(--loading-duration);
+                }
+            }
+
+            transition-delay: var(--loading-duration);
+        }
+    }
+
+    &-leave {
+        &-to {
+            .loading {
+                &__first {
+                    opacity: 0;
+                }
+            }
+        }
+
+        &-active {
+            .loading {
+                &__first {
+                    transition: opacity var(--loading-duration);
+                }
+            }
+
+            transition-delay: var(--loading-duration);
         }
     }
 }

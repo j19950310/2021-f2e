@@ -8,8 +8,8 @@ import { ref, reactive, provide, computed, watch, onMounted } from 'vue'
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 const $route = useRoute()
-const store = useStore()
-store.dispatch('admin/init')
+const $store = useStore()
+$store.dispatch('admin/init')
 
 // registerPlugin gsap
 const scrollInstance = reactive({
@@ -96,6 +96,7 @@ onMounted(() => {
             </transition>
         </router-view>
         <div id="portalTarget" />
+        <Loading />
         <CursorApp />
     </div>
 </template>
