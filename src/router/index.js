@@ -3,7 +3,7 @@ import store from '@/store/index'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
-import Dev from '@/views/Dev.vue'
+import Week2Component from '@/views/Week2Component.vue'
 import About from '@/views/About/index.vue'
 import AboutPerson from '@/views/About/AboutPerson.vue'
 import TourHome from '@/views/Tour/Index.vue'
@@ -32,9 +32,9 @@ const routes = [
         ],
     },
     {
-        path: '/dev',
-        name: 'Develope',
-        component: Dev,
+        path: '/week2-component',
+        name: 'Week2Component',
+        component: Week2Component,
     },
     {
         path: '/components',
