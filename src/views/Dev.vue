@@ -12,140 +12,49 @@ import {
 
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import { onMounted, computed, ref } from 'vue'
+import { getBikeStation, getBikeAvailability, getBikeStationWithAvailability } from '@/api/getBike'
 // dev
-onMounted(() => {
-    // await new Promise(resolve => setTimeout(resolve, 100))
-    const collection = {}
-    // const keys = ['ID', 'Name', 'DescriptionDetail', 'Description', 'Phone', 'Address', 'ZipCode', 'TravelInfo', 'OpenTime', 'Picture', 'Position', 'ParkingPosition', 'TicketInfo', 'Remarks', 'SrcUpdateTime', 'UpdateTime']
-    // data.forEach(item => {
-    //     keys.forEach(key => {
-    //         if (!collection[key]) {
-    //             collection[key] = []
-    //         }
-
-    //         if (item[key]) {
-    //             collection[key].push(item[key])
-    //         }
-    //     })
-    // })
-    // console.log({ data })
+const list = ref([])
+// getBikeStation('台北市').then(res => {
+//     list.value.push(...res)
+// })
+// getBikeAvailability('台北市').then(res => {
+//     list.value.push(...res)
+// })
+getBikeStationWithAvailability('台北市').then(res => {
+    list.value.push(...res)
 })
-const citiesOptions = (() => {
-    const arr = Object.entries(cities).map(([label, value]) => ({ value, label }))
-    arr.unshift({ value: '', label: '全部' })
-    return arr
-})()
 
-// data
-const apiOptions = [
-    { label: '餐廳', value: 'restaurant' },
-    { label: '景點', value: 'scenic' },
-    { label: '旅宿', value: 'hotel' },
-    { label: '活動', value: 'activity' },
-]
-const topOptions = [
-    { label: '數量：10', value: '10' },
-    { label: '數量：20', value: '20' },
-    { label: '數量：30', value: '30' },
-]
-const city = ref('')
-const apiType = ref('scenic')
-const topNumber = ref('10')
-const showArray = ref([])
-
-// methods
-const submit = async (e) => {
-    // const config = {top: 1}
-    // let api = apiType.value
-    // new FormData(e.target)
-    const cityParam = getCityParam(city.value)
-    const whatApiType = apiType.value
-    const top = topNumber.value
-    switch (whatApiType) {
-        case 'restaurant':
-            showArray.value = cityParam ? (await getRestaurantSpotByCity(cityParam, { top })) : (await getRestaurantSpot({ top }))
-            break
-        case 'scenic':
-            showArray.value = cityParam ? (await getScenicSpotByCity(cityParam, { top })) : (await getScenicSpot({ top }))
-            break
-        case 'hotel':
-            showArray.value = cityParam ? (await getHotelSpotByCity(cityParam, { top })) : (await getHotelSpot({ top }))
-            break
-        case 'activity':
-            showArray.value = cityParam ? (await getActivitySpotByCity(cityParam, { top })) : (await getActivitySpot({ top }))
-            break
-    }
-}
 </script>
 
 <template>
     <div class="page-dev">
-        <form
-            ref="form"
-            @submit.prevent="submit"
+        <ul
+            v-for="ul in list"
+            :key="ul.id"
         >
-            <select
-                id="city"
-                v-model="city"
-                name="city"
+            <li
+                v-for="key in ['id','name','position','address','version','service','availability']"
+                :key="key"
             >
-                <option
-                    v-for="option in citiesOptions"
-                    :key="option.value"
-                    :value="option.value"
-                >
-                    {{ option.label }}
-                </option>
-            </select>
-            <select
-                id="apiType"
-                v-model="apiType"
-                name="apiType"
-            >
-                <option
-                    v-for="option in apiOptions"
-                    :key="option.value"
-                    :value="option.value"
-                >
-                    {{ option.label }}
-                </option>
-            </select>
-            <select
-                id="top"
-                v-model="topNumber"
-                name="top"
-            >
-                <option
-                    v-for="option in topOptions"
-                    :key="option.value"
-                    :value="option.value"
-                >
-                    {{ option.label }}
-                </option>
-            </select>
-            <input
-                type="submit"
-                value="查"
-            >
-        </form>
-        <div
-            v-if="showArray.length"
-            class="page-dev__show"
-        >
-            <div
-                v-for="item in showArray"
-                :key="item.ID"
-                class="page-dev__show-row"
-            >
-                <div
-                    v-for="(v, k) in item"
-                    :key="k"
-                    class="page-dev__show-col"
-                >
-                    {{ k }}: {{ v }}
-                </div>
-            </div>
-        </div>
+                <template v-if="key === 'availability'">
+                    <ol>
+                        <li
+                            v-for="subkey in ['status','statusDesc','numOfRent','numOfReturn','ableRent','ableReturn']"
+                            :key="subkey"
+                        >
+                            <temaplate v-if="ul['availability'][subkey]">
+                                {{ subkey }}: {{ ul['availability'][subkey] }}
+                            </temaplate>
+                        </li>
+                    </ol>
+                </template>
+
+                <temaplate v-if="key !== 'availability' && ul[key]">
+                    {{ key }}: {{ ul[key] }}
+                </temaplate>
+            </li>
+        </ul>
     </div>
 </template>
 

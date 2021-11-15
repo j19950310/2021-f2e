@@ -1,4 +1,4 @@
-
+// 第一週 API
 import { ScenicSpot, RestaurantSpot, HotelSpot, ActivitySpot } from '@/api/TourSpot'
 import getAxios from '@/api/getAxios'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
