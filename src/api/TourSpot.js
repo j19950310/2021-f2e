@@ -1,5 +1,5 @@
 // ZipCode collection
-
+import PointType from '@/api/PointType'
 export default class TourSpot {
     constructor (config) {
         Object.assign(this, config)
@@ -254,37 +254,6 @@ class TourismPicture {
 
     get empty () {
         return !this.length
-    }
-}
-
-class PointType {
-    constructor (config) {
-        const {
-            GeoHash,
-            PositionLat,
-            PositionLon,
-        } = config
-        Object(this, {
-            GeoHash,
-            PositionLat,
-            PositionLon,
-        })
-    }
-
-    get lat () {
-        return this.PositionLat
-    }
-
-    get lng () {
-        return this.PositionLon
-    }
-
-    get hash () {
-        return this.GeoHash
-    }
-
-    get empty () {
-        return !this.lat && !this.lng && !this.hash
     }
 }
 
