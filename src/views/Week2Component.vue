@@ -3,10 +3,13 @@
 </script>
 
 <template>
-    <div class="week2-component">
-        <div class="container">
+    <div
+        class="week2-component"
+        :style="{'--primary': '#32F3AE'}"
+    >
+        <DragPopup>
             <BikeCard />
-        </div>
+        </DragPopup>
     </div>
 </template>
 

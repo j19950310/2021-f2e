@@ -18,6 +18,7 @@ export default ({ mode }) => {
         },
         server: {
             port: process.env.VITE_APP_PORT,
+            host: '0.0.0.0',
         },
         plugins: [
             vue(),
