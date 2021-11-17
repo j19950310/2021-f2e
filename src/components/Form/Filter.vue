@@ -482,7 +482,7 @@ export default {
 
     &.-pendding {
         &::after {
-            background-color: rgb(color('Black') 0.5);
+            background-color: rgba(color('Black'), 0.5);
             opacity: 100%;
             transition: opacity 1s ease 0.3s;
             pointer-events: all;

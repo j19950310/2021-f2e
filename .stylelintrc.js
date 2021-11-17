@@ -12,12 +12,14 @@ module.exports = {
             files: ["*.vue", "**/*.vue"],
             rules: {
                 'string-quotes': 'single',
+                'color-function-notation': null,
             }
         }
     ],
     rules: {
         indentation: 4,
         'string-quotes': 'single',
+        'color-function-notation': null,
         'property-no-vendor-prefix': null,
         'selector-max-compound-selectors': null,
         'value-no-vendor-prefix': null,
