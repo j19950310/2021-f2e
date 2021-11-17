@@ -12,9 +12,17 @@ import {
 
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import { onMounted, computed, ref } from 'vue'
-import { getBikeStation, getBikeAvailability, getBikeStationWithAvailability } from '@/api/getBike'
+import {
+    getBikeStation,
+    getBikeAvailability,
+    getBikeStationWithAvailability,
+    getBikeStationNearBy,
+    getBikeAvailabilityNearBy,
+    getBikeStationWithAvailabilityNearBy
+} from '@/api/getBike'
 // dev
 const list = ref([])
+const closeStation = ref([])
 // getBikeStation('台北市').then(res => {
 //     list.value.push(...res)
 // })
@@ -24,11 +32,27 @@ const list = ref([])
 getBikeStationWithAvailability('台北市').then(res => {
     list.value.push(...res)
 })
+navigator.geolocation.getCurrentPosition((e) => {
+    const { coords: { latitude: lat, longitude: lng } } = e
+    const config = { position: { lat, lng }, distance: 1000 }
+
+    // getBikeStationNearBy, getBikeAvailabilityNearBy
+    getBikeStationWithAvailabilityNearBy(config).then(res => {
+        closeStation.value.push(...res)
+    })
+}, (e) => {
+    console.log('確定啦')
+}, {
+    enableHighAccuracy: true,
+    timeout: 5000,
+    maximumAge: 0,
+})
 
 </script>
 
 <template>
     <div class="page-dev">
+        站點資料
         <ul
             v-for="ul in list"
             :key="ul.id"
@@ -55,6 +79,9 @@ getBikeStationWithAvailability('台北市').then(res => {
                 </temaplate>
             </li>
         </ul>
+        <br><br><br><br><br><br>
+        近站點
+        {{ closeStation }}
     </div>
 </template>
 

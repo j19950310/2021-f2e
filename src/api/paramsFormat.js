@@ -36,7 +36,7 @@ export default function paramsFormat (config) {
     }
 
     // 排序 $orderby
-    if (position) {
+    if (orderBy) {
         params.append('$orderby', orderBy)
     }
 

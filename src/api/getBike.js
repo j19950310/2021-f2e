@@ -26,7 +26,6 @@ export const getBikeStation = async (queryCity, config = {}) => {
         const queryString = paramsFormat(config)
         // 取得資料
         const { data } = await axios.get(`/Station/${city}/?${queryString}`)
-        console.log(data)
         return data.map(item => (new BikeStation(item)))
     } catch (e) {
         return errorHandler(e)
@@ -55,9 +54,10 @@ export const getBikeAvailability = async (queryCity, config = {}) => {
     }
 }
 
+// 合併功能
 export const getBikeStationWithAvailability = async (queryCity, config = {}) => {
-    const stations = await getBikeStation(queryCity, { config, orderBy: 'StationID' })
-    const availabilities = await getBikeAvailability(queryCity, { config, orderBy: 'StationID' })
+    const stations = await getBikeStation(queryCity, { ...config, orderBy: 'StationID' })
+    const availabilities = await getBikeAvailability(queryCity, { ...config, orderBy: 'StationID' })
 
     return stations.map((station, index) => {
         if (station.StationUID === availabilities[index].StationUID) {
@@ -68,6 +68,7 @@ export const getBikeStationWithAvailability = async (queryCity, config = {}) => 
         }
     }).filter(Boolean)
 }
+
 // GET /v2/Bike/Station/NearBy
 /**
  * 取得指定[位置,範圍]的全臺公共自行車租借站位資料
@@ -79,8 +80,7 @@ export const getBikeStationNearBy = async (config = {}) => {
         const queryString = paramsFormat(config)
         // 取得資料
         const { data } = await axios.get(`/Station/NearBy/?${queryString}`)
-
-        // return data.map(item => (new ScenicSpot(item)))
+        return data.map(item => (new BikeStation(item)))
     } catch (e) {
         return errorHandler(e)
     } finally {
@@ -99,11 +99,26 @@ export const getBikeAvailabilityNearBy = async (config = {}) => {
         const queryString = paramsFormat(config)
         // 取得資料
         const { data } = await axios.get(`/Availability/NearBy/?${queryString}`)
-
-        // return data.map(item => (new ScenicSpot(item)))
+        return data.map(item => (new BikeAvailability(item)))
     } catch (e) {
         return errorHandler(e)
     } finally {
         refreshHeader()
     }
+}
+
+// 合併功能
+export const getBikeStationWithAvailabilityNearBy = async (config = {}) => {
+    const stations = await getBikeStationNearBy({ ...config, orderBy: 'StationID' })
+    const availabilities = await getBikeAvailabilityNearBy({ ...config, orderBy: 'StationID' })
+
+    return stations.map((station, index) => {
+        if (station.StationUID === availabilities[index].StationUID) {
+            // BikeStation(Station, Availabilities)
+            return new BikeStation(station, availabilities[index])
+        } else {
+            const ava = availabilities.find(availability => availability.StationUID === station.StationUID)
+            return new BikeStation(station, ava || null)
+        }
+    }).filter(Boolean)
 }
