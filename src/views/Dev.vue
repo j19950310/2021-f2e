@@ -20,9 +20,12 @@ import {
     getBikeAvailabilityNearBy,
     getBikeStationWithAvailabilityNearBy
 } from '@/api/getBike'
+import { getCyclingShape } from '@/api/getCycling'
 // dev
 const list = ref([])
+const cycleList = ref([])
 const closeStation = ref([])
+
 // getBikeStation('台北市').then(res => {
 //     list.value.push(...res)
 // })
@@ -31,6 +34,11 @@ const closeStation = ref([])
 // })
 getBikeStationWithAvailability('台北市').then(res => {
     list.value.push(...res)
+})
+
+getCyclingShape('台北市').then(res => {
+    console.log(res)
+    cycleList.value.push(...res)
 })
 navigator.geolocation.getCurrentPosition((e) => {
     const { coords: { latitude: lat, longitude: lng } } = e
@@ -80,7 +88,10 @@ navigator.geolocation.getCurrentPosition((e) => {
             </li>
         </ul>
         <br><br><br><br><br><br>
-        近站點
+        腳踏車道(簡化後key值看Class)<br><br>
+        {{ cycleList }}
+        <br><br><br><br><br><br>
+        近站點<br><br>
         {{ closeStation }}
     </div>
 </template>

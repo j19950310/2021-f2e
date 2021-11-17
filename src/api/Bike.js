@@ -106,3 +106,54 @@ export class BikeStation {
         }
     }
 }
+
+export class BikeShape {
+    constructor (config) {
+        Object.assign(this, config)
+    }
+
+    get id () {
+        return this.ShapeUID
+    }
+
+    get author () {
+        return this.AuthorityName
+    }
+
+    get city () {
+        return this.City
+    }
+
+    get town () {
+        return this.Town
+    }
+
+    get start () {
+        return this.RoadSectionStart
+    }
+
+    get end () {
+        return this.RoadSectionEnd
+    }
+
+    get direction () {
+        return this.Direction
+    }
+
+    get isUni () {
+        return this.Direction === '單向'
+    }
+
+    get isBi () {
+        return this.Direction === '雙向'
+    }
+
+    get geometry () {
+        const positionRegex = /(\d+\.\d+) (\d+\.\d+)/g
+        if (this.Geometry) {
+            return [...this.Geometry.matchAll(positionRegex)].map(match => match[0])
+        } else {
+            return undefined
+        }
+    }
+}
