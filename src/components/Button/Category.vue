@@ -58,29 +58,29 @@ export default {
     cursor: pointer;
     user-select: none;
     @include hover {
-        background-color: color('Primary');
-        border-color: color('Primary');
+        background-color: var(--primary, color('Primary'));
+        border-color: var(--primary, color('Primary'));
 
         .icon {
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
     }
 
     &.-focus {
-        background-color: color('Primary');
-        border-color: color('Primary');
+        background-color: var(--primary, color('Primary'));
+        border-color: var(--primary, color('Primary'));
 
         .icon {
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
     }
 
     &.-active {
-        background-color: color('Primary');
-        border-color: color('Primary');
+        background-color: var(--primary, color('Primary'));
+        border-color: var(--primary, color('Primary'));
 
         .icon {
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
     }
 

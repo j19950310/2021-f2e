@@ -103,8 +103,8 @@ export default {
     }
 
     &.-focus {
-        border-color: color('Primary');
-        box-shadow: inset 0 0 0 1px color('Primary');
+        border-color: var(--primary, color('Primary'));
+        box-shadow: inset 0 0 0 1px var(--primary, color('Primary'));
     }
 
     &.-warn {
@@ -141,7 +141,7 @@ export default {
 
             .icon {
                 font-size: $icon-size;
-                color: color('Primary');
+                color: var(--primary, color('Primary'));
                 transition: transform 0.3s ease-in-out, color 0.3s;
             }
 
@@ -158,7 +158,7 @@ export default {
             // }
 
             &:active,&:focus {
-                background-color: color('Primary');
+                background-color: var(--primary, color('Primary'));
 
                 .icon {
                     color: color('Black');

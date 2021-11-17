@@ -40,7 +40,7 @@
                         @include typo-h1;
 
                         .primary {
-                            color: color('Primary');
+                            color: var(--primary, color('Primary'));
                             @include typo('EN/D/Number_80px_Bold');
                             @include media-breakpoint-down('tablet') {
                                 @include typo('EN/M/Number_40px_Bold');

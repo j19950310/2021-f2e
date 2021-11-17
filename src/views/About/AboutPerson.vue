@@ -153,7 +153,7 @@ const close = () => {
 
         @media (hover: hover) and (pointer: fine) {
             &:hover {
-                color: color('Primary');
+                color: var(--primary, color('Primary'));
             }
         }
     }
@@ -239,7 +239,7 @@ const close = () => {
             > * {
                 @media (hover: hover) and (pointer: fine) {
                     &:hover {
-                        color: color('Primary');
+                        color: var(--primary, color('Primary'));
                     }
                 }
 

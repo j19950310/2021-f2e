@@ -81,22 +81,22 @@ export default {
             min-width: 24px;
             min-height: 24px;
             color: color('White');
-            background-color: color('Primary');
+            background-color: var(--primary, color('Primary'));
             border-radius: 80px;
             transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
             #{$class-name}.-active & {
                 color: color('Black');
-                background-color: color('Primary');
+                background-color: var(--primary, color('Primary'));
             }
         }
 
         @include hover {
-            border-bottom-color: color('Primary');
+            border-bottom-color: var(--primary, color('Primary'));
         }
 
         &.-active {
-            border-bottom-color: color('Primary');
+            border-bottom-color: var(--primary, color('Primary'));
         }
     }
 </style>

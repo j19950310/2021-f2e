@@ -247,7 +247,7 @@ const handleCopy = () => {
 
         @media (hover: hover) and (pointer: fine) {
             &:hover {
-                color: color('Primary');
+                color: var(--primary, color('Primary'));
             }
         }
     }
@@ -427,7 +427,7 @@ const handleCopy = () => {
             align-items: center;
             justify-content: center;
             margin-right: $padding;
-            background-color: color('Primary');
+            background-color: var(--primary, color('Primary'));
             border-radius: 50%;
         }
     }

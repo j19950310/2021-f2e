@@ -261,7 +261,7 @@ $class-name: '.tour-header';
             @include size(1.5rem);
 
             margin-right: $padding / 2;
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
 
         &-main {
@@ -324,7 +324,7 @@ $class-name: '.tour-header';
                     position: absolute;
                     bottom: 0;
                     left: 0;
-                    background-color: color('Primary');
+                    background-color: var(--primary, color('Primary'));
                     opacity: 0%;
                 }
             }

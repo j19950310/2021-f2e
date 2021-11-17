@@ -48,7 +48,7 @@ export default {
             padding: 16px 24px;
             width: 100%;
             background-color: transparent;
-            caret-color: color('Primary');
+            caret-color: var(--primary, color('Primary'));
             @include media-breakpoint-down(tablet) {
                 padding: $padding * 1.5 $padding * 2;
             }

@@ -161,7 +161,7 @@ export default {
             position: relative;
 
             span {
-                background-color: color('Primary');
+                background-color: var(--primary, color('Primary'));
             }
         }
     }

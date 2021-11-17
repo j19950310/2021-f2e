@@ -55,8 +55,8 @@ export default {
         }
 
         &.-focus {
-            border-color: color('Primary');
-            box-shadow: inset 0 0 0 1px color('Primary');
+            border-color: var(--primary, color('Primary'));
+            box-shadow: inset 0 0 0 1px var(--primary, color('Primary'));
         }
 
         &__clear {

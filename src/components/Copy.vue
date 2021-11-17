@@ -46,7 +46,7 @@ const copy = () => {
     justify-self: center;
     @media (hover: hover) and (pointer: fine) {
         &:hover {
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
     }
 }

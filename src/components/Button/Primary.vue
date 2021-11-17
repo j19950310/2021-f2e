@@ -23,12 +23,12 @@ export default {
         background-color: color('Black');
 
         .icon {
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
 
         @include hover {
             color: color('Black');
-            background-color: color('Primary');
+            background-color: var(--primary, color('Primary'));
 
             .icon {
                 color: color('Black');

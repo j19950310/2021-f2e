@@ -84,12 +84,12 @@ export default {
             transition: border-bottom-color 0.3s ease;
 
             @include hover {
-                border-bottom-color: color('Primary');
+                border-bottom-color: var(--primary, color('Primary'));
             }
 
             #{$class-name}.-active & {
                 border-bottom-width: 2px;
-                border-bottom-color: color('Primary');
+                border-bottom-color: var(--primary, color('Primary'));
 
                 .icon {
                     transform: rotate(180deg) translateY(-4px);

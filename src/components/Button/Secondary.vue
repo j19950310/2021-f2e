@@ -32,7 +32,7 @@ export default {
             background-color: color('Black');
 
             .icon {
-                color: color('Primary');
+                color: var(--primary, color('Primary'));
             }
         }
     }

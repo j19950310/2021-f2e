@@ -90,14 +90,10 @@
         right: 0;
         padding: $padding * 2.5;
         cursor: pointer;
+        color: var(--primary, color('Primary'));
+
         @include media-breakpoint-down(tablet) {
             padding: $padding;
-        }
-
-        @media (hover: hover) and (pointer: fine) {
-            &:hover {
-                color: color('Primary');
-            }
         }
 
         .icon {
@@ -132,6 +128,7 @@
         border-bottom: 1px solid color('Light-Gray');
         @include media-breakpoint-down(tablet) {
             margin: $padding * 2 0;
+            padding: $padding / 2 0;
         }
     }
 
@@ -164,6 +161,8 @@
 
         span {
             @include typo-h1;
+
+            color: var(--primary, color('Primary'));
         }
 
         p {
@@ -191,6 +190,9 @@
         align-items: center;
         justify-content: space-between;
         margin-bottom: $padding * 2.5;
+        @include media-breakpoint-down(desktop) {
+            margin-bottom: $padding * 2;
+        }
 
         > * {
             flex: 0 0 calc((100% - #{$padding} * 1.5) / 2);

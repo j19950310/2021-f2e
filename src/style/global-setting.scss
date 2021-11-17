@@ -4,7 +4,7 @@
 
 ::selection {
     color: color('White');
-    background: color('Primary');
+    background: var(--primary, color('Primary'));
 }
 
 @include get-container;
@@ -44,7 +44,7 @@ textarea {
     appearance: none;
 
     &::selection {
-        background: color('Primary');
+        background: var(--primary, color('Primary'));
     }
 }
 

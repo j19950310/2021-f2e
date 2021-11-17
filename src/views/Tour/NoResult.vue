@@ -44,7 +44,7 @@ export default {
         .icon {
             position: relative;
             font-size: 12px;
-            color: color('Primary');
+            color: var(--primary, color('Primary'));
         }
 
         span {

@@ -26,7 +26,7 @@ defineProps({
         content: '';
         display: block;
         margin-right: $padding / 2;
-        background-color: color('Primary');
+        background-color: var(--primary, color('Primary'));
         border-radius: 50%;
     }
 }
