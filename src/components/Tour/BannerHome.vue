@@ -94,14 +94,14 @@ const submit = () => {
             @include typo-display;
 
             text-transform: uppercase;
-            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+            text-shadow: 0 1px 6px rgb(0 0 0 / 25%);
         }
 
         &__desc {
             @include typo-display-small;
 
             padding-top: 4px;
-            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+            text-shadow: 0 1px 6px rgb(0 0 0 / 25%);
             margin-bottom: 24px;
             @include media-breakpoint-down(tablet) {
                 margin-bottom: $padding * 2;

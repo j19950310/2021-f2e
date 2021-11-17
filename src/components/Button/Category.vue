@@ -87,7 +87,7 @@ export default {
     &.-default > .icon {
         margin: 0;
         width: 0;
-        opacity: 0;
+        opacity: 0%;
         transition: color 0.15s ease-in-out, width 0.15s linear 0.15s, opacity 0.15s, margin 0.15s linear 0.15s;
     }
 
@@ -95,7 +95,7 @@ export default {
         margin-left: 4px;
         font-size: 24px;
         color: color('White');
-        opacity: 1;
+        opacity: 100%;
         transition: color 0.15s ease-in-out, width 0.15s linear, opacity 0.15s 0.15s, margin 0.15s linear;
     }
 }

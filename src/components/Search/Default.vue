@@ -60,7 +60,7 @@ export default {
 
             &:focus {
                 &::placeholder {
-                    opacity: 0.7;
+                    opacity: 70%;
                 }
             }
         }

@@ -48,6 +48,7 @@
             margin-left: auto;
             flex: 0 0 auto;
             padding-right: 40px;
+
             $spacing: 16px;
 
             &-item {

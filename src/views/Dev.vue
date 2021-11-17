@@ -156,7 +156,7 @@ const submit = async (e) => {
         align-items: center;
         justify-content: center;
 
-        [type="submit"] {
+        [type='submit'] {
             display: flex;
             align-items: center;
             justify-content: center;

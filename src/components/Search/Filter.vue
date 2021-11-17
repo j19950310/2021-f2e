@@ -98,7 +98,7 @@ export default {
 
     input:placeholder-shown {
         & ~ .search-filter__clear {
-            opacity: 0;
+            opacity: 0%;
         }
     }
 
@@ -123,7 +123,7 @@ export default {
     &__functions {
         display: flex;
         margin: -10px 0;
-        opacity: 1;
+        opacity: 100%;
         transition: opacity 0.1s;
         flex-shrink: 0;
 

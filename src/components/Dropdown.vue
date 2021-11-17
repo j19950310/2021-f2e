@@ -68,7 +68,7 @@ export default {
 }
 </script>
 <style lang="scss">
-    $class-name : '.dropdown';
+    $class-name: '.dropdown';
     #{$class-name} {
         position: relative;
         display: inline-block;
@@ -77,7 +77,7 @@ export default {
         &__title {
             display: block;
             cursor: pointer;
-            @include typo-h2();
+            @include typo-h2;
 
             border-bottom: 1px solid #2c2c2c;
             padding-bottom: 8px;

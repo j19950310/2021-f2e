@@ -37,7 +37,7 @@ defineProps({
             .person-card {
                 &__image {
                     &::after {
-                        opacity: 1;
+                        opacity: 100%;
                     }
                 }
             }
@@ -59,8 +59,8 @@ defineProps({
             position: absolute;
             top: 0;
             left: 0;
-            background-color: rgba(44, 44, 44, 0.2);
-            opacity: 0;
+            background-color: rgb(44 44 44 / 20%);
+            opacity: 0%;
             transition: opacity .3s;
         }
     }

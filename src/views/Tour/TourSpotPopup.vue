@@ -370,8 +370,8 @@ const handleCopy = () => {
             padding: $padding * 2;
             background: color('White');
             border-radius: 24px;
-            opacity: 0;
-            box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+            opacity: 0%;
+            box-shadow: 0 0 24px rgb(0 0 0 / 10%);
             transition: opacity .3s;
             transform: translate(0, -100%);
             pointer-events: none;
@@ -382,7 +382,7 @@ const handleCopy = () => {
             }
 
             &.-active {
-                opacity: 1;
+                opacity: 100%;
                 pointer-events: auto;
             }
 
@@ -404,8 +404,8 @@ const handleCopy = () => {
         padding: $padding * 2;
         background: color('White');
         border-radius: 24px;
-        opacity: 0;
-        box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+        opacity: 0%;
+        box-shadow: 0 0 24px rgb(0 0 0 / 10%);
         transform: translate(100%, 0);
         pointer-events: none;
         transition: opacity .3s;
@@ -417,7 +417,7 @@ const handleCopy = () => {
         }
 
         &.-active {
-            opacity: 1;
+            opacity: 100%;
         }
 
         > div {

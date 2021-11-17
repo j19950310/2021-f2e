@@ -1,7 +1,7 @@
 .fade {
     &-enter {
         &-from {
-            opacity: 0;
+            opacity: 0%;
         }
 
         &-active {
@@ -11,7 +11,7 @@
 
     &-leave {
         &-active {
-            opacity: 0;
+            opacity: 0%;
             transition: opacity var(--loading-duration);
         }
     }
@@ -21,7 +21,7 @@
     &-enter {
         .loading {
             &__first {
-                opacity: 1;
+                opacity: 100%;
             }
         }
 
@@ -40,10 +40,10 @@
         &-to {
             .loading {
                 &__first {
-                    opacity: 0;
+                    opacity: 0%;
 
                     > p {
-                        opacity: 0;
+                        opacity: 0%;
                     }
                 }
             }
@@ -135,10 +135,10 @@
 .popup-fade-up {
     &-enter {
         &-from {
-            opacity: 0;
+            opacity: 0%;
 
             .popup__main {
-                opacity: 0;
+                opacity: 0%;
                 transform: translateY(15%);
             }
         }
@@ -154,10 +154,10 @@
 
     &-leave {
         &-to {
-            opacity: 0;
+            opacity: 0%;
 
             .popup__main {
-                opacity: 0;
+                opacity: 0%;
                 transform: translateY(15%);
             }
         }

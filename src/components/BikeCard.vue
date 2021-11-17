@@ -70,7 +70,7 @@
     padding: $padding * 3;
     background-color: color('White');
     border-radius: 24px;
-    box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 24px rgb(0 0 0 / 10%);
 
     &__image {
         @include aspect(200 / 350);
@@ -130,6 +130,9 @@
         padding: $padding 0;
         border-top: 1px solid color('Light-Gray');
         border-bottom: 1px solid color('Light-Gray');
+        @include media-breakpoint-down(tablet) {
+            margin: $padding * 2 0;
+        }
     }
 
     &__count {
@@ -174,6 +177,9 @@
         display: flex;
         align-items: flex-start;
         margin-bottom: $padding * 2.5;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
 
         > * {
             margin-right: $padding * 1.5;

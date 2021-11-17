@@ -30,7 +30,7 @@
                 padding: 8px 24px 24px;
                 background: #ffffff;
                 border-radius: 24px;
-                box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+                box-shadow: 0 0 24px rgb(0 0 0 / 10%);
                 @include media-breakpoint-down('tablet') {
                     display: block;
                 }
@@ -62,7 +62,7 @@
 
             padding: $space 0;
             background: color('White');
-            box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 24px rgb(0 0 0 / 10%);
 
             &-cat {
                 display: flex;

@@ -50,7 +50,7 @@ export default {
 
         input:placeholder-shown {
             & ~ .search-keywords__clear {
-                opacity: 0;
+                opacity: 0%;
             }
         }
 
@@ -67,7 +67,7 @@ export default {
             right: 5px;
             padding: 12.5px;
             font-size: 24px;
-            opacity: 1;
+            opacity: 100%;
             transition: opacity 0.1s;
 
             .icon {

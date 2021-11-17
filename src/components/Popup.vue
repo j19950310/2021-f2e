@@ -42,7 +42,7 @@ defineEmits(['on-close'])
     position: fixed;
     top: 0;
     left: 0;
-    background-color: rgba(color('Black_80%'), 0.8);
+    background-color: rgb(color('Black_80%') 0.8);
     backdrop-filter: blur(30px);
     z-index: 100;
 

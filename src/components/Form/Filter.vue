@@ -473,7 +473,7 @@ export default {
         display: flex;
         justify-content: center;
         font-size: 200px;
-        opacity: 0;
+        opacity: 0%;
         z-index: 100;
         line-height: 2;
         pointer-events: none;
@@ -482,8 +482,8 @@ export default {
 
     &.-pendding {
         &::after {
-            background-color: rgba(color('Black'), 0.5);
-            opacity: 1;
+            background-color: rgb(color('Black') 0.5);
+            opacity: 100%;
             transition: opacity 1s ease 0.3s;
             pointer-events: all;
             animation: dotLoading 1s steps(3) infinite;
@@ -594,7 +594,7 @@ export default {
         .button-main {
             margin: 4px 12px;
             @include media-breakpoint-down(tablet) {
-                margin: 0 0 12px 0;
+                margin: 0 0 12px;
                 width: 100%;
             }
         }

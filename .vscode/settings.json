@@ -1,6 +1,7 @@
 {
     "editor.tabSize": 4,
     "editor.formatOnSave": false,
+    "stylelint.validate": ["css", "scss", "vue"],
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,
         "source.fixAll.stylelint": true
@@ -10,5 +11,4 @@
         "extensions": [".html", ".js", ".vue"]
     },
     "eslint.workingDirectories": ["."],
-    "stylelint.validate": ["css", "scss", "vue"],
 }

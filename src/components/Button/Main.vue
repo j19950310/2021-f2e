@@ -41,7 +41,7 @@ export default {
     .icon {
         margin-left: 12px;
         font-size: 24px;
-        opacity: 1;
+        opacity: 100%;
         transition: color 0.2s ease-in-out, width 0.2s linear, opacity 0.2s 0.2s, margin 0.2s linear;
     }
 }

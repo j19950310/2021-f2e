@@ -70,7 +70,7 @@ const loadingDone = () => {
             @include typo-h2;
 
             color: color('White');
-            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+            text-shadow: 0 1px 6px rgb(0 0 0 / 25%);
         }
     }
 }

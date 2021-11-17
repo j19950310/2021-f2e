@@ -43,7 +43,7 @@ export default {
 
         margin-right: 4px;
         color: color('Black');
-        opacity: 1;
+        opacity: 100%;
         transition: color 0.2s ease-in-out, width 0.2s linear, opacity 0.2s 0.2s, margin 0.2s linear;
         @include media-breakpoint-down(tablet) {
             @include size(1rem);

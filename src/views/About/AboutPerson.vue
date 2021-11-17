@@ -117,7 +117,6 @@ const close = () => {
 </template>
 
 <style lang="scss">
-
 .about-person {
     &__main {
         pointer-events: none;
@@ -221,8 +220,8 @@ const close = () => {
             padding: $padding * 2;
             background: color('White');
             border-radius: 24px;
-            opacity: 0;
-            box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
+            opacity: 0%;
+            box-shadow: 0 0 24px rgb(0 0 0 / 10%);
             transition: opacity .3s;
             transform: translate(0, -100%);
             pointer-events: none;
@@ -233,7 +232,7 @@ const close = () => {
             }
 
             &.-active {
-                opacity: 1;
+                opacity: 100%;
                 pointer-events: auto;
             }
 

@@ -1,14 +1,23 @@
 module.exports = {
-    extends: ['stylelint-config-standard'],
+    extends: ['stylelint-config-standard-scss', 'stylelint-config-recommended-vue'],
     plugins: ['stylelint-order'],
-    "ignoreFiles": [
+    ignoreFiles: [
         "**/*.js",
         "**/*.jsx"
     ],
     // add your custom config here
     // https://stylelint.io/user-guide/configuration
+    overrides: [
+        {
+            files: ["*.vue", "**/*.vue"],
+            rules: {
+                'string-quotes': 'single',
+            }
+        }
+    ],
     rules: {
         indentation: 4,
+        'string-quotes': 'single',
         'property-no-vendor-prefix': null,
         'selector-max-compound-selectors': null,
         'value-no-vendor-prefix': null,

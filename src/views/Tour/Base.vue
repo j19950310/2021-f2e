@@ -47,7 +47,6 @@ const headSearchHandler = (e) => {
     </div>
 </template>
 <style lang="scss">
-
 .tour-base {
     display: flex;
     padding-top: map-get($header-height, large);

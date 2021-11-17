@@ -308,7 +308,7 @@ $class-name: '.tour-header';
             &.-active {
                 span {
                     &::before {
-                        opacity: 1;
+                        opacity: 100%;
                     }
                 }
             }
@@ -325,7 +325,7 @@ $class-name: '.tour-header';
                     bottom: 0;
                     left: 0;
                     background-color: color('Primary');
-                    opacity: 0;
+                    opacity: 0%;
                 }
             }
         }
@@ -347,14 +347,14 @@ $class-name: '.tour-header';
             color: color('Black');
             background-color: color('White');
             border-radius: 24px;
-            opacity: 0;
-            box-shadow: 0 0 24px rgba(0, 0, 0, 0.3);
+            opacity: 0%;
+            box-shadow: 0 0 24px rgb(0 0 0 / 30%);
             transition: opacity .3s;
             transform: translate(0, 100%) translate(0, $padding * 2);
 
             &.-saved {
                 .tour-header__tool-saved.-active & {
-                    opacity: 1;
+                    opacity: 100%;
                 }
 
                 .save-card {

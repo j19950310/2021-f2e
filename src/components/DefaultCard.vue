@@ -76,7 +76,7 @@ defineEmits(['on-add-favorite'])
             .default-card {
                 &__image {
                     &::after {
-                        background-color: rgba(44, 44, 44, 0.2);
+                        background-color: rgb(44 44 44 / 20%);
                     }
                 }
             }
