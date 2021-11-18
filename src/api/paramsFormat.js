@@ -20,6 +20,9 @@ export default function paramsFormat (config) {
         format = 'JSON',
         skip = 0,
         select = [],
+        position = null,
+        orderBy = '',
+        distance = 0,
         filter = '',
     } = config
     const params = new URLSearchParams()
@@ -30,6 +33,16 @@ export default function paramsFormat (config) {
     // 可選擇欄位 $select=[A,B,C]
     if (select.length > 0) {
         params.append('$select', selectToString(select))
+    }
+
+    // 排序 $orderby
+    if (orderBy) {
+        params.append('$orderby', orderBy)
+    }
+
+    // 距離範圍 filter
+    if (position && distance) {
+        params.append('$spatialFilter', spatialFilter(position, distance))
     }
 
     // 主要filter
@@ -72,8 +85,11 @@ export function filterStringConvert (str) {
     return str
 }
 
-// TODO
-// export function spatialFilter ( {}
+// nearby({Lat},{Lon},{DistanceInMeters})，距離範圍為{DistanceInMeters}公尺
+export function spatialFilter (position, distance) {
+    const { lat, lng } = position
+    return `nearby(${lat},${lng},${distance})`
+}
 
 export const cities = {
     臺北市: 'Taipei',
@@ -105,6 +121,23 @@ export const cities = {
     馬祖地區: 'LienchiangCounty',
 }
 
+export const bikeCities = {
+    臺北市: 'Taipei',
+    台北市: 'Taipei',
+    新竹市: 'Hsinchu',
+    苗栗縣: 'MiaoliCounty',
+    新北市: 'NewTaipei',
+    屏東縣: 'PingtungCounty',
+    金門縣: 'KinmenCounty',
+    桃園市: 'Taoyuan',
+    臺中市: 'Taichung',
+    台中市: 'Taichung',
+    高雄市: 'Kaohsiung',
+    臺南市: 'Tainan',
+    嘉義市: 'Chiayi',
+    台南市: 'Tainan',
+}
+
 /**
  * 取得城市 API key值
  * @param {String} text 城市名稱
@@ -114,6 +147,28 @@ export const getCityParam = (text) => {
     if (text === '') return undefined
     try {
         for (const [key, value] of Object.entries(cities)) {
+            if (key.includes(text)) {
+                throw value
+            } else if (value.includes(text)) {
+                throw value
+            }
+        }
+    } catch (city) {
+        return city
+    }
+
+    return false
+}
+
+/**
+ * 取得自行車城市 API key值
+ * @param {String} text 自行車城市名稱
+ * @returns {String} API key值
+ */
+export const getBikeCityParam = (text) => {
+    if (text === '') return undefined
+    try {
+        for (const [key, value] of Object.entries(bikeCities)) {
             if (key.includes(text)) {
                 throw value
             } else if (value.includes(text)) {
