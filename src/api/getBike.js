@@ -3,7 +3,7 @@ import getAxios from '@/api/getAxios'
 import paramsFormat, { getBikeCityParam } from '@/api/paramsFormat'
 import { BikeStation, BikeAvailability } from '@/api/Bike'
 
-// Request URL: https://ptx.transportdata.tw/MOTC/v2/Bike
+// Request URL: https://ptx.transportdata.tw/MOTC/?t=Bike&v=2
 const { axios, refreshHeader } = getAxios('Bike')
 const simpleQueryNumConfig = { // TODO
     // top: 10000,
@@ -77,9 +77,10 @@ export const getBikeStationWithAvailability = async (queryCity, config = {}) => 
  */
 export const getBikeStationNearBy = async (config = {}) => {
     try {
+        config.distance = Math.min(config.distance, 1000)
         const queryString = paramsFormat(config)
         // 取得資料
-        const { data } = await axios.get(`/Station/NearBy/?${queryString}`)
+        const { data } = await axios.get(`/Station/NearBy?${queryString}`)
         return data.map(item => (new BikeStation(item)))
     } catch (e) {
         return errorHandler(e)
@@ -96,9 +97,10 @@ export const getBikeStationNearBy = async (config = {}) => {
  */
 export const getBikeAvailabilityNearBy = async (config = {}) => {
     try {
+        config.distance = Math.min(config.distance, 1000)
         const queryString = paramsFormat(config)
         // 取得資料
-        const { data } = await axios.get(`/Availability/NearBy/?${queryString}`)
+        const { data } = await axios.get(`/Availability/NearBy?${queryString}`)
         return data.map(item => (new BikeAvailability(item)))
     } catch (e) {
         return errorHandler(e)

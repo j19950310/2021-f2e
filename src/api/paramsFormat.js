@@ -16,7 +16,7 @@
  */
 export default function paramsFormat (config) {
     const {
-        top = 1,
+        top = 0,
         format = 'JSON',
         skip = 0,
         select = [],
@@ -26,9 +26,9 @@ export default function paramsFormat (config) {
         filter = '',
     } = config
     const params = new URLSearchParams()
-    params.append('$top', top)
     params.append('$format', format)
-    params.append('$skip', skip)
+    if (top) params.append('$top', top)
+    if (skip) params.append('$skip', skip)
 
     // 可選擇欄位 $select=[A,B,C]
     if (select.length > 0) {

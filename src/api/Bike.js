@@ -50,6 +50,7 @@ export class BikeStation {
     constructor (config, availability = null) {
         Object.assign(this, config)
         this.defaultLanguage = 'zh'
+        this.type = 'bikeStation'
 
         if (availability && availability instanceof BikeAvailability) {
             this.isAvailability = true
