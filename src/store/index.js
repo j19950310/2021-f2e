@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
 import admin from './admin' // 行政區
 import tour from './tour' // 旅遊
+import bike from './bike' // 旅遊
 
 const LOADING = Object.freeze({
     MIN_LOAD_TIME: 600,
@@ -10,6 +11,7 @@ export default createStore({
     modules: {
         admin,
         tour,
+        bike,
     },
     state: () => ({
         isFirstEnter: true,
