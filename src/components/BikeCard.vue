@@ -1,5 +1,46 @@
 <script setup>
-
+defineProps({
+    title: {
+        type: String,
+        default: null,
+    },
+    from: {
+        type: String,
+        default: null,
+    },
+    to: {
+        type: String,
+        default: null,
+    },
+    desc: {
+        type: String,
+        default: null,
+    },
+    rentBikes: {
+        type: Number,
+        default: null,
+    },
+    returnBikes: {
+        type: Number,
+        default: null,
+    },
+    content: {
+        type: String,
+        default: null,
+    },
+    src: {
+        type: String,
+        default: null,
+    },
+    tags: {
+        type: Array,
+        default: null,
+    },
+    date: {
+        type: String,
+        default: null,
+    },
+})
 </script>
 
 <template>
@@ -21,46 +62,61 @@
             </div>
         </div>
         <p class="bike-card__title">
-            YouBike1.0 捷運市政府站(3號出口)
+            {{ title }}
         </p>
         <div class="bike-card__address">
             <p class="bike-card__from">
-                忠孝東路/松仁路(東南側)
+                {{ from }}
             </p>
             <p class="bike-card__to">
-                寧波西街
+                {{ to }}
             </p>
         </div>
         <p class="bike-card__desc">
-            週一~週日 11:30-22:00(供餐至21:00)
+            {{ desc }}
         </p>
-        <div class="bike-card__info">
+        <div
+            v-if="rentBikes || returnBikes"
+            class="bike-card__info"
+        >
             <div class="bike-card__count">
-                <div class="bike-card__number">
-                    <span lang="en">9999</span>
+                <div
+                    v-if="rentBikes"
+                    class="bike-card__number"
+                >
+                    <span lang="en">{{ rentBikes }}</span>
                     <p>可租借</p>
                 </div>
-                <div class="bike-card__number">
-                    <span lang="en">9999</span>
+                <div
+                    v-if="returnBikes"
+                    class="bike-card__number"
+                >
+                    <span lang="en">{{ returnBikes }}</span>
                     <p>可退還</p>
                 </div>
             </div>
-            <div>大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…大稻埕原是平埔族的居住地，因萬華（艋舺）同安人發生激烈的械鬥，造成族人移至大稻埕定居，開始大稻…</div>
+            <div>{{ content }}</div>
         </div>
         <div class="bike-card__tags">
-            <Tag name="台北市" />
-            <Tag name="台北市" />
+            <Tag
+                v-for="tag in tags"
+                :key="tag"
+                :name="tag"
+            />
         </div>
         <div class="bike-card__buttons">
             <ButtonSecondary>
                 <p>返回</p>
             </ButtonSecondary>
             <ButtonPrimary icon="enter">
-                <p>送出</p>
+                <p>路線指引</p>
             </ButtonPrimary>
         </div>
-        <p class="bike-card__update">
-            更新時間：10:09:45
+        <p
+            v-if="date"
+            class="bike-card__update"
+        >
+            更新時間：{{ date }}
         </p>
     </div>
 </template>
