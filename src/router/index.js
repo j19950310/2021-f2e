@@ -52,17 +52,17 @@ const routes = [
                 component: BikeHome,
                 children: [
                     {
-                        path: 'search',
+                        path: 'search/:value',
                         name: 'BikeSearch',
                         component: BikeSearch,
                     },
                     {
-                        path: 'place',
+                        path: 'place/:value',
                         name: 'BikePlace',
                         component: BikePlace,
                     },
                     {
-                        path: 'dir',
+                        path: 'dir/:value',
                         name: 'BikeDir',
                         component: BikeDir,
                     },
