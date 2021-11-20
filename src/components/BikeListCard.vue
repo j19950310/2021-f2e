@@ -28,10 +28,10 @@ defineProps({
             />
             <div class="bike-list-card__content">
                 <p class="bike-list-card__title">
-                    YouBike1.0 捷運市政府站(3號出口)
+                    {{ title }}
                 </p>
                 <p class="bike-list-card__desc">
-                    忠孝東路/松仁路(東南側)
+                    {{ desc }}
                 </p>
             </div>
             <div class="bike-list-card__button">
@@ -39,8 +39,11 @@ defineProps({
             </div>
         </div>
         <div class="bike-list-card__tags">
-            <Tag name="正常營運" />
-            <Tag name="YouBike1.0" />
+            <Tag
+                v-for="tag in tags"
+                :key="tag"
+                :name="tag"
+            />
         </div>
     </div>
 </template>
@@ -50,6 +53,10 @@ defineProps({
     @media (hover: hover) and (pointer: fine) {
         &:hover {
             .bike-list-card {
+                &__title {
+                    color: var(--primary, color('Primary'));
+                }
+
                 &__button {
                     color: color('Black');
                     background-color: var(--primary, color('Primary'));
@@ -70,6 +77,10 @@ defineProps({
         margin-right: $padding * 1.5;
         border-radius: 8px;
         flex: 0 0 64px;
+    }
+
+    &__content {
+        flex: 1 1 auto;
     }
 
     &__title {
