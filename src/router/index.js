@@ -3,7 +3,12 @@ import store from '@/store/index'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
-import Week2Component from '@/views/Week2Component.vue'
+import Bike from '@/views/Bike/Wrapper.vue'
+import BikeHome from '@/views/Bike/Index.vue'
+import BikeSearch from '@/views/Bike/Search.vue'
+import BikePlace from '@/views/Bike/Place.vue'
+import BikeDir from '@/views/Bike/Dir.vue'
+import Dev from '@/views/Dev.vue'
 import About from '@/views/About/index.vue'
 import AboutPerson from '@/views/About/AboutPerson.vue'
 import TourHome from '@/views/Tour/Index.vue'
@@ -20,6 +25,11 @@ const routes = [
     //     component: Home,
     // },
     {
+        path: '/dev',
+        name: 'Dev',
+        component: Dev,
+    },
+    {
         path: '/about',
         name: 'About',
         component: About,
@@ -32,9 +42,33 @@ const routes = [
         ],
     },
     {
-        path: '/week2-component',
-        name: 'Week2Component',
-        component: Week2Component,
+        path: '/bike',
+        name: 'Bike',
+        component: Bike,
+        children: [
+            {
+                path: ':pathMatch(.*)*',
+                name: 'BikeHome',
+                component: BikeHome,
+                children: [
+                    {
+                        path: 'search',
+                        name: 'BikeSearch',
+                        component: BikeSearch,
+                    },
+                    {
+                        path: 'place',
+                        name: 'BikePlace',
+                        component: BikePlace,
+                    },
+                    {
+                        path: 'dir',
+                        name: 'BikeDir',
+                        component: BikeDir,
+                    },
+                ],
+            },
+        ],
     },
     {
         path: '/components',
