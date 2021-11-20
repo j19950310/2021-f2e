@@ -34,35 +34,38 @@ export default {
 }
 </script>
 <style lang="scss">
-    .search-default {
-        padding-right: 24px;
-        background-color: color('White');
-        border: 1px solid transparent;
-        border-radius: 80px;
+.search-default {
+    @include typo-h3;
+
+    display: flex;
+    align-items: center;
+    padding-right: 24px;
+    background-color: color('White');
+    border: 1px solid transparent;
+    border-radius: 80px;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 10%);
+
+    input {
         @include typo-h3;
 
-        input {
-            @include typo-h3;
+        flex: 1 1 auto;
+        padding: 16px 24px;
+        background-color: transparent;
+        caret-color: var(--primary, color('Primary'));
+        @include media-breakpoint-down(tablet) {
+            padding: $padding * 1.5 $padding * 2;
+        }
 
-            display: block;
-            padding: 16px 24px;
-            width: 100%;
-            background-color: transparent;
-            caret-color: var(--primary, color('Primary'));
-            @include media-breakpoint-down(tablet) {
-                padding: $padding * 1.5 $padding * 2;
-            }
+        &::placeholder {
+            color: color('Dark-Gray');
+            transition: opacity 0.3s;
+        }
 
+        &:focus {
             &::placeholder {
-                color: color('Dark-Gray');
-                transition: opacity 0.3s;
-            }
-
-            &:focus {
-                &::placeholder {
-                    opacity: 70%;
-                }
+                opacity: 70%;
             }
         }
     }
+}
 </style>
