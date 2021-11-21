@@ -12,9 +12,11 @@ import { BIKE_TYPE } from '@/plugins/variable'
 export default ({
     namespaced: true,
     state: () => ({
+        isLoading: true,
         isWaiting: false,
         currentLocation: null,
-        allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING, BIKE_TYPE.RESTAURANT, BIKE_TYPE.TOUR],
+        // allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING, BIKE_TYPE.RESTAURANT, BIKE_TYPE.TOUR],
+        allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING],
         selectTypes: [BIKE_TYPE.STATION],
         bikeStations: [],
         bikeCycling: [],
@@ -27,6 +29,9 @@ export default ({
         },
     },
     mutations: {
+        SET_LOADING (state, status) {
+            state.isLoading = status
+        },
         SET_WAITING (state, status) {
             state.isWaiting = status
         },
