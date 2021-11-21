@@ -139,6 +139,19 @@ export default class GoogleMap {
         ]).then(results => results.flat())
     }
 
+    searchPlaceDetail (placeId, options) {
+        if (placeId) {
+            return new Promise(resolve => {
+                this.placesInstance.getDetails({
+                    placeId,
+                    ...options,
+                }, (e) => {
+                    resolve(e || [])
+                })
+            })
+        }
+    }
+
     moveMapToPlace (center, radius) {
         const [minBound] = this.radius
 

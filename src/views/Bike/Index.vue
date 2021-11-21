@@ -4,6 +4,7 @@ import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import BikeSearch from '@/views/Bike/Search.vue'
 import GoogleMap from '@/plugins/GoogleMap/googleMap'
+import { BIKE_TYPE } from '@/plugins/variable'
 
 export default defineComponent({
     components: {
@@ -21,11 +22,17 @@ export default defineComponent({
             })
             this.addClusterMakers()
         }
-        if (this.isPlace) {
-            const marker = this.map.findClusterMarker(({ markerData }) => markerData.StationName.Zh_tw === value)
-            if (marker) {
-                this.map.setActivateMarker(marker)
-                this.$store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
+        if (this.isPlace || to.name === 'BikePlace') {
+            if (!this.map.currentMarker) this.findLocationMarker(value)
+            if (this.map.currentMarker) {
+                let marker = this.map.currentMarker
+                const { markerData } = marker
+                const { type } = markerData
+                if (type === BIKE_TYPE.STATION && markerData.StationName.Zh_tw !== value) marker = this.findLocationMarker(value)
+                if (type === BIKE_TYPE.CYCLING && markerData.RouteName !== value) marker = this.findLocationMarker(value)
+                if (marker) {
+                    this.$store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
+                }
             }
         }
     },
@@ -38,6 +45,18 @@ export default defineComponent({
         const googleMapEl = ref(null)
         const map = ref(null)
         const searchQuerys = ref([])
+        const selectTypesMap = ref({
+            [BIKE_TYPE.STATION]: '自行車站',
+            [BIKE_TYPE.CYCLING]: '自行車路線',
+            [BIKE_TYPE.RESTAURANT]: '餐廳',
+            [BIKE_TYPE.TOUR]: '景點',
+        })
+        const iconsMap = ref({
+            [BIKE_TYPE.STATION]: 'bike',
+            [BIKE_TYPE.CYCLING]: 'cycling',
+            [BIKE_TYPE.RESTAURANT]: 'restaurant',
+            [BIKE_TYPE.TOUR]: 'tour',
+        })
 
         const isWaiting = computed(() => $store.state.bike.isWaiting)
         const isHome = computed(() => $route.name === 'BikeHome')
@@ -45,6 +64,8 @@ export default defineComponent({
         const isPlace = computed(() => $route.name === 'BikePlace')
         const allData = computed(() => $store.getters['bike/allData'])
         const currentLocation = computed(() => $store.state.bike.currentLocation)
+        const allTypes = computed(() => $store.state.bike.allTypes)
+        const selectTypes = computed(() => $store.state.bike.selectTypes)
 
         watch(() => searchValue.value, async (value) => {
             if (value) {
@@ -60,30 +81,84 @@ export default defineComponent({
         const addClusterMakers = () => {
             map.value.clearClusterMarker()
             allData.value.forEach(station => {
-                map.value.setClusterMarker(station, {
-                    position: {
-                        lat: station.StationPosition.PositionLat,
-                        lng: station.StationPosition.PositionLon,
-                    },
-                    icon: new URL('../../assets/icons/bike.svg', import.meta.url).href,
-                })
+                if (station.type === BIKE_TYPE.STATION) {
+                    map.value.setClusterMarker(station, {
+                        position: {
+                            lat: station.StationPosition.PositionLat,
+                            lng: station.StationPosition.PositionLon,
+                        },
+                        icon: new URL('../../assets/icons/bike.svg', import.meta.url).href,
+                    })
+                }
+                if (station.type === BIKE_TYPE.CYCLING) {
+                    const [lng, lat] = station.geometry[0].split(' ')
+                    map.value.setClusterMarker(station, {
+                        position: {
+                            lat: Number(lat),
+                            lng: Number(lng),
+                        },
+                        icon: new URL('../../assets/icons/cycling.svg', import.meta.url).href,
+                    })
+                }
             })
+        }
+        const findLocationMarker = (value) => {
+            if (value) {
+                const marker = map.value.findClusterMarker(({ markerData }) => {
+                    const { type } = markerData
+                    if (type === BIKE_TYPE.STATION) {
+                        return markerData.StationName.Zh_tw === value
+                    }
+                    if (type === BIKE_TYPE.CYCLING) {
+                        return markerData.RouteName === value
+                    }
+                })
+                map.value.setActivateMarker(marker)
+                return marker
+            }
         }
         const search = async (value) => {
             value = value || $route.params.value
-            if (value) {
+            if (typeof value === 'string') {
                 const radius = Math.min(Math.max(map.value.radius[0] | 0, 250), 1000)
                 const [firstPlaces] = await map.value.searchPlace(value, {
                     radius,
                 })
                 if (firstPlaces) {
-                    const { location } = firstPlaces.geometry
-                    await $store.dispatch('bike/GET_BIKE_NEAR_STATIONS', {
-                        options: {
-                            position: { lat: location.lat(), lng: location.lng() },
-                            distance: radius,
-                        },
+                    const detail = await map.value.searchPlaceDetail(firstPlaces.place_id, {
+                        fields: ['address_components'],
                     })
+                    let administrative
+                    if (detail) {
+                        administrative = detail.address_components[4]?.long_name
+                    }
+                    const { location } = firstPlaces.geometry
+
+                    await Promise.all(selectTypes.value.map(type => {
+                        if (type === BIKE_TYPE.STATION) {
+                            return $store.dispatch('bike/GET_BIKE_NEAR_STATIONS', {
+                                options: {
+                                    position: { lat: location.lat(), lng: location.lng() },
+                                    distance: radius,
+                                },
+                            })
+                        }
+                        if (type === BIKE_TYPE.CYCLING) {
+                            return $store.dispatch('bike/GET_BIKE_CYCLING', {
+                                area: administrative,
+                                options: {
+                                    top: 10,
+                                },
+                            })
+                        }
+                        if (type === BIKE_TYPE.RESTAURANT) {
+                            return null
+                        }
+                        if (type === BIKE_TYPE.TOUR) {
+                            return null
+                        }
+                        return null
+                    }))
                     addClusterMakers()
                     map.value.moveMapToPlace(firstPlaces.geometry.location, radius)
                     map.value.removeQueryMarker()
@@ -110,6 +185,17 @@ export default defineComponent({
                 map.value.getUserLocation()
             }
         }
+        const changeSelectTypes = (type) => {
+            $store.commit('bike/CLEAR_ALL_DATA')
+            if (type !== 'all') {
+                selectTypes.value.includes(type)
+                    ? $store.commit('bike/DEL_SELECT_TYPE', type)
+                    : $store.commit('bike/ADD_SELECT_TYPE', type)
+            } else {
+                $store.commit('bike/TOGGLE_ALL_TYPE')
+            }
+            search()
+        }
 
         onMounted(() => {
             map.value = new GoogleMap(googleMapEl.value)
@@ -121,14 +207,31 @@ export default defineComponent({
             })
             map.value.on('markerActivated', (marker) => {
                 map.value.removeQueryMarker()
-                marker.setIcon(new URL('../../assets/icons/bike-active.svg', import.meta.url).href)
+                const { markerData } = marker
+                if (markerData.type === BIKE_TYPE.STATION) {
+                    marker.setIcon(new URL('../../assets/icons/bike-active.svg', import.meta.url).href)
+                }
+                if (markerData.type === BIKE_TYPE.CYCLING) {
+                    marker.setIcon(new URL('../../assets/icons/cycling-active.svg', import.meta.url).href)
+                }
             })
             map.value.on('markerDeActivated', (marker) => {
-                marker.setIcon(new URL('../../assets/icons/bike.svg', import.meta.url).href)
+                const { markerData } = marker
+                if (markerData.type === BIKE_TYPE.STATION) {
+                    marker.setIcon(new URL('../../assets/icons/bike.svg', import.meta.url).href)
+                }
+                if (markerData.type === BIKE_TYPE.CYCLING) {
+                    marker.setIcon(new URL('../../assets/icons/cycling.svg', import.meta.url).href)
+                }
             })
             map.value.on('markerClicked', (marker) => {
                 const { markerData } = marker
-                $router.push({ name: 'BikePlace', params: { value: markerData.StationName.Zh_tw }, query: { ...$route.query } })
+                if (markerData.type === BIKE_TYPE.STATION) {
+                    $router.push({ name: 'BikePlace', params: { value: markerData.StationName.Zh_tw }, query: { ...$route.query } })
+                }
+                if (markerData.type === BIKE_TYPE.CYCLING) {
+                    $router.push({ name: 'BikePlace', params: { value: markerData.RouteName }, query: { ...$route.query } })
+                }
             })
         })
 
@@ -146,8 +249,14 @@ export default defineComponent({
             submit,
             search,
             addClusterMakers,
+            findLocationMarker,
             zoom,
             getUserLocation,
+            selectTypesMap,
+            iconsMap,
+            allTypes,
+            selectTypes,
+            changeSelectTypes,
         }
     },
 })
@@ -208,7 +317,7 @@ export default defineComponent({
             <div
                 class="bike__refresh"
                 :class="{'-active': !isHome && !isWaiting}"
-                @click="search"
+                @click="search(null)"
             >
                 <Icon name="search" />
                 <p>搜尋這個區域</p>
@@ -231,6 +340,44 @@ export default defineComponent({
             >
                 <Icon name="position" />
             </div>
+            <Collapse class="bike__types">
+                <template #display>
+                    <div class="bike__types-display">
+                        <div
+                            v-for="type in selectTypes"
+                            :key="type"
+                            class="bike__types-icon"
+                        >
+                            <Icon :name="`${iconsMap[type]}-outline`" />
+                        </div>
+                        <p>顯示項目 x {{ selectTypes.length }}</p>
+                    </div>
+                </template>
+                <ul class="bike__types-main">
+                    <li
+                        v-for="type in allTypes"
+                        :key="type"
+                        class="bike__types-type"
+                        :class="{'-active': selectTypes.includes(type)}"
+                        @click="changeSelectTypes(type)"
+                    >
+                        <div class="bike__types-icon">
+                            <Icon :name="`${iconsMap[type]}-outline`" />
+                        </div>
+                        <p>{{ selectTypesMap[type] }}</p>
+                    </li>
+                    <li
+                        class="bike__types-type"
+                        :class="{'-active': selectTypes.length === allTypes.length}"
+                        @click="changeSelectTypes('all')"
+                    >
+                        <div class="bike__types-icon">
+                            <Icon name="all-outline" />
+                        </div>
+                        <p>全部項目</p>
+                    </li>
+                </ul>
+            </Collapse>
         </div>
         <div
             class="bike__mask"
@@ -396,6 +543,86 @@ export default defineComponent({
 
     &__reset-position {
         color: color('Dark-Gray');
+    }
+
+    &__types {
+        position: absolute;
+        bottom: $padding * 5;
+        left: 50%;
+        transform: translate(-50%, 0);
+        @include media-breakpoint-down(tablet) {
+            bottom: 12%;
+            left: $padding * 2.5;
+            transform: none;
+        }
+
+        &-icon {
+            @include size(24px);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: $padding;
+            border-radius: 50%;
+
+            .icon {
+                transition: none;
+            }
+        }
+
+        &-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .bike__types-icon {
+                color: color('Black');
+                background-color: var(--primary, color('Primary'));
+            }
+
+            > * {
+                flex-shrink: 0;
+            }
+        }
+
+        &-type {
+            display: flex;
+            align-items: center;
+            white-space: nowrap;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    p {
+                        color: var(--primary, color('Primary'));
+                    }
+                }
+            }
+
+            &.-active {
+                p {
+                    color: var(--primary, color('Primary'));
+                }
+
+                .bike__types-icon {
+                    color: color('Black');
+                    background-color: var(--primary, color('Primary'));
+                }
+            }
+
+            & ~ & {
+                margin-top: $padding * 1.5;
+            }
+
+            p {
+                transition: color .3s;
+            }
+
+            .bike__types-icon {
+                color: color('White');
+                background-color: color('Black');
+            }
+        }
     }
 
     &__mask {

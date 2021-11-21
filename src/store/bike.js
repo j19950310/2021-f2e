@@ -6,18 +6,24 @@ import {
     getBikeAvailabilityNearBy,
     getBikeStationWithAvailabilityNearBy
 } from '@/api/getBike'
+import { getCyclingShape } from '@/api/getCycling'
+import { BIKE_TYPE } from '@/plugins/variable'
 
 export default ({
     namespaced: true,
     state: () => ({
         isWaiting: false,
         currentLocation: null,
+        allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING, BIKE_TYPE.RESTAURANT, BIKE_TYPE.TOUR],
+        selectTypes: [BIKE_TYPE.STATION],
         bikeStations: [],
-        bikeRoads: [],
+        bikeCycling: [],
+        restaurants: [],
+        tours: [],
     }),
     getters: {
         allData (state) {
-            return [...state.bikeStations]
+            return state.selectTypes.map(type => ([...state[type]])).flat()
         },
     },
     mutations: {
@@ -25,13 +31,42 @@ export default ({
             state.isWaiting = status
         },
         SET_BIKE_STATIONS (state, payload) {
-            state.bikeStations = payload || []
+            if (Array.isArray(payload)) {
+                state.bikeStations = payload
+            }
         },
-        SET_BIKE_ROADS (state, payload) {
-            state.bikeRoads = payload
+        SET_BIKE_CYCLING (state, payload) {
+            if (Array.isArray(payload)) {
+                state.bikeCycling = payload
+            }
         },
         SET_CURRENT_LOCATION (state, payload) {
             state.currentLocation = payload
+        },
+        ADD_SELECT_TYPE (state, type) {
+            if (state.allTypes.includes(type)) {
+                state.selectTypes.push(type)
+                state.selectTypes = [...new Set(state.selectTypes)]
+            }
+        },
+        DEL_SELECT_TYPE (state, type) {
+            if (state.allTypes.includes(type)) {
+                const index = state.selectTypes.findIndex(t => t === type)
+                if (~index) state.selectTypes.splice(index, 1)
+            }
+        },
+        TOGGLE_ALL_TYPE (state) {
+            if (state.selectTypes.length !== state.allTypes.length) {
+                state.selectTypes = [...state.allTypes]
+                return
+            }
+            state.selectTypes = []
+        },
+        CLEAR_ALL_DATA (state) {
+            state.bikeStations = []
+            state.bikeCycling = []
+            state.restaurants = []
+            state.tours = []
         },
     },
     actions: {
@@ -41,6 +76,19 @@ export default ({
                 commit('SET_WAITING', true)
                 data = await getBikeStationWithAvailabilityNearBy(options)
                 commit('SET_BIKE_STATIONS', data)
+            } catch (e) {
+                console.log(e)
+            } finally {
+                commit('SET_WAITING', false)
+            }
+            return data
+        },
+        async GET_BIKE_CYCLING ({ commit }, { area, options }) {
+            let data
+            try {
+                commit('SET_WAITING', true)
+                data = await getCyclingShape(area, options)
+                commit('SET_BIKE_CYCLING', data)
             } catch (e) {
                 console.log(e)
             } finally {

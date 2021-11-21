@@ -1,5 +1,5 @@
 <script setup>
-import { inject, ref, watch, onBeforeUnmount } from 'vue'
+import { nextTick, inject, ref, watch, onBeforeUnmount } from 'vue'
 import { Vector2, MathUtils } from 'three'
 import gsap from 'gsap'
 
@@ -67,21 +67,21 @@ const render = () => {
     popup.value.style.overflow = 'hidden'
 }
 const destroy = () => {
-    if (popup.value) {
-        popup.value.style.overflow = 'auto'
-        popup.value.style.transform = 'none'
-        window.cancelAnimationFrame(reqID)
-        window.removeEventListener('touchmove', touchmove)
-        window.removeEventListener('touchend', touchend)
-    }
+    popup.value.style.overflow = 'auto'
+    popup.value.style.transform = 'none'
+    window.cancelAnimationFrame(reqID)
+    window.removeEventListener('touchmove', touchmove)
+    window.removeEventListener('touchend', touchend)
 }
 
 watch(() => viewport.isPc, (value) => {
-    if (!value) {
-        render()
-        return
-    }
-    destroy()
+    nextTick(() => {
+        if (!value) {
+            render()
+            return
+        }
+        destroy()
+    })
 }, { immediate: true })
 
 onBeforeUnmount(() => {

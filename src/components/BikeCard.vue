@@ -41,6 +41,8 @@ defineProps({
         default: null,
     },
 })
+defineEmits(['on-back', 'on-road'])
+
 </script>
 
 <template>
@@ -49,26 +51,38 @@ defineProps({
             v-bg="'https://source.unsplash.com/random/1024x768'"
             class="bike-card__image"
         >
-            <div
+            <!-- <div
                 class="bike-card__favorite"
             >
                 <Icon
                     name="like-active"
                 />
-                <!-- <Icon
-                    v-else
+                <Icon
                     name="like-default"
-                /> -->
-            </div>
+                />
+            </div> -->
         </div>
         <p class="bike-card__title">
             {{ title }}
         </p>
-        <div class="bike-card__address">
-            <p class="bike-card__from">
+        <div
+            v-if="from ||to "
+            class="bike-card__address"
+        >
+            <p
+                v-if="from"
+                class="bike-card__from"
+            >
                 {{ from }}
             </p>
-            <p class="bike-card__to">
+            <Icon
+                v-if="to"
+                name="arrow-right"
+            />
+            <p
+                v-if="to"
+                class="bike-card__to"
+            >
                 {{ to }}
             </p>
         </div>
@@ -105,10 +119,13 @@ defineProps({
             />
         </div>
         <div class="bike-card__buttons">
-            <ButtonSecondary>
+            <ButtonSecondary @click="$emit('on-back')">
                 <p>返回</p>
             </ButtonSecondary>
-            <ButtonPrimary icon="enter">
+            <ButtonPrimary
+                icon="enter"
+                @click="$emit('on-road')"
+            >
                 <p>路線指引</p>
             </ButtonPrimary>
         </div>
@@ -162,7 +179,13 @@ defineProps({
         @include typo-min;
 
         display: flex;
-        align-items: center;
+        align-items: flex-start;
+
+        .icon {
+            @include size(1rem);
+
+            margin: $padding * 0.15 $padding;
+        }
     }
 
     &__desc {
@@ -176,7 +199,6 @@ defineProps({
         margin: $padding * 2.5 0;
         padding: $padding 0;
         border-top: 1px solid color('Light-Gray');
-        border-bottom: 1px solid color('Light-Gray');
         @include media-breakpoint-down(tablet) {
             margin: $padding * 2 0;
             padding: $padding / 2 0;
@@ -227,6 +249,9 @@ defineProps({
         display: flex;
         align-items: flex-start;
         margin-bottom: $padding * 2.5;
+        padding-top: $padding / 2;
+        border-top: 1px solid color('Light-Gray');
+
         @include media-breakpoint-down(tablet) {
             margin-bottom: $padding * 2;
         }

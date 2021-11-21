@@ -1,4 +1,5 @@
 import PointType from '@/api/PointType'
+import { BIKE_TYPE } from '@/plugins/variable'
 
 export class BikeAvailability {
     constructor (config, station = null) {
@@ -50,7 +51,7 @@ export class BikeStation {
     constructor (config, availability = null) {
         Object.assign(this, config)
         this.defaultLanguage = 'zh'
-        this.type = 'bikeStation'
+        this.type = BIKE_TYPE.STATION
 
         if (availability && availability instanceof BikeAvailability) {
             this.isAvailability = true
@@ -111,6 +112,7 @@ export class BikeStation {
 export class BikeShape {
     constructor (config) {
         Object.assign(this, config)
+        this.type = BIKE_TYPE.CYCLING
     }
 
     get id () {

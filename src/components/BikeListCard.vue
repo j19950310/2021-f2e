@@ -4,6 +4,14 @@ defineProps({
         type: String,
         default: null,
     },
+    from: {
+        type: String,
+        default: null,
+    },
+    to: {
+        type: String,
+        default: null,
+    },
     desc: {
         type: String,
         default: null,
@@ -30,6 +38,27 @@ defineProps({
                 <p class="bike-list-card__title">
                     {{ title }}
                 </p>
+                <div
+                    v-if="from ||to "
+                    class="bike-list-card__address"
+                >
+                    <p
+                        v-if="from"
+                        class="bike-list-card__from"
+                    >
+                        {{ from }}
+                    </p>
+                    <Icon
+                        v-if="to"
+                        name="arrow-right"
+                    />
+                    <p
+                        v-if="to"
+                        class="bike-list-card__to"
+                    >
+                        {{ to }}
+                    </p>
+                </div>
                 <p class="bike-list-card__desc">
                     {{ desc }}
                 </p>
@@ -87,6 +116,20 @@ defineProps({
         @include typo-h3;
 
         margin-bottom: $padding / 2;
+    }
+
+    &__address {
+        @include typo-min;
+
+        display: flex;
+        align-items: flex-start;
+        color: color('Dark-Gray');
+
+        .icon {
+            @include size(1rem);
+
+            margin: $padding * 0.15 $padding;
+        }
     }
 
     &__desc {
