@@ -36,7 +36,7 @@ const headSearchHandler = (e) => {
             <div class="tour-base__filter">
                 <div class="container">
                     <div class="col-desktop-8">
-                        <FormFilter
+                        <FormTourFilter
                             @back="hidePopUp"
                             @submit="hidePopUp"
                         />

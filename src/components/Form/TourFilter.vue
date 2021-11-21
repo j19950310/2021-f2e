@@ -205,7 +205,7 @@ import {
 } from '@/api/taiwanCountyData'
 
 export default {
-    name: 'FormFilter',
+    name: 'FormTourFilter',
     emits: ['back', 'submit'],
     data () {
         const region = Object.keys(regionLabels).reduce((obj, key) => {
