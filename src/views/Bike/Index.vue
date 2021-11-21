@@ -10,17 +10,18 @@ export default defineComponent({
         BikeSearch,
     },
     async beforeRouteUpdate (to, from) {
+        const { lat = 0, lng = 0, r = 0 } = to.query
+        const { value } = to.params
         if (this.isHome) {
             await this.$store.dispatch('bike/GET_BIKE_NEAR_STATIONS', {
                 options: {
                     position: { lat, lng },
-                    distance: radius | 0,
+                    distance: r | 0,
                 },
             })
             this.addClusterMakers()
         }
         if (this.isPlace) {
-            const { value } = to.params
             const marker = this.map.findClusterMarker(({ markerData }) => markerData.StationName.Zh_tw === value)
             if (marker) {
                 this.map.setActivateMarker(marker)
@@ -115,7 +116,7 @@ export default defineComponent({
 
         onMounted(() => {
             map.value = new GoogleMap(googleMapEl.value)
-            map.value.on('init', (payload) => {
+            map.value.on('init', () => {
                 search()
             })
             map.value.on('boundsChanged', (payload) => {

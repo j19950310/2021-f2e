@@ -12,10 +12,10 @@ export default class GoogleMap {
         this.options = {
             mapId,
             center: {
-                lat: 0,
-                lng: 0,
+                lat: 23.973875,
+                lng: 120.982024,
             },
-            zoom: 17,
+            zoom: 8,
             minZoom: 8,
             disableDefaultUI: true,
             ...options,
@@ -45,6 +45,7 @@ export default class GoogleMap {
                 if (navigator.geolocation) {
                     this.getUserLocation(() => {
                         this.userLocationMark.setMap(this.mapInstance)
+                        this.setZoom(17)
                         this.onEvents.init?.()
                     })
                     navigator.geolocation.watchPosition(this.userLocationChange, (err) => {
@@ -72,17 +73,17 @@ export default class GoogleMap {
 
     getUserLocation (callback) {
         if (this.agreeGeolocation) {
-            this.moveMapToPlace(this.userLocationMark.getPosition())
             callback?.()
+            this.moveMapToPlace(this.userLocationMark.getPosition())
             return
         }
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (e) => {
                     this.agreeGeolocation = true
+                    callback?.()
                     this.userLocationChange(e)
                     this.moveMapToPlace(this.userLocationMark.getPosition())
-                    callback?.()
                 },
                 (err) => {
                     console.log(err)
