@@ -49,7 +49,7 @@ export default defineComponent({
         const isSearch = computed(() => $route.name === 'BikeSearch')
         const isPlace = computed(() => $route.name === 'BikePlace')
         const allData = computed(() => $store.getters['bike/allData'])
-        const currentLocation = computed(() => $store.state.bike.currentLocation)
+        const currentLocationData = computed(() => $store.state.bike.currentLocationData)
         const allTypes = computed(() => $store.state.bike.allTypes)
         const selectTypes = computed(() => $store.state.bike.selectTypes)
 
@@ -66,7 +66,7 @@ export default defineComponent({
                     const marker = findLocationMarker($route.params.value)
                     if (marker) {
                         map.value.moveMapToPlace(marker.position)
-                        $store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
+                        $store.commit('bike/SET_CURRENT_LOCATION_DATA', marker.markerData)
                     }
                 }
             }
@@ -191,6 +191,10 @@ export default defineComponent({
             }
             search()
         }
+        const reset = () => {
+            $router.push({ name: 'BikeHome' })
+            map.value.removeQueryMarker()
+        }
 
         onMounted(() => {
             map.value = new GoogleMap(googleMapEl.value)
@@ -200,6 +204,12 @@ export default defineComponent({
             })
             map.value.on('boundsChanged', (payload) => {
                 handleBoundsChanged(payload)
+            })
+            map.value.on('onUserLocationChanged', (position) => {
+                $store.commit('bike/SET_USER_LOCATION', {
+                    lat: position.lat(),
+                    lng: position.lng(),
+                })
             })
             map.value.on('markerActivated', (marker) => {
                 map.value.removeQueryMarker()
@@ -241,7 +251,7 @@ export default defineComponent({
             isSearch,
             isPlace,
             allData,
-            currentLocation,
+            currentLocationData,
             submit,
             search,
             addClusterMakers,
@@ -253,6 +263,7 @@ export default defineComponent({
             allTypes,
             selectTypes,
             changeSelectTypes,
+            reset,
         }
     },
 })
@@ -277,7 +288,7 @@ export default defineComponent({
                         <div
                             v-show="!isHome"
                             class="search-filter__functions-item"
-                            @click="$router.push({name: 'BikeHome'})"
+                            @click="reset"
                         >
                             <Icon name="close-active" />
                         </div>
@@ -312,7 +323,7 @@ export default defineComponent({
                         </ul>
                     </div>
                 </SearchDefault>
-                <DragPopup v-show="(isSearch && allData.length) || (isPlace && currentLocation)">
+                <DragPopup v-show="(isSearch && allData.length) || (isPlace && currentLocationData)">
                     <router-view v-if="!isHome" />
                     <BikeSearch v-else />
                 </DragPopup>

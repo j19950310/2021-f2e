@@ -25,17 +25,21 @@ export default defineComponent({
         const bikeType = ref(BIKE_TYPE)
         const serviceStatusMap = ref(['停止營運', '正常營運', '暫停營運'])
 
-        const currentLocation = computed(() => $store.state.bike.currentLocation)
+        const currentLocationData = computed(() => $store.state.bike.currentLocationData)
+        const userLocation = computed(() => $store.state.bike.userLocation)
 
         const linkGoogleDirections = (address) => {
-            const { query: { lat, lng } } = $route
+            let { query: { lat, lng } } = $route
+            if (userLocation.value) {
+                ({ lat, lng } = userLocation.value)
+            }
             window.open(`https://www.google.com.tw/maps/dir/${lat},${lng}/${address}`, '_blank')
         }
 
         return {
             bikeType,
             serviceStatusMap,
-            currentLocation,
+            currentLocationData,
             prevRoute,
             linkGoogleDirections,
         }
@@ -47,31 +51,31 @@ export default defineComponent({
 <template>
     <div class="bike-place">
         <BikeCard
-            v-if="currentLocation && currentLocation.type === bikeType.STATION"
-            :title="currentLocation.StationName.Zh_tw"
-            :desc="currentLocation.StationAddress.Zh_tw"
-            :rent-bikes="currentLocation.availability.AvailableRentBikes"
-            :return-bikes="currentLocation.availability.AvailableReturnBikes"
+            v-if="currentLocationData && currentLocationData.type === bikeType.STATION"
+            :title="currentLocationData.StationName.Zh_tw"
+            :desc="currentLocationData.StationAddress.Zh_tw"
+            :rent-bikes="currentLocationData.availability.AvailableRentBikes"
+            :return-bikes="currentLocationData.availability.AvailableReturnBikes"
             :tags="[
-                serviceStatusMap[currentLocation.availability.ServiceStatus],
-                `YouBike${currentLocation.ServiceType}.0`,
+                serviceStatusMap[currentLocationData.availability.ServiceStatus],
+                `YouBike${currentLocationData.ServiceType}.0`,
             ]"
-            :date="currentLocation.UpdateTime"
+            :date="currentLocationData.UpdateTime"
             @on-back="$router.push(prevRoute)"
-            @on-road="linkGoogleDirections(`${currentLocation.StationPosition.PositionLat},${currentLocation.StationPosition.PositionLon}`)"
+            @on-road="linkGoogleDirections(`${currentLocationData.StationPosition.PositionLat},${currentLocationData.StationPosition.PositionLon}`)"
         />
         <BikeCard
-            v-if="currentLocation && currentLocation.type === 'bikeCycling'"
-            :title="currentLocation.RouteName"
-            :from="currentLocation.RoadSectionStart"
-            :to="currentLocation.RoadSectionEnd"
+            v-if="currentLocationData && currentLocationData.type === 'bikeCycling'"
+            :title="currentLocationData.RouteName"
+            :from="currentLocationData.RoadSectionStart"
+            :to="currentLocationData.RoadSectionEnd"
             :tags="[
-                currentLocation.city,
-                `路線長度：${currentLocation.CyclingLength / 1000}km`,
+                currentLocationData.city,
+                `路線長度：${currentLocationData.CyclingLength / 1000}km`,
             ]"
-            :date="currentLocation.UpdateTime"
+            :date="currentLocationData.UpdateTime"
             @on-back="$router.push(prevRoute)"
-            @on-road="linkGoogleDirections(`${currentLocation.geometry[0].split(' ').reverse().join(',')}`)"
+            @on-road="linkGoogleDirections(`${currentLocationData.geometry[0].split(' ').reverse().join(',')}`)"
         />
     </div>
 </template>

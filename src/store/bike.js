@@ -14,7 +14,8 @@ export default ({
     state: () => ({
         isLoading: true,
         isWaiting: false,
-        currentLocation: null,
+        currentLocationData: null,
+        userLocation: null,
         // allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING, BIKE_TYPE.RESTAURANT, BIKE_TYPE.TOUR],
         allTypes: [BIKE_TYPE.STATION, BIKE_TYPE.CYCLING],
         selectTypes: [BIKE_TYPE.STATION],
@@ -45,8 +46,11 @@ export default ({
                 state.bikeCycling = payload
             }
         },
-        SET_CURRENT_LOCATION (state, payload) {
-            state.currentLocation = payload
+        SET_CURRENT_LOCATION_DATA (state, payload) {
+            state.currentLocationData = payload
+        },
+        SET_USER_LOCATION (state, payload) {
+            state.userLocation = payload
         },
         ADD_SELECT_TYPE (state, type) {
             if (state.allTypes.includes(type)) {

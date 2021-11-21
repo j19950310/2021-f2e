@@ -99,6 +99,7 @@ export default class GoogleMap {
     userLocationChange ({ coords: { latitude: lat, longitude: lng } }) {
         if (this.userLocationMark) {
             this.userLocationMark.setPosition({ lat, lng })
+            this.onEvents.onUserLocationChanged?.(this.userLocationMark.getPosition())
         }
     }
 
