@@ -2,7 +2,7 @@
     <div class="tour-no-result">
         <div class="tour-no-result__main container">
             <div class="tour-no-result__title">
-                哎呀！找不到你的搜尋結果 ...
+                哎呀！找不到你的搜尋結果: {{ $route.query.keyword }}
             </div>
             <div class="tour-no-result__desc">
                 小精靈環島了好幾圈仍未找到你的應許之地 😭 <br>
@@ -36,6 +36,7 @@ export default {
 
     &__title {
         @include typo-h1;
+        @include text-ellipsis(1);
     }
 
     &__desc {

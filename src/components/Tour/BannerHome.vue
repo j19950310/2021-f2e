@@ -18,13 +18,25 @@ const headSearchHandler = (e) => {
     }
 }
 const submit = () => {
-    router.push({
-        name: 'TourSpotSearch',
-        query: {
-            category: 'scenic',
-            page: 1,
-            keyword: searchValue.value,
-        },
+    const formData = new FormData()
+    formData.set('keywords', searchValue.value)
+    store.dispatch('tour/query', formData).then((e) => {
+        router.push({
+            name: 'TourSpotSearch',
+            query: {
+                category: 'scenic',
+                page: 1,
+                keyword: searchValue.value,
+            },
+        })
+    }).catch((e) => {
+        router.push({
+            name: 'TourNoResult',
+            query: {
+                keyword: searchValue.value,
+            },
+        })
+        searchValue.value = ''
     })
 }
 </script>
