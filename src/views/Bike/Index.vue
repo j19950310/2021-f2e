@@ -12,7 +12,6 @@ export default defineComponent({
     },
     async beforeRouteUpdate (to, from) {
         const { lat = 0, lng = 0, r = 0 } = to.query
-        const { value } = to.params
         if (this.isHome) {
             await this.$store.dispatch('bike/GET_BIKE_NEAR_STATIONS', {
                 options: {
@@ -21,22 +20,6 @@ export default defineComponent({
                 },
             })
             this.addClusterMakers()
-        }
-        if (this.isPlace || to.name === 'BikePlace') {
-            if (!this.map.currentMarker) this.findLocationMarker(value)
-            if (this.map.currentMarker) {
-                let marker = this.map.currentMarker
-                const { markerData } = marker
-                const { type } = markerData
-                if (type === BIKE_TYPE.STATION && markerData.StationName.Zh_tw !== value) marker = this.findLocationMarker(value)
-                if (type === BIKE_TYPE.CYCLING && markerData.RouteName !== value) marker = this.findLocationMarker(value)
-                if (marker) {
-                    if (this.map.calcLineDistance(marker.position, this.map.mapInstance.getCenter()) > 100) {
-                        this.map.moveMapToPlace(marker.position)
-                    }
-                    this.$store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
-                }
-            }
         }
     },
     setup () {
@@ -76,6 +59,17 @@ export default defineComponent({
                 return
             }
             searchQuerys.value = []
+        })
+        watch(() => $route.params.value, (value) => {
+            if (value) {
+                if (!isSearch.value) {
+                    const marker = findLocationMarker($route.params.value)
+                    if (marker) {
+                        map.value.moveMapToPlace(marker.position)
+                        $store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
+                    }
+                }
+            }
         })
 
         const handleBoundsChanged = async ({ lat, lng, radius }) => {
@@ -280,6 +274,13 @@ export default defineComponent({
                     @submit="submit(searchValue)"
                 >
                     <div class="search-filter__functions">
+                        <div
+                            v-show="!isHome"
+                            class="search-filter__functions-item"
+                            @click="$router.push({name: 'BikeHome'})"
+                        >
+                            <Icon name="close-active" />
+                        </div>
                         <div
                             class="search-filter__functions-item"
                             @click="submit(searchValue)"

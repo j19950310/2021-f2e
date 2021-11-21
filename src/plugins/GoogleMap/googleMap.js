@@ -18,6 +18,7 @@ export default class GoogleMap {
             zoom: 8,
             minZoom: 8,
             disableDefaultUI: true,
+            gestureHandling: 'greedy',
             ...options,
         }
         this.onEvents = {}
