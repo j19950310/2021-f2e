@@ -38,6 +38,7 @@ const isLoading = computed(() => $store.state.bike.isLoading)
 .bike-wrapper {
     touch-action: none;
     overflow: hidden;
+    user-select: none;
 
     &__loading {
         @include size(100%);

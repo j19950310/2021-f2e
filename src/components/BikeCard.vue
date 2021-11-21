@@ -269,11 +269,16 @@ defineEmits(['on-back', 'on-road'])
         @include media-breakpoint-down(desktop) {
             margin-bottom: $padding * 2;
         }
+        @include media-breakpoint-down(tablet) {
+            display: block;
+        }
 
         > * {
             flex: 0 0 calc((100% - #{$padding} * 1.5) / 2);
             @include media-breakpoint-down(tablet) {
+                width: 100%;
                 min-width: auto;
+                margin-bottom: $padding * 1.5;
             }
         }
     }
