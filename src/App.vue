@@ -8,7 +8,7 @@ import ImagesLoaded from 'imagesloaded'
 import gsap from 'gsap/dist/gsap'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 // viewport
-import Viewport from '@/plugins/viewport'
+import vp from '@/plugins/viewport'
 const $route = useRoute()
 const $store = useStore()
 $store.dispatch('admin/init')
@@ -32,7 +32,7 @@ const scrollTriggerInstance = ScrollTrigger.create({
         scrollInstance.end = self.end
     },
 })
-const viewport = reactive(new Viewport())
+const viewport = reactive(vp)
 
 const loadingConfig = computed(() => $store.state.loadingConfig)
 const isFirstEnter = computed(() => $store.state.isFirstEnter)
@@ -84,55 +84,7 @@ onMounted(async () => {
             '--loading-duration': `${loadingConfig.minTime / 1000}s`
         }"
     >
-        <!-- <div class="dev-link__wrap">
-            <router-link
-                class="dev-link"
-                to="/dev"
-            >
-                DEV
-            </router-link>
-            <router-link
-                class="dev-link"
-                to="/components"
-            >
-                Component
-            </router-link>
-            <router-link
-                class="dev-link"
-                to="/tour"
-            >
-                旅遊景點
-            </router-link>
-            <router-link
-                class="dev-link"
-                to="/tour/no-result"
-            >
-                旅遊景點（搜不到)
-            </router-link>
-            <router-link
-                class="dev-link"
-                to="/tour/spot/search"
-            >
-                搜尋結果
-            </router-link>
-            <router-link
-                class="dev-link"
-                to="/tour/spot/saved"
-            >
-                收藏
-            </router-link>
-        </div> -->
-        <router-view v-slot="{ Component }">
-            <transition
-                name="fade"
-                mode="out-in"
-            >
-                <component
-                    :is="Component"
-                    v-show="!isFirstEnter"
-                />
-            </transition>
-        </router-view>
+        <router-view />
         <div id="portalTarget" />
         <Loading />
         <CursorApp />
@@ -140,20 +92,5 @@ onMounted(async () => {
 </template>
 
 <style lang="scss">
-.dev-link {
-    display: inline-block;
-    margin-right: 10px;
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #cccccc;
-    z-index: 100;
 
-    &__wrap {
-        position: fixed;
-        top: 50px;
-        right: 0;
-        left: 0;
-        z-index: 100;
-    }
-}
 </style>
