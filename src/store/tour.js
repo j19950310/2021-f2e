@@ -19,7 +19,7 @@ import {
     // QUERY_ACTIVITY,
     QUERY_ACTIVITY_BY_CITY,
     FILTER_BASIC_TRUE,
-    BASIC_FILTER
+    BASIC_TOUR_FILTER
 } from '@/plugins/defaultFilter'
 
 import getZipcode from '@/api/getZipcode'
@@ -274,7 +274,7 @@ export default {
             context.dispatch('resetAll') // 重置資料
             return new Promise((resolve, reject) => {
                 const requestStacks = []
-                const filter = Object.assign({}, BASIC_FILTER)
+                const filter = Object.assign({}, BASIC_TOUR_FILTER)
                 const queryString = config.keywords
                     ? `(contains(Name,'${config.keywords}') | contains(Description,'${config.keywords}'))`
                     : FILTER_BASIC_TRUE

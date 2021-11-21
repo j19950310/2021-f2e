@@ -103,6 +103,13 @@ getTownsByCountycode('A').then(res => {
                     style="background: #000000; backdrop-filter: blur(2px);"
                 >
                     FormTourFilter
+                    <FormBikeFilter />
+                </div>
+                <div
+                    class="col-6"
+                    style="background: #000000; backdrop-filter: blur(2px);"
+                >
+                    FormTourFilter
                     <FormTourFilter />
                 </div>
             </div>

@@ -260,7 +260,7 @@ export const QUERY_ACTIVITY_BY_CITY = 'QUERY_ACTIVITY_BY_CITY'
 export const FILTER_BASIC_TRUE = '1 == 1'
 
 // 初始化預設Filter
-export const BASIC_FILTER = { // Query 預設 True
+export const BASIC_TOUR_FILTER = { // Query 預設 True
     [QUERY_SCENIC]: FILTER_BASIC_TRUE,
     [QUERY_SCENIC_BY_CITY]: FILTER_BASIC_TRUE,
     [QUERY_RESTAURANT]: FILTER_BASIC_TRUE,
@@ -270,7 +270,7 @@ export const BASIC_FILTER = { // Query 預設 True
     [QUERY_ACTIVITY]: FILTER_BASIC_TRUE,
     [QUERY_ACTIVITY_BY_CITY]: '1 == 0', // 活動沒有ZipCode
 }
-Object.freeze(BASIC_FILTER)
+Object.freeze(BASIC_TOUR_FILTER)
 
 export const getTourQueryFunction = {
     [QUERY_SCENIC]: getScenicSpot,
