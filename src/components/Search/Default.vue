@@ -66,9 +66,10 @@ export default {
     input {
         @include typo-h3;
 
-        flex: 1 1 auto;
         padding: 16px 24px;
+        width: 100%;
         background-color: transparent;
+        flex: 1 1 auto;
         caret-color: var(--primary, color('Primary'));
         @include media-breakpoint-down(tablet) {
             padding: $padding * 1.5 $padding * 2;
