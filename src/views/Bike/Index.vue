@@ -31,6 +31,9 @@ export default defineComponent({
                 if (type === BIKE_TYPE.STATION && markerData.StationName.Zh_tw !== value) marker = this.findLocationMarker(value)
                 if (type === BIKE_TYPE.CYCLING && markerData.RouteName !== value) marker = this.findLocationMarker(value)
                 if (marker) {
+                    if (this.map.calcLineDistance(marker.position, this.map.mapInstance.getCenter()) > 100) {
+                        this.map.moveMapToPlace(marker.position)
+                    }
                     this.$store.commit('bike/SET_CURRENT_LOCATION', marker.markerData)
                 }
             }
@@ -119,6 +122,7 @@ export default defineComponent({
         }
         const search = async (value) => {
             value = value || $route.params.value
+
             if (typeof value === 'string') {
                 const radius = Math.min(Math.max(map.value.radius[0] | 0, 250), 1000)
                 const [firstPlaces] = await map.value.searchPlace(value, {
@@ -201,6 +205,7 @@ export default defineComponent({
             map.value = new GoogleMap(googleMapEl.value)
             map.value.on('init', () => {
                 search()
+                $store.commit('bike/SET_LOADING', false)
             })
             map.value.on('boundsChanged', (payload) => {
                 handleBoundsChanged(payload)

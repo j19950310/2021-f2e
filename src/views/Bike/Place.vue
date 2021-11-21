@@ -7,17 +7,21 @@ import { BIKE_TYPE } from '@/plugins/variable'
 export default defineComponent({
     beforeRouteEnter (to, from, next) {
         next((vm) => {
-            vm.prevRoute = from
+            if (from.name === 'BikeSearch') {
+                vm.prevRoute = from
+            }
         })
     },
     beforeRouteUpdate (to, from) {
-        this.prevRoute = from
+        if (from.name === 'BikeSearch') {
+            this.prevRoute = from
+        }
     },
     setup () {
         const $store = useStore()
         const $route = useRoute()
 
-        const prevRoute = ref(null)
+        const prevRoute = ref({ name: 'BikeHome' })
         const bikeType = ref(BIKE_TYPE)
         const serviceStatusMap = ref(['停止營運', '正常營運', '暫停營運'])
 

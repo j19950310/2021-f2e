@@ -47,6 +47,8 @@ export default class GoogleMap {
                         this.userLocationMark.setMap(this.mapInstance)
                         this.setZoom(17)
                         this.onEvents.init?.()
+                    }, () => {
+                        this.onEvents.init?.()
                     })
                     navigator.geolocation.watchPosition(this.userLocationChange, (err) => {
                         console.log(err)
@@ -71,7 +73,7 @@ export default class GoogleMap {
         }, this.mapInstance, this.googleMap)
     }
 
-    getUserLocation (callback) {
+    getUserLocation (callback, errCallback) {
         if (this.agreeGeolocation) {
             callback?.()
             this.moveMapToPlace(this.userLocationMark.getPosition())
@@ -87,6 +89,7 @@ export default class GoogleMap {
                 },
                 (err) => {
                     console.log(err)
+                    errCallback?.()
                 }
             )
         }
@@ -221,6 +224,13 @@ export default class GoogleMap {
         if (zoom) {
             return this.mapInstance.setZoom(zoom)
         }
+    }
+
+    calcLineDistance (l1, l2) {
+        if (l1 && l2) {
+            return this.googleMap.geometry.spherical.computeDistanceBetween(l1, l2)
+        }
+        return 0
     }
 
     on (name, callback) {
