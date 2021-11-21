@@ -52,6 +52,10 @@ export default (google) => {
             setPosition ({ lat, lng }) {
                 this.latlng = new google.maps.LatLng(lat, lng)
             }
+
+            getPosition () {
+                return this.latlng
+            }
         }
     }
 }

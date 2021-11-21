@@ -21,6 +21,7 @@ export default class GoogleMap {
             ...options,
         }
         this.onEvents = {}
+        this.agreeGeolocation = false
         this.boundsChanged = this.boundsChanged.bind(this)
         this.userLocationChange = this.userLocationChange.bind(this)
 
@@ -36,23 +37,16 @@ export default class GoogleMap {
                 this.mapInstance = new google.maps.Map(this.el, this.options)
                 this.mapInstance.addListener('idle', this.boundsChanged)
                 this.placesInstance = new google.maps.places.PlacesService(this.mapInstance)
+                this.autocompleteInstance = new google.maps.places.AutocompleteService()
                 this.markerCluster = new MarkerClusterer({ map: this.mapInstance })
                 this.userLocationMark = new User(this.options.center)
                 this.currentMarker = null
 
                 if (navigator.geolocation) {
-                    this.userLocationMark.setMap(this.mapInstance)
-                    navigator.geolocation.getCurrentPosition(
-                        (e) => {
-                            const { coords: { latitude: lat, longitude: lng } } = e
-                            this.mapInstance.setCenter({ lat, lng })
-                            this.userLocationChange(e)
-                            this.onEvents.init?.()
-                        },
-                        (err) => {
-                            console.log(err)
-                        }
-                    )
+                    this.getUserLocation(() => {
+                        this.userLocationMark.setMap(this.mapInstance)
+                        this.onEvents.init?.()
+                    })
                     navigator.geolocation.watchPosition(this.userLocationChange, (err) => {
                         console.log(err)
                     })
@@ -76,9 +70,43 @@ export default class GoogleMap {
         }, this.mapInstance, this.googleMap)
     }
 
+    getUserLocation (callback) {
+        if (this.agreeGeolocation) {
+            this.moveMapToPlace(this.userLocationMark.getPosition())
+            callback?.()
+            return
+        }
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (e) => {
+                    this.agreeGeolocation = true
+                    this.userLocationChange(e)
+                    this.moveMapToPlace(this.userLocationMark.getPosition())
+                    callback?.()
+                },
+                (err) => {
+                    console.log(err)
+                }
+            )
+        }
+    }
+
     userLocationChange ({ coords: { latitude: lat, longitude: lng } }) {
         if (this.userLocationMark) {
             this.userLocationMark.setPosition({ lat, lng })
+        }
+    }
+
+    searchQuery (value) {
+        if (value) {
+            return new Promise(resolve => {
+                this.autocompleteInstance.getPlacePredictions({
+                    input: value,
+                    bounds: this.mapInstance.getBounds(),
+                }, (e) => {
+                    resolve(e || [])
+                })
+            })
         }
     }
 
@@ -91,13 +119,21 @@ export default class GoogleMap {
                     radius: minBound,
                     ...options,
                     query,
-                }, (result) => resolve(result))
+                }, (result) => resolve(result || []))
+            }),
+            new Promise(resolve => {
+                this.placesInstance.nearbySearch({
+                    location: this.mapInstance.getCenter(),
+                    radius: minBound,
+                    ...options,
+                    query,
+                }, (result) => resolve(result || []))
             }),
             new Promise(resolve => {
                 this.placesInstance.findPlaceFromQuery({
                     fields: ['name', 'geometry', 'place_id', 'types'],
                     query,
-                }, (result) => resolve(result))
+                }, (result) => resolve(result || []))
             }),
         ]).then(results => results.flat())
     }
@@ -107,7 +143,7 @@ export default class GoogleMap {
 
         if (center) {
             this.mapInstance.fitBounds(
-                new this.googleMap.Circle({ center, radius: radius || minBound / 2 }).getBounds()
+                new this.googleMap.Circle({ center, radius: radius / 2 || minBound / 2 }).getBounds()
             )
         }
     }
@@ -138,11 +174,8 @@ export default class GoogleMap {
             })
             marker.markerData = markerData
             marker.addListener('click', () => {
-                if (this.currentMarker) {
-                    this.onEvents.markerUnClicked?.(this.currentMarker)
-                }
-                this.currentMarker = marker
-                this.onEvents.markerClicked?.(this.currentMarker)
+                this.onEvents.markerClicked?.(marker)
+                this.setActivateMarker(marker)
             })
             this.markerCluster.addMarker(marker, true)
         }
@@ -151,6 +184,28 @@ export default class GoogleMap {
     clearClusterMarker () {
         if (this.markerCluster) {
             this.markerCluster.clearMarkers(true)
+        }
+    }
+
+    findClusterMarker (callback) {
+        if (this.markerCluster) {
+            return this.markerCluster.markers.find(callback)
+        }
+    }
+
+    setActivateMarker (marker) {
+        if (marker) {
+            if (this.currentMarker) {
+                this.onEvents.markerDeActivated?.(this.currentMarker)
+            }
+            this.currentMarker = marker
+            this.onEvents.markerActivated?.(this.currentMarker)
+        }
+    }
+
+    setZoom (zoom) {
+        if (zoom) {
+            return this.mapInstance.setZoom(zoom)
         }
     }
 
@@ -163,13 +218,16 @@ export default class GoogleMap {
     get radius () {
         if (this.mapInstance) {
             const bounds = this.mapInstance.getBounds()
-            const ne = bounds.getNorthEast()
-            const sw = bounds.getSouthWest()
-            const l1 = new google.maps.LatLng(ne.lat(), sw.lng())
-            const l2 = new google.maps.LatLng(sw.lat(), ne.lng())
-            const width = this.googleMap.geometry.spherical.computeDistanceBetween(ne, l2)
-            const height = this.googleMap.geometry.spherical.computeDistanceBetween(ne, l1)
-            return [Math.min(width, height) / 2, Math.max(width, height) / 2]
+            if (bounds) {
+                const ne = bounds.getNorthEast()
+                const sw = bounds.getSouthWest()
+                const l1 = new google.maps.LatLng(ne.lat(), sw.lng())
+                const l2 = new google.maps.LatLng(sw.lat(), ne.lng())
+                const width = this.googleMap.geometry.spherical.computeDistanceBetween(ne, l2)
+                const height = this.googleMap.geometry.spherical.computeDistanceBetween(ne, l1)
+                return [Math.min(width, height) / 2, Math.max(width, height) / 2]
+            }
+            return [0, 0]
         }
         return [0, 0]
     }
