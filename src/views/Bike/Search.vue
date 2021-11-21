@@ -14,7 +14,7 @@ const bikeStations = computed(() => $store.state.bike.bikeStations)
         <router-link
             v-for="{StationUID, StationName, StationAddress, ServiceType, availability} in bikeStations"
             :key="StationUID"
-            :to="'/'"
+            :to="{ name: 'BikePlace', params: { value: StationName.Zh_tw }, query: { ...$route.query } }"
         >
             <BikeListCard
                 :title="StationName.Zh_tw"

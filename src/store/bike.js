@@ -40,7 +40,6 @@ export default ({
             try {
                 commit('SET_WAITING', true)
                 data = await getBikeStationWithAvailabilityNearBy(options)
-                console.log(data)
                 commit('SET_BIKE_STATIONS', data)
             } catch (e) {
                 console.log(e)

@@ -4,7 +4,7 @@ const mediaQuery = {
     tablet: '(min-width: 768px) and (max-width: 1199px)',
     mobile: '(max-width: 767px)',
 }
-export default class Viewport {
+class Viewport {
     constructor () {
         Object.assign(this, {
             width: 0,
@@ -73,3 +73,7 @@ export default class Viewport {
         return this._name === 'ie'
     }
 }
+
+const vp = new Viewport()
+
+export default vp

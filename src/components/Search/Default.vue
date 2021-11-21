@@ -5,10 +5,12 @@
             :value="modelValue"
             type="text"
             :placeholder="placeholder"
-            @input="$emit('update:modelValue', $event.target.value)"
+            @compositionstart="isComposing = true"
+            @compositionend="isComposing = false"
+            @input="input"
             @focus="$emit('focus')"
             @blur="$emit('blur')"
-            @keyup.enter="$emit('submit')"
+            @keyup.enter="submit"
         >
         <slot />
     </div>
@@ -31,6 +33,23 @@ export default {
         },
     },
     emits: ['update:modelValue', 'focus', 'blur', 'submit'],
+    data () {
+        return {
+            isComposing: false,
+        }
+    },
+    methods: {
+        input (e) {
+            if (!this.isComposing) {
+                this.$emit('update:modelValue', e.target.value)
+            }
+        },
+        submit () {
+            if (!this.isComposing) {
+                this.$emit('submit')
+            }
+        },
+    },
 }
 </script>
 <style lang="scss">

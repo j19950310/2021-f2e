@@ -1,7 +1,10 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { inject, ref, watch, onBeforeUnmount } from 'vue'
 import { Vector2, MathUtils } from 'three'
 import gsap from 'gsap'
+
+const viewport = inject('viewport')
+
 const popup = ref(null)
 
 let reqID
@@ -63,12 +66,26 @@ const render = () => {
     }
     popup.value.style.overflow = 'hidden'
 }
+const destroy = () => {
+    if (popup.value) {
+        popup.value.style.overflow = 'auto'
+        popup.value.style.transform = 'none'
+        window.cancelAnimationFrame(reqID)
+        window.removeEventListener('touchmove', touchmove)
+        window.removeEventListener('touchend', touchend)
+    }
+}
 
-onMounted(() => {
-    render()
-})
+watch(() => viewport.isPc, (value) => {
+    if (!value) {
+        render()
+        return
+    }
+    destroy()
+}, { immediate: true })
+
 onBeforeUnmount(() => {
-    window.cancelAnimationFrame(reqID)
+    destroy()
 })
 </script>
 
@@ -76,6 +93,7 @@ onBeforeUnmount(() => {
     <div
         ref="popup"
         class="drag-popup"
+        :class="{'-mobile': !viewport.isPc}"
         @touchstart="touchstart"
     >
         <slot />
@@ -86,26 +104,32 @@ onBeforeUnmount(() => {
 .drag-popup {
     @include size(100%);
 
-    position: fixed;
-    top: 0;
-    left: 0;
-
-    // overflow: auto;
     padding: $padding * 3;
     background-color: color('White');
     border-radius: 24px;
     z-index: 100;
     box-shadow: 0 0 24px rgba(0, 0, 0, 10%);
 
-    &::before {
-        @include size(45%, 4px);
+    &:not(.-mobile) {
+        overflow: auto;
+        max-height: calc(100vh - #{$padding * 15});
+    }
 
-        content: '';
-        display: block;
-        margin: auto;
-        background-color: color('Light-Gray');
-        border-radius: 24px;
-        margin-bottom: $padding * 2;
+    &.-mobile {
+        position: fixed;
+        top: 0;
+        left: 0;
+
+        &::before {
+            @include size(45%, 4px);
+
+            content: '';
+            display: block;
+            margin: auto;
+            background-color: color('Light-Gray');
+            border-radius: 24px;
+            margin-bottom: $padding * 2;
+        }
     }
 }
 </style>
