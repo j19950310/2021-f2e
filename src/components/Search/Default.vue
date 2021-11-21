@@ -5,8 +5,6 @@
             :value="modelValue"
             type="text"
             :placeholder="placeholder"
-            @compositionstart="isComposing = true"
-            @compositionend="isComposing = false"
             @input="input"
             @focus="$emit('focus')"
             @blur="$emit('blur')"
@@ -40,14 +38,15 @@ export default {
     },
     methods: {
         input (e) {
-            if (!this.isComposing) {
-                this.$emit('update:modelValue', e.target.value)
-            }
+            this.$emit('update:modelValue', e.target.value)
+            this.isComposing = e.isComposing
         },
         submit () {
-            if (!this.isComposing) {
-                this.$emit('submit')
+            if (this.isComposing) {
+                this.isComposing = false
+                return
             }
+            this.$emit('submit')
         },
     },
 }
