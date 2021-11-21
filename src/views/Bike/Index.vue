@@ -69,9 +69,8 @@ export default defineComponent({
                 })
             })
         }
-        const search = async () => {
-            const { value } = $route.params
-
+        const search = async (value) => {
+            value = value || $route.params.value
             if (value) {
                 const radius = Math.min(Math.max(map.value.radius[0] | 0, 250), 1000)
                 const [firstPlaces] = await map.value.searchPlace(value, {
@@ -98,9 +97,7 @@ export default defineComponent({
             if (value) {
                 $router.push({ name: 'BikeSearch', params: { value }, query: { ...$route.query } })
                 searchValue.value = null
-                requestAnimationFrame(() => {
-                    search()
-                })
+                search(value)
             }
         }
         const zoom = (value = 1) => {
