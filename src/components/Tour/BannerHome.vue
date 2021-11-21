@@ -59,7 +59,7 @@ const submit = () => {
                             台灣觀光懶人包
                         </div>
                         <div class="tour-banner-home__search">
-                            <SearchFilter
+                            <SearchTourFilter
                                 v-model="searchValue"
                                 @submit="submit"
                                 @click="headSearchHandler"

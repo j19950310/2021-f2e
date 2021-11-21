@@ -93,8 +93,8 @@ getTownsByCountycode('A').then(res => {
                 style="padding-top: 20px; padding-bottom: 20px;"
             >
                 <div class="col-6">
-                    SearchFilter
-                    <SearchFilter
+                    SearchTourFilter
+                    <SearchTourFilter
                         v-model="search"
                     />
                 </div>

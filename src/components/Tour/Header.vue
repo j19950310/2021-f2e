@@ -54,7 +54,7 @@
                     class="tour-header__search-bar"
                 >
                     <div>
-                        <SearchFilter
+                        <SearchTourFilter
                             v-model="searchValue"
                             @submit="submit"
                             @click="searchFilterClickHandler"
