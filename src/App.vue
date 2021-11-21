@@ -86,7 +86,7 @@ onMounted(async () => {
     >
         <router-view />
         <div id="portalTarget" />
-        <Loading />
+        <!-- <Loading /> -->
         <CursorApp />
     </div>
 </template>
