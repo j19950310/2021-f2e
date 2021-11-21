@@ -150,9 +150,6 @@ export default defineComponent({
                         if (type === BIKE_TYPE.CYCLING) {
                             return $store.dispatch('bike/GET_BIKE_CYCLING', {
                                 area: administrative,
-                                options: {
-                                    top: 10,
-                                },
                             })
                         }
                         if (type === BIKE_TYPE.RESTAURANT) {
