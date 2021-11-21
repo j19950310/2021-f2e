@@ -518,7 +518,7 @@ export default defineComponent({
         border-radius: 50%;
         cursor: pointer;
         @include media-breakpoint-down(desktop) {
-            bottom: 12%;
+            bottom: 22%;
         }
         @include media-breakpoint-down(tablet) {
             right: $padding * 2.5;
@@ -553,7 +553,7 @@ export default defineComponent({
         left: 50%;
         transform: translate(-50%, 0);
         @include media-breakpoint-down(tablet) {
-            bottom: 12%;
+            bottom: 22%;
             left: $padding * 2.5;
             transform: none;
         }
