@@ -1,6 +1,6 @@
 <template>
     <form
-        class="form-tour-filter form-filter"
+        class="form-bike-filter form-filter"
         :class="{
             '-pendding' :pendding
         }"
@@ -9,9 +9,7 @@
         <div class="form-filter__row">
             <SearchKeywords
                 v-model="search"
-                :input-attrs="{
-                    name: 'keywords',
-                }"
+                :input-attrs="{name: 'keywords'}"
             />
         </div>
         <!-- 搜尋類別 -->
@@ -20,6 +18,18 @@
                 搜尋類別
             </p>
             <div class="form-filter__category">
+                <ButtonCategory
+                    :active="category.station"
+                    @click="category.station = !category.station"
+                >
+                    公共自行車站點
+                </ButtonCategory>
+                <ButtonCategory
+                    :active="category.cycling"
+                    @click="category.cycling = !category.cycling"
+                >
+                    自行車路線
+                </ButtonCategory>
                 <ButtonCategory
                     :active="category.scenic"
                     @click="category.scenic = !category.scenic"
@@ -31,18 +41,6 @@
                     @click="category.restaurant = !category.restaurant"
                 >
                     餐飲
-                </ButtonCategory>
-                <ButtonCategory
-                    :active="category.hotel"
-                    @click="category.hotel = !category.hotel"
-                >
-                    旅宿
-                </ButtonCategory>
-                <ButtonCategory
-                    :active="category.activity"
-                    @click="category.activity = !category.activity"
-                >
-                    活動
                 </ButtonCategory>
             </div>
             <!-- 類別同步資料 -->
@@ -113,7 +111,7 @@
                 :checked="!!countySelectedAllTowns.length"
             >
         </div>
-        <!-- 鄉鎮 -->
+        <!-- 鄉鎮 / 行政區 -->
         <div
             class="form-filter__row"
         >
@@ -174,6 +172,33 @@
                 </div>
             </Dropdown>
         </div>
+        <!-- 其他 -->
+        <div class="form-filter__row">
+            <Dropdown title="其他">
+                <div class="form-filter__dropdown-checkboxs">
+                    <div class="form-filter__dropdown-checkboxs-item">
+                        <FormCheckbox
+                            v-bind="version.v1"
+                            id="YouBike1.0"
+                            prefix="version/"
+                            name="YouBike1.0"
+                            :value="version.v1"
+                            @update="version.v1 = $event"
+                        />
+                    </div>
+                    <div class="form-filter__dropdown-checkboxs-item">
+                        <FormCheckbox
+                            v-bind="version.v2"
+                            id="YouBike2.0"
+                            prefix="version/"
+                            name="YouBike2.0"
+                            :value="version.v2"
+                            @update="version.v2 = $event"
+                        />
+                    </div>
+                </div>
+            </Dropdown>
+        </div>
         <!-- 送出/返回 -->
         <div class="form-filter__row">
             <div class="form-filter__submit">
@@ -195,38 +220,50 @@
 <script>
 import { defaultFilterComponent } from '@/plugins/defaultFilter'
 export default {
-    name: 'FormTourFilter',
+    name: 'FormBikeFilter',
     extends: defaultFilterComponent,
+    data () {
+        return {
+            version: {
+                v1: false,
+                v2: false,
+            },
+        }
+    },
     methods: {
         submit () {
-            this.tourSubmit().then((category) => {
-                // 成功，清除所有選取
-                this.$emit('submit')
-                this.$router.push({
-                    name: 'TourSpotSearch',
-                    query: {
-                        keyword: this.search,
-                        category,
-                        page: 1,
-                    },
-                })
-                this.clearAll()
-            }).catch(err => {
-                // 失敗，無收尋內容
-                // console.log(err)
-                this.$emit('submit')
-                this.$router.push({
-                    name: 'TourNoResult',
-                    params: {
-                        messages: err.message || '查無結果',
-                    },
-                })
-            }).finally(() => {
-                this.search = null
-            })
+            const data = new FormData(this.$el)
+            console.log([...data.keys()], [...data.values()])
+            // this.submitQuery(data).then((category) => {
+            //     // 成功，清除所有選取
+            //     this.$emit('submit')
+            //     this.$router.push({
+            //         name: 'TourSpotSearch',
+            //         query: {
+            //             keyword: this.search,
+            //             category,
+            //             page: 1,
+            //         },
+            //     })
+            //     this.clearAll()
+            // }).catch(err => {
+            //     // 失敗，無收尋內容
+            //     // console.log(err)
+            //     this.$emit('submit')
+            //     this.$router.push({
+            //         name: 'TourNoResult',
+            //         params: {
+            //             messages: err.message || '查無結果',
+            //         },
+            //     })
+            // }).finally(() => {
+            //     this.search = null
+            // })
         },
     },
 }
+
 </script>
 <style lang="scss">
+
 </style>

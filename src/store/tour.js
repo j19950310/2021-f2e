@@ -1,25 +1,27 @@
 import {
-    getScenicSpot,
-    getScenicSpotByCity,
-    getRestaurantSpot,
-    getRestaurantSpotByCity,
-    getHotelSpot,
-    getHotelSpotByCity,
-    getActivitySpot,
-    getActivitySpotByCity
-} from '@/api/getTourism'
-import {
     ScenicSpot,
     RestaurantSpot,
     HotelSpot,
     ActivitySpot
 } from '@/api/TourSpot'
 import {
-    regionLabels,
-    regionKeys,
-    getRegionCounty,
-    countiesLabels
-} from '@/api/taiwanCountyData'
+    pushScenicQuery,
+    pushRestaurantQuery,
+    pushHotelQuery,
+    pushActivityQuery,
+    getTourQueryFunction,
+    QUERY_SCENIC,
+    QUERY_SCENIC_BY_CITY,
+    QUERY_RESTAURANT,
+    QUERY_RESTAURANT_BY_CITY,
+    QUERY_HOTEL,
+    QUERY_HOTEL_BY_CITY,
+    // QUERY_ACTIVITY,
+    QUERY_ACTIVITY_BY_CITY,
+    FILTER_BASIC_TRUE,
+    BASIC_FILTER
+} from '@/plugins/defaultFilter'
+
 import getZipcode from '@/api/getZipcode'
 
 const baseQueryConfig = {
@@ -29,135 +31,6 @@ const baseQueryConfig = {
     format: 'JSON',
 }
 Object.freeze(baseQueryConfig)
-
-// 固定 KEY 值
-const QUERY_SCENIC = 'QUERY_SCENIC'
-const QUERY_SCENIC_BY_CITY = 'QUERY_SCENIC_BY_CITY'
-const QUERY_RESTAURANT = 'QUERY_RESTAURANT'
-const QUERY_RESTAURANT_BY_CITY = 'QUERY_RESTAURANT_BY_CITY'
-const QUERY_HOTEL = 'QUERY_HOTEL'
-const QUERY_HOTEL_BY_CITY = 'QUERY_HOTEL_BY_CITY'
-const QUERY_ACTIVITY = 'QUERY_ACTIVITY'
-const QUERY_ACTIVITY_BY_CITY = 'QUERY_ACTIVITY_BY_CITY'
-
-const FILTER_BASIC_TRUE = '1 == 1'
-
-const BASIC_FILTER = { // Query 預設 True
-    [QUERY_SCENIC]: FILTER_BASIC_TRUE,
-    [QUERY_SCENIC_BY_CITY]: FILTER_BASIC_TRUE,
-    [QUERY_RESTAURANT]: FILTER_BASIC_TRUE,
-    [QUERY_RESTAURANT_BY_CITY]: FILTER_BASIC_TRUE,
-    [QUERY_HOTEL]: FILTER_BASIC_TRUE,
-    [QUERY_HOTEL_BY_CITY]: FILTER_BASIC_TRUE,
-    [QUERY_ACTIVITY]: FILTER_BASIC_TRUE,
-    [QUERY_ACTIVITY_BY_CITY]: '1 == 0', // 活動沒有ZipCode
-}
-Object.freeze(BASIC_FILTER)
-
-const queryFunction = {
-    [QUERY_SCENIC]: getScenicSpot,
-    [QUERY_SCENIC_BY_CITY]: getScenicSpotByCity, // 發現一般filter也可以用
-    [QUERY_RESTAURANT]: getRestaurantSpot,
-    [QUERY_RESTAURANT_BY_CITY]: getRestaurantSpotByCity, // 發現一般filter也可以用
-    [QUERY_HOTEL]: getHotelSpot,
-    [QUERY_HOTEL_BY_CITY]: getHotelSpotByCity, // 發現一般filter也可以用
-    [QUERY_ACTIVITY]: getActivitySpot,
-    [QUERY_ACTIVITY_BY_CITY]: getActivitySpotByCity, // 發現一般filter也可以用
-    scenic: getScenicSpot,
-    restaurant: getRestaurantSpot,
-    hotel: getHotelSpot,
-    activity: getActivitySpot,
-}
-
-/**
- * 取得query格式的縣市
- */
-function getConfigQueryCounties (config) {
-    const counties = new Map()
-
-    // 全選的縣市
-    Object.keys(config.region).forEach(region => {
-        if (regionKeys[region]) {
-            getRegionCounty(regionKeys[region]).forEach(county => {
-                counties.set(county, true)
-            })
-        }
-    })
-
-    // 一般選的縣市
-    Object.keys(config.countyAll).forEach(county => {
-        counties.set(county, true)
-    })
-    return [...counties.keys()]
-}
-
-/**
- * 取得query格式的行政區
- */
-function getConfigQueryTowns (config) {
-    const townsMap = new Map()
-    Object.keys(config.town).forEach(countyName => {
-        // 收集所有 不包含全選 的 鄉鎮
-        if (!config?.countyAll?.[countyName]) {
-            Object.keys(config.town[countyName]).forEach(town => {
-                townsMap.set(town, true)
-            })
-        }
-    })
-    return [...townsMap.keys()]
-}
-
-function pushScenicQuery (config) {
-    // 純縣市查詢
-    config.queryList.push({
-        category: QUERY_SCENIC_BY_CITY,
-        query: getConfigQueryCounties(config),
-    })
-    // 地區查詢
-    config.queryList.push({
-        category: QUERY_SCENIC,
-        query: getConfigQueryTowns(config),
-    })
-}
-
-function pushRestaurantQuery (config) {
-    // 純縣市查詢
-    config.queryList.push({
-        category: QUERY_RESTAURANT_BY_CITY,
-        query: getConfigQueryCounties(config),
-    })
-    // 地區查詢
-    config.queryList.push({
-        category: QUERY_RESTAURANT,
-        query: getConfigQueryTowns(config),
-    })
-}
-
-function pushHotelQuery (config) {
-    // 純縣市查詢
-    config.queryList.push({
-        category: QUERY_HOTEL_BY_CITY,
-        query: getConfigQueryCounties(config),
-    })
-    // 地區查詢
-    config.queryList.push({
-        category: QUERY_HOTEL,
-        query: getConfigQueryTowns(config),
-    })
-}
-
-function pushActivityQuery (config) {
-    // 純縣市查詢
-    config.queryList.push({
-        category: QUERY_ACTIVITY_BY_CITY,
-        query: getConfigQueryCounties(config),
-    })
-    // 地區查詢
-    config.queryList.push({
-        category: QUERY_ACTIVITY,
-        query: getConfigQueryTowns(config),
-    })
-}
 
 export default {
     namespaced: true,
@@ -351,7 +224,6 @@ export default {
         },
         // ------------ 0: 分類別 (OR) ------------
         query (context, formDate) {
-            // console.log('tour/query', formDate)
             context.commit('resetQueryConfig') // 重置查詢設定
 
             const config = {
@@ -401,24 +273,22 @@ export default {
         dispatchQueryStacks (context, config) {
             context.dispatch('resetAll') // 重置資料
             return new Promise((resolve, reject) => {
-                let categoryList = Object.keys(config.category)
+                const requestStacks = []
+                const filter = Object.assign({}, BASIC_FILTER)
                 const queryString = config.keywords
                     ? `(contains(Name,'${config.keywords}') | contains(Description,'${config.keywords}'))`
                     : FILTER_BASIC_TRUE
-
-                // 若空白 則全選
-                categoryList = (categoryList.length > 0)
-                    ? categoryList
+                    // 若空白 則全選
+                const categoryList = (Object.keys(config.category).length > 0)
+                    ? Object.keys(config.category)
                     : ['scenic', 'restaurant', 'hotel', 'activity']
-                const requestStacks = []
-                const filter = Object.assign({}, BASIC_FILTER)
 
                 // Merge same category
                 config.queryList.forEach(queryConfig => {
                     const { category, query } = queryConfig
 
                     // 非正常操作：不純在查詢的API
-                    if (!queryFunction[category]) return
+                    if (!getTourQueryFunction[category]) return
 
                     if ( // Filter City
                         category === QUERY_SCENIC_BY_CITY ||
@@ -461,7 +331,7 @@ export default {
                     })
 
                     // 送出主要查詢
-                    requestStacks.push(queryFunction[category](queryConfig))
+                    requestStacks.push(getTourQueryFunction[category](queryConfig))
                     // 儲存查詢
                     context.commit('saveQueryConfig', { category, config: queryConfig })
                 })
@@ -504,7 +374,7 @@ export default {
             config.skip = context.getters.getSkip // 只針對skip設定
             return new Promise((resolve, reject) => {
                 // 送出相同查詢
-                queryFunction[category](config).then(res => { // 更新查詢結果
+                getTourQueryFunction[category](config).then(res => { // 更新查詢結果
                     context.state.currentQuery[category] = res.list // TODO commit
                 }).catch(err => {
                     reject(err)

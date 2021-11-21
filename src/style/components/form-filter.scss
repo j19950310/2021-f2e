@@ -1,0 +1,150 @@
+.form-filter {
+    position: relative;
+    padding: $padding * 5;
+    text-align: left;
+    background-color: color('White');
+    border-radius: 24px;
+    @include media-breakpoint-down(tablet) {
+        padding: $padding * 3;
+    }
+
+    // block loading
+    &::after {
+        content: '.';
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        font-size: 200px;
+        opacity: 0%;
+        z-index: 100;
+        line-height: 2;
+        pointer-events: none;
+        @include size(100%);
+    }
+
+    &.-pendding {
+        &::after {
+            background-color: rgba(color('Black'), 0.5);
+            opacity: 100%;
+            transition: opacity 1s ease 0.3s;
+            pointer-events: all;
+            animation: dotLoading 1s steps(3) infinite;
+            @keyframes dotLoading {
+                0% {
+                    content: '.  ';
+                }
+
+                50% {
+                    content: '.. ';
+                }
+
+                100% {
+                    content: '...';
+                }
+            }
+        }
+    }
+
+    &__row {
+        margin-bottom: $padding * 4;
+        @include media-breakpoint-down(tablet) {
+            margin-bottom: $padding * 2;
+        }
+    }
+
+    &__title {
+        @include typo-h2;
+    }
+
+    &__category {
+        padding-top: 12px;
+
+        .button-category {
+            margin: 0 $padding $padding 0;
+        }
+    }
+
+    &__dropdown {
+        &-checkboxs {
+            $space: 16px;
+
+            display: flex;
+            margin-top: -$space/2;
+            margin-right: -$space/2;
+            margin-left: -$space/2;
+            padding-top: 14px;
+            padding-bottom: 18px;
+            flex-wrap: wrap;
+            align-content: flex-start;
+            @include media-breakpoint-down(tablet) {
+                padding-bottom: 4px;
+            }
+
+            &.-town {
+                transition: height 0.3s ease-in-out, padding 0.3s ease-in-out, margin 0.3s ease-in-out;
+            }
+
+            &.-empty {
+                margin: 0;
+                padding: 0;
+                height: 0;
+            }
+
+            &-item {
+                padding: $space / 2;
+            }
+        }
+
+        &-category {
+            $space: 8px;
+
+            display: flex;
+            overflow: auto;
+            margin: 0 #{-$space};
+            padding: 16px $space;
+            flex-wrap: nowrap;
+            @include media-breakpoint-down(tablet) {
+                padding: 12px $space;
+            }
+
+            &-item {
+                display: inline-block;
+                padding: $space / 2;
+                transition: transform 1s;
+            }
+
+            &:empty {
+                display: none;
+            }
+        }
+
+        &-all {
+            .button-min + .button-min {
+                margin-left: 12px;
+            }
+
+            &.-inside {
+                padding: 8px;
+                flex: 1 0 100%;
+            }
+        }
+    }
+
+    &__submit {
+        display: flex;
+        justify-content: center;
+        @include media-breakpoint-down(tablet) {
+            flex-direction: column-reverse;
+        }
+
+        .button-main {
+            margin: 4px 12px;
+            @include media-breakpoint-down(tablet) {
+                margin: 0 0 12px;
+                width: 100%;
+            }
+        }
+    }
+}
