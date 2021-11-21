@@ -63,7 +63,7 @@ export const getCountyRegion = (county) => {
     }
 }
 
-export const coutiesLabels = {
+export const countiesLabels = {
     Taipei: '台北市',
     NewTaipei: '新北市',
     Taoyuan: '桃園市',
@@ -89,9 +89,9 @@ export const coutiesLabels = {
 }
 
 // 正反收錄好查詢
-export const coutiesMap = new Map(Object.entries(coutiesLabels))
-Object.keys(coutiesLabels).forEach(key => {
-    coutiesMap.set(coutiesLabels[key], key)
+export const countiesMap = new Map(Object.entries(countiesLabels))
+Object.keys(countiesLabels).forEach(key => {
+    countiesMap.set(countiesLabels[key], key)
 })
 
 // ＃＃＃＃＃＃校正簡體繁體名稱＃＃＃＃＃＃

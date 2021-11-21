@@ -18,10 +18,9 @@ import {
     regionLabels,
     regionKeys,
     getRegionCounty,
-    coutiesLabels
+    countiesLabels
 } from '@/api/taiwanCountyData'
 import getZipcode from '@/api/getZipcode'
-import objectKeys from 'object-keys'
 
 const baseQueryConfig = {
     top: 12, // 一次幾篇
@@ -70,6 +69,9 @@ const queryFunction = {
     activity: getActivitySpot,
 }
 
+/**
+ * 取得query格式的縣市
+ */
 function getConfigQueryCounties (config) {
     const counties = new Map()
 
@@ -89,6 +91,9 @@ function getConfigQueryCounties (config) {
     return [...counties.keys()]
 }
 
+/**
+ * 取得query格式的行政區
+ */
 function getConfigQueryTowns (config) {
     const townsMap = new Map()
     Object.keys(config.town).forEach(countyName => {
@@ -429,7 +434,8 @@ export default {
                         category === QUERY_RESTAURANT ||
                         category === QUERY_HOTEL
                     ) {
-                        if (query.length > 0) { // ex. ZipCode == '123' | ...
+                        if (query.length > 0) {
+                            // ex. ZipCode == '123' | ZipCode == '456' | Zip...
                             const zipCodeList = query.map(getZipcode)
                             filter[category] = `ZipCode == '${zipCodeList.join('\' | ZipCode == \'')}'`
                         }
@@ -485,6 +491,7 @@ export default {
                 })
             })
         },
+        // ------------ 3: 補充查詢 ------------
         dispatchPageQuery (context, query) {
             const { category, page } = query
             const config = context.state.currentQueryConfig[category]
