@@ -76,7 +76,7 @@ export function filterStringConvert (str) {
         '+': 'add',
         '-': 'sub',
         '*': 'mul',
-        '/': 'div',
+        //  '/': 'div', // 語法衝突
         '%': 'mod',
     }
     Object.entries(sign2key).forEach(([sign, key]) => {

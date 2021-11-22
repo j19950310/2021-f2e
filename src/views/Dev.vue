@@ -1,103 +1,49 @@
-<script setup>
-import {
-    getScenicSpot,
-    getScenicSpotByCity,
-    getHotelSpot,
-    getHotelSpotByCity,
-    getActivitySpot,
-    getActivitySpotByCity,
-    getRestaurantSpotByCity,
-    getRestaurantSpot
-} from '@/api/getTourism'
+<script>
+import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import GoogleMap from '@/plugins/GoogleMap/googleMap'
+import { getBusRouteByCity } from '@/api/getBus'
+export default defineComponent({
+    name: 'Dev',
+    setup () {
 
-import paramsFormat, { getCityParam } from '@/api/paramsFormat'
-import { onMounted, computed, ref } from 'vue'
-import {
-    getBikeStation,
-    getBikeAvailability,
-    getBikeStationWithAvailability,
-    getBikeStationNearBy,
-    getBikeAvailabilityNearBy,
-    getBikeStationWithAvailabilityNearBy
-} from '@/api/getBike'
-import { getCyclingShape } from '@/api/getCycling'
-// dev
-const list = ref([])
-const cycleList = ref([])
-const closeStation = ref([])
-
-// getBikeStation('台北市').then(res => {
-//     list.value.push(...res)
-// })
-// getBikeAvailability('台北市').then(res => {
-//     list.value.push(...res)
-// })
-getBikeStationWithAvailability('台北市').then(res => {
-    list.value.push(...res)
+    },
+    mounted () {
+        // new GoogleMap(this.$refs.map)
+        this.keywordsSearch('臺北')
+    },
+    methods: {
+        keywordsSearch (keywords) {
+            const config = {
+                top: 10,
+                filter: `contains(RouteName/Zh_tw, '${keywords}') | contains(DestinationStopNameZh, '${keywords}') | contains(DepartureStopNameZh, '${keywords}')`,
+            }
+            getBusRouteByCity('臺北市', config).then(res => {
+                console.log(res)
+            })
+        },
+    },
 })
-
-getCyclingShape('台北市').then(res => {
-    console.log(res)
-    cycleList.value.push(...res)
-})
-navigator.geolocation.getCurrentPosition((e) => {
-    const { coords: { latitude: lat, longitude: lng } } = e
-    const config = { position: { lat, lng }, distance: 1000 }
-
-    // getBikeStationNearBy, getBikeAvailabilityNearBy
-    getBikeStationWithAvailabilityNearBy(config).then(res => {
-        closeStation.value.push(...res)
-    })
-}, (e) => {
-    console.log('確定啦')
-}, {
-    enableHighAccuracy: true,
-    timeout: 5000,
-    maximumAge: 0,
-})
-
 </script>
 
 <template>
     <div class="page-dev">
-        站點資料
-        <ul
-            v-for="ul in list"
-            :key="ul.id"
-        >
-            <li
-                v-for="key in ['id','name','position','address','version','service','availability']"
-                :key="key"
-            >
-                <template v-if="key === 'availability'">
-                    <ol>
-                        <li
-                            v-for="subkey in ['status','statusDesc','numOfRent','numOfReturn','ableRent','ableReturn']"
-                            :key="subkey"
-                        >
-                            <temaplate v-if="ul['availability'][subkey]">
-                                {{ subkey }}: {{ ul['availability'][subkey] }}
-                            </temaplate>
-                        </li>
-                    </ol>
-                </template>
-
-                <temaplate v-if="key !== 'availability' && ul[key]">
-                    {{ key }}: {{ ul[key] }}
-                </temaplate>
-            </li>
-        </ul>
-        <br><br><br><br><br><br>
-        腳踏車道(簡化後key值看Class)<br><br>
-        {{ cycleList }}
-        <br><br><br><br><br><br>
-        近站點<br><br>
-        {{ closeStation }}
+        <div
+            id="map"
+            ref="map"
+        />
     </div>
 </template>
 
 <style lang="scss">
 .page-dev {
+    #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
     form {
         display: flex;
         align-items: center;
