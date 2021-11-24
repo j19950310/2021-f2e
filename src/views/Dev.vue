@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch, createApp } from 'vue'
 import GoogleMap from '@/plugins/GoogleMap/googleMapDev'
 import { getBusRouteByCity } from '@/api/getBus'
 import { BusQuery } from '@/api/Bus'
@@ -14,6 +14,7 @@ export default defineComponent({
         }
     },
     mounted () {
+        const div = document.createElement('div')
         // map
         this.map = new GoogleMap(this.$refs.map)
         const originMapInit = this.map.onEvents.init
@@ -26,18 +27,28 @@ export default defineComponent({
         })
 
         // events
-        this.map.onEvents.init = (map) => {
+        this.map.onEvents.init = () => {
             originMapInit()
             // query.searchByNearBy('士林').then(res => {
             //     console.log(res)
             // })
             query.searchByCity('臺北市', '士林').then(routes => {
                 console.log(routes)
+                // 取得停站點
                 routes[0].getStops().then(stops => {
                     console.log(stops)
-                    const paths = stops[0].stops.map(stop => (stop.position))
-                    console.log(paths)
-                    this.map.drawCustomPolyline(paths)
+                    const path = stops[0].stops.map(stop => (stop.position))
+                    console.log(path)
+                    this.map.drawCustomPolyline(path)
+                    path.forEach(stop => {
+                        const marker = new this.map.Stop({
+                            position: stop,
+                            map: this.map.mapInstance,
+                        })
+                        this.map.googleMap.event.addListener(marker, 'click', () => {
+                            console.log(stop)
+                        })
+                    })
                 })
             })
         }
@@ -54,6 +65,12 @@ export default defineComponent({
             id="map"
             ref="map"
         />
+        <div
+            id="testMarker"
+            ref="marker"
+        >
+            test
+        </div>
     </div>
 </template>
 
