@@ -1,6 +1,6 @@
 <script>
 import { defineComponent, ref, computed, onMounted, watch } from 'vue'
-import GoogleMap from '@/plugins/GoogleMap/googleMap'
+import GoogleMap from '@/plugins/GoogleMap/googleMapDev'
 import { getBusRouteByCity } from '@/api/getBus'
 import { BusQuery } from '@/api/Bus'
 export default defineComponent({
@@ -14,36 +14,36 @@ export default defineComponent({
         }
     },
     mounted () {
+        // map
         this.map = new GoogleMap(this.$refs.map)
-        navigator.geolocation.getCurrentPosition((e) => {
-            const { latitude: lat, longitude: lng } = e.coords
-            const distance = 1000
-            const query = new BusQuery({
-                position: { lat, lng },
-                distance,
-            })
+        const originMapInit = this.map.onEvents.init
+
+        // bus query
+        const distance = 1000
+        const query = new BusQuery({
+            position: { lat: 25.0833676, lng: 121.5258913 },
+            distance,
+        })
+
+        // events
+        this.map.onEvents.init = (map) => {
+            originMapInit()
             // query.searchByNearBy('士林').then(res => {
             //     console.log(res)
             // })
-            query.searchByCity('臺北市', '士林').then(res => {
-                console.log(res)
+            query.searchByCity('臺北市', '士林').then(routes => {
+                console.log(routes)
+                routes[0].getStops().then(stops => {
+                    console.log(stops)
+                    const paths = stops[0].stops.map(stop => (stop.position))
+                    console.log(paths)
+                    this.map.drawCustomPolyline(paths)
+                })
             })
-        })
+        }
     },
     methods: {
-        keywordsSearch (keywords) {
-            const config = {
-                top: 10,
-                filter: `contains(RouteName/Zh_tw, '${keywords}') | contains(DestinationStopNameZh, '${keywords}') | contains(DepartureStopNameZh, '${keywords}')`,
-            }
-            // getBusRouteByCity('臺北市', config).then(res => {
-            //     console.log(res)
-            // })
-            const queryObject = new BusQuery(config)
-            queryObject.searchByCity('臺北市').then(res => {
-                console.log(res)
-            })
-        },
+
     },
 })
 </script>
