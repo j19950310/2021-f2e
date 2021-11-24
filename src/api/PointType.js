@@ -2,27 +2,11 @@
 export default class PointType {
     constructor (config) {
         const {
-            GeoHash,
-            PositionLat,
-            PositionLon,
+            GeoHash: hash,
+            PositionLat: lat,
+            PositionLon: lng,
         } = config
-        Object(this, {
-            GeoHash,
-            PositionLat,
-            PositionLon,
-        })
-    }
-
-    get lat () {
-        return this.PositionLat
-    }
-
-    get lng () {
-        return this.PositionLon
-    }
-
-    get hash () {
-        return this.GeoHash
+        Object.assign(this, { lat, lng, hash })
     }
 
     get empty () {

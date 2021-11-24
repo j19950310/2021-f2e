@@ -184,12 +184,12 @@ export class BusStop {
         return this.StopSequence
     }
 
-    get position () {
-        return new PointType(this.StopPosition)
-    }
-
     get stationId () {
         return this.StationID
+    }
+
+    get position () {
+        return new PointType(this.StopPosition)
     }
 }
 
