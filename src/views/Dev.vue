@@ -2,14 +2,33 @@
 import { defineComponent, ref, computed, onMounted, watch } from 'vue'
 import GoogleMap from '@/plugins/GoogleMap/googleMap'
 import { getBusRouteByCity } from '@/api/getBus'
+import { BusQuery } from '@/api/Bus'
 export default defineComponent({
     name: 'Dev',
     setup () {
 
     },
+    data () {
+        return {
+            map: null,
+        }
+    },
     mounted () {
-        // new GoogleMap(this.$refs.map)
-        this.keywordsSearch('臺北')
+        this.map = new GoogleMap(this.$refs.map)
+        navigator.geolocation.getCurrentPosition((e) => {
+            const { latitude: lat, longitude: lng } = e.coords
+            const distance = 1000
+            const query = new BusQuery({
+                position: { lat, lng },
+                distance,
+            })
+            // query.searchByNearBy('士林').then(res => {
+            //     console.log(res)
+            // })
+            query.searchByCity('臺北市', '士林').then(res => {
+                console.log(res)
+            })
+        })
     },
     methods: {
         keywordsSearch (keywords) {
@@ -17,7 +36,11 @@ export default defineComponent({
                 top: 10,
                 filter: `contains(RouteName/Zh_tw, '${keywords}') | contains(DestinationStopNameZh, '${keywords}') | contains(DepartureStopNameZh, '${keywords}')`,
             }
-            getBusRouteByCity('臺北市', config).then(res => {
+            // getBusRouteByCity('臺北市', config).then(res => {
+            //     console.log(res)
+            // })
+            const queryObject = new BusQuery(config)
+            queryObject.searchByCity('臺北市').then(res => {
                 console.log(res)
             })
         },
