@@ -172,7 +172,7 @@ export class BusStop {
     }
 
     get name () {
-        return this.StopName
+        return this.StopName.Zh_tw
     }
 
     get boarding () {
