@@ -40,9 +40,9 @@ const selectTypes = computed(() => $store.state.bike.selectTypes)
                     class="bike-search__cards-stations"
                 >
                     <router-link
-                        v-for="({StationUID, StationName, StationAddress, ServiceType, availability}) in bikeStations"
+                        v-for="({StationUID, StationName, StationAddress, ServiceType, StationPosition, availability}) in bikeStations"
                         :key="StationUID"
-                        :to="{ name: 'BikePlace', params: { value: StationName.Zh_tw }, query: { ...$route.query } }"
+                        :to="{ name: 'BikePlace', params: { value: `${StationPosition.PositionLat},${StationPosition.PositionLon}` }, query: { ...$route.query } }"
                     >
                         <BikeListCard
                             :title="StationName.Zh_tw"
@@ -55,13 +55,13 @@ const selectTypes = computed(() => $store.state.bike.selectTypes)
                     </router-link>
                 </div>
                 <div
-                    v-show="selectTypes[typeIndex] === 'bikeCycling'"
+                    v-show="selectTypes[typeIndex] === BIKE_TYPE.CYCLING"
                     class="bike-search__cards-cycling"
                 >
                     <router-link
-                        v-for="({ RouteName, RoadSectionStart, RoadSectionEnd, CyclingLength, city }) in bikeCycling"
+                        v-for="({ RouteName, RoadSectionStart, RoadSectionEnd, CyclingLength, city, geometry }) in bikeCycling"
                         :key="RouteName"
-                        :to="{ name: 'BikePlace', params: { value: RouteName }, query: { ...$route.query } }"
+                        :to="{ name: 'BikePlace', params: { value: `${geometry[0].split(' ').reverse().join(',')}` }, query: { ...$route.query } }"
                     >
                         <BikeListCard
                             :title="RouteName"

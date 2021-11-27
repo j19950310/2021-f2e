@@ -52,6 +52,7 @@ export default defineComponent({
     <div class="bike-place">
         <BikeCard
             v-if="currentLocationData && currentLocationData.type === bikeType.STATION"
+            :key="currentLocationData.StationName.Zh_tw"
             :title="currentLocationData.StationName.Zh_tw"
             :desc="currentLocationData.StationAddress.Zh_tw"
             :rent-bikes="currentLocationData.availability.AvailableRentBikes"
@@ -65,7 +66,8 @@ export default defineComponent({
             @on-road="linkGoogleDirections(`${currentLocationData.StationPosition.PositionLat},${currentLocationData.StationPosition.PositionLon}`)"
         />
         <BikeCard
-            v-if="currentLocationData && currentLocationData.type === 'bikeCycling'"
+            v-if="currentLocationData && currentLocationData.type === bikeType.CYCLING"
+            :key="currentLocationData.RouteName"
             :title="currentLocationData.RouteName"
             :from="currentLocationData.RoadSectionStart"
             :to="currentLocationData.RoadSectionEnd"
