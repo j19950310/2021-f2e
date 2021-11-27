@@ -1,11 +1,45 @@
 import PointType from '@/api/PointType'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import {
+    getBusStationNearBy,
+    getBusRouteInterCity,
     getBusRouteByCity,
     getBusRouteByNearBy,
+    getStopOfRouteInterCity,
     getBusDisplayStopOfRoute
 } from '@/api/getBus'
 const PER_PAGE = 10
+
+export class BusStation {
+    constructor (config) {
+        Object.assign(this, config)
+    }
+
+    get name () {
+        // return this.RouteName.En
+        return this.StationName.Zh_tw
+    }
+
+    get id () {
+        return this.StationID
+    }
+
+    get uid () {
+        return this.StationUID
+    }
+
+    get position () {
+        return new PointType(this.StationPosition)
+    }
+
+    get stops () {
+        return this.Stops.map(stop => new BusStation(stop))
+    }
+
+    get updateTime () {
+        return this.UpdateTime
+    }
+}
 
 export class BusRoute {
     constructor (config) {
@@ -16,14 +50,11 @@ export class BusRoute {
         const config = {
             filter: `RouteID == '${this.id}'`,
         }
-        return (await getBusDisplayStopOfRoute(this.city, this.name, config))
-            .map(item => {
-                const { Direction: direction, Stops: stops } = item
-                return {
-                    direction,
-                    stops: stops.map(stop => (new BusStop(stop))),
-                }
-            })
+        if (this.city) {
+            return (await getBusDisplayStopOfRoute(this.city, this.name, config))
+        } else { // 公交車路線沒有城市資訊
+            return (await getStopOfRouteInterCity(config))
+        }
     }
 
     get name () {
@@ -200,22 +231,39 @@ export class BusQuery {
             page: 1,
         }, config)
         this.setPage(this.config.page)
-        this.currentSearch = this.searchByCity
     }
 
-    async searchByCity (queryCity, keywords = '') {
+    async searchRouteInterCity (options) {
+        const config = Object.assign({}, this.config, options)
+        return (await getBusRouteInterCity(config))
+            .map(item => new BusRoute(item))
+    }
+
+    async searchRouteByCity (queryCity, options) {
         const city = getCityParam(queryCity)
         if (!city) return new Error('city wrong')
-        const config = this.mergeKeywordsConfig(this.config, keywords)
+        const config = Object.assign({}, this.config, options)
         return (await getBusRouteByCity(city, config))
             .map(item => new BusRoute(item))
     }
 
-    async searchByNearBy (keywords = '') {
+    async searchRouteByNearBy (keywords = '') {
         if (!this.config.position || !this.config.distance) return new Error('position wrong')
-        const config = this.mergeKeywordsConfig(this.config, keywords)
-        return (await getBusRouteByNearBy(config))
+        const routeConfig = this.mergeRouteKeywordsConfig(this.config, keywords)
+        return (await getBusRouteByNearBy(routeConfig))
             .map(item => new BusRoute(item))
+            .filter((item, index, list) => { // 濾掉重複ID
+                return list.findIndex((subFindItem) => (subFindItem.uid === item.uid)) === index
+            })
+    }
+
+    async searchStationByNearBy () {
+        if (!this.config.position || !this.config.distance) return new Error('position wrong')
+        return (await getBusStationNearBy({
+            ...this.config,
+            top: 1000, // 範圍1000公尺內的站點不會太多
+        }))
+            .map(item => new BusStation(item))
     }
 
     // async getLength () {
@@ -226,7 +274,16 @@ export class BusQuery {
     //     const { length } = await getBusRouteByCity(config)
     //     return length
     // }
-    mergeKeywordsConfig (config, keywords) {
+
+    mergeStationKeywordsConfig (config, keywords) {
+        const filter = keywords ? `contains(StationName/Zh_tw, '${keywords}') | contains(StationAddress, '${keywords}') | Stops/any(stop: contains(stop/StopName/Zh_tw, '${keywords}'))` : '(1 == 1)'
+        return {
+            ...config,
+            filter: config.filter ? config.filter + ` and (${filter})` : filter,
+        }
+    }
+
+    mergeRouteKeywordsConfig (config, keywords) {
         const filter = keywords ? `contains(RouteName/Zh_tw, '${keywords}') | contains(DestinationStopNameZh, '${keywords}') | contains(DepartureStopNameZh, '${keywords}')` : '(1 == 1)'
         return {
             ...config,
@@ -248,7 +305,8 @@ export class BusQuery {
         this.config.skip = PER_PAGE * (page - 1)
     }
 
-    setPosition (position) {
+    setPosition (position, distance = undefined) {
         this.config.position = position
+        if (distance) this.config.distance = distance
     }
 }

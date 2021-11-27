@@ -9,9 +9,44 @@ function errorHandler (e) {
     return e
 }
 
+// GET /v2/Bus/Station/NearBy
+/**
+ * 取得指定[位置,範圍]的全臺公車站位資料
+ */
+export const getBusStationNearBy = async (config) => {
+    try {
+        if (config.position === undefined || config.distance === undefined) throw new Error('請輸入位置與範圍')
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/Station/NearBy?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+        return []
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/Route/InterCity
+/**
+ * 取得公路客運路線資料
+ */
+export const getBusRouteInterCity = async (config) => {
+    try {
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/Route/InterCity?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
 // GET /v2/Bus/Route/City/{City}
 /**
  * 取得指定[縣市]的市區公車路線資料
+ * Note: 參數沒有[位置,範圍]，所以含有position參數不會影響結果
  */
 export const getBusRouteByCity = async (queryCity, config = {}) => {
     try {
@@ -37,6 +72,22 @@ export const getBusRouteByNearBy = async (config) => {
         if (config.position === undefined || config.distance === undefined) throw new Error('請輸入位置與範圍')
         const queryString = paramsFormat(config)
         const { data } = await axios.get(`/Route/NearBy?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/StopOfRoute/InterCity
+/**
+ * 取得公路客運路線與站牌資料
+ */
+export const getStopOfRouteInterCity = async (config) => {
+    try {
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/StopOfRoute/InterCity?${queryString}`)
         return data
     } catch (error) {
         errorHandler(error)

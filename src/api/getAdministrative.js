@@ -21,6 +21,14 @@ export async function getTownsByCountycode (countycode) {
     return data.map(convertXMLTown)
 }
 
+// https://api.nlsc.gov.tw/other/TownVillagePointQuery/120.698659/24.156250
+
+export async function getCityByPosition (position) {
+    const { lat, lng } = position
+    const { data: { ctyName } } = await axios.get(`${baseUrl}/TownVillagePointQuery/${lng}/${lat}`)
+    return ctyName
+}
+
 function convertXMLCounty (county) {
     return {
         code: county.countycode,

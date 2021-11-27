@@ -7,7 +7,7 @@
         @submit="submit"
         @focus="setFocus"
         @blur="setBlur"
-        @mousedown="setFocus"
+        @keyup.enter="submit"
     >
         <div
             class="search-filter__functions"
@@ -40,6 +40,5 @@
 import TourFilter from '@/components/Search/TourFilter.vue'
 export default {
     extends: TourFilter,
-    inheritAttrs: false,
 }
 </script>
