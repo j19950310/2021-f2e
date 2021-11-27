@@ -1,4 +1,5 @@
 import PointType from '@/api/PointType'
+import { getCityByPosition } from '@/api/getAdministrative'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import {
     getBusStationNearBy,
@@ -13,6 +14,20 @@ const PER_PAGE = 10
 export class BusStation {
     constructor (config) {
         Object.assign(this, config)
+    }
+
+    async getRoutes () {
+        const routeUIDs = this.stops.map(stop => stop.RouteUID)
+        const city = getCityParam(await getCityByPosition(this.position))
+        const config = {
+            // ${id} == RouteUID
+            filter: routeUIDs.map(id => `(RouteUID == '${id}')`).join(' | '),
+        }
+        const interRoutes = (await getBusRouteInterCity(config))
+            .map(item => new BusRoute(item))
+        const cityRoutes = (await getBusRouteByCity(city, config))
+            .map(item => new BusRoute(item))
+        return { interRoutes, cityRoutes }
     }
 
     get name () {

@@ -4,6 +4,7 @@ import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
 import Bus from '@/views/Bus/Index.vue'
+import BusStation from '@/views/Bus/Station.vue'
 import BusSearchResult from '@/views/Bus/SearchResult.vue'
 import BusSearchRoute from '@/views/Bus/SearchRoute.vue'
 import BusSearchRouteDetail from '@/views/Bus/SearchRouteDetail.vue'
@@ -60,6 +61,7 @@ const routes = [
                 path: ':search',
                 name: 'BusSearch',
                 components: {
+                    BusStation,
                     BusSearchResult,
                     BusSearchRoute,
                     BusSearchRouteDetail,
