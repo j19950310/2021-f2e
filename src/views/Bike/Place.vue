@@ -79,6 +79,37 @@ export default defineComponent({
             @on-back="$router.push(prevRoute)"
             @on-road="linkGoogleDirections(`${currentLocationData.geometry[0].split(' ').reverse().join(',')}`)"
         />
+        <BikeCard
+            v-if="currentLocationData && currentLocationData.type === bikeType.RESTAURANT"
+            :key="currentLocationData.Name"
+            :title="currentLocationData.Name"
+            :from="currentLocationData.Address"
+            :desc="currentLocationData.OpenTime"
+            :src="currentLocationData.Picture.PictureUrl1"
+            :content="currentLocationData.Description"
+            :tags="[
+                currentLocationData.City,
+                currentLocationData.Class,
+            ]"
+            :date="currentLocationData.UpdateTime"
+            @on-back="$router.push(prevRoute)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}}`)"
+        />
+        <BikeCard
+            v-if="currentLocationData && currentLocationData.type === bikeType.TOUR"
+            :key="currentLocationData.Name"
+            :title="currentLocationData.Name"
+            :from="currentLocationData.Address"
+            :desc="currentLocationData.Description"
+            :src="currentLocationData.Picture.PictureUrl1"
+            :content="currentLocationData.DescriptionDetail"
+            :tags="[
+                currentLocationData.City,
+            ]"
+            :date="currentLocationData.UpdateTime"
+            @on-back="$router.push(prevRoute)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}}`)"
+        />
     </div>
 </template>
 

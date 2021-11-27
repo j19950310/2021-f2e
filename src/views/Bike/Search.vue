@@ -17,6 +17,8 @@ const typeIndex = ref(0)
 
 const bikeStations = computed(() => $store.state.bike.bikeStations)
 const bikeCycling = computed(() => $store.state.bike.bikeCycling)
+const restaurants = computed(() => $store.state.bike.restaurants)
+const tours = computed(() => $store.state.bike.tours)
 const selectTypes = computed(() => $store.state.bike.selectTypes)
 
 </script>
@@ -70,6 +72,46 @@ const selectTypes = computed(() => $store.state.bike.selectTypes)
                             :tags="[
                                 city,
                                 `路線長度：${CyclingLength / 1000}km`,
+                            ]"
+                        />
+                    </router-link>
+                </div>
+                <div
+                    v-show="selectTypes[typeIndex] === BIKE_TYPE.RESTAURANT"
+                    class="bike-search__cards-restaurant"
+                >
+                    <router-link
+                        v-for="({ Name, Address, City, Class, Picture, Position }) in restaurants"
+                        :key="Name"
+                        :to="{ name: 'BikePlace', params: { value: `${Position.PositionLat},${Position.PositionLon}` }, query: { ...$route.query } }"
+                    >
+                        <BikeListCard
+                            :title="Name"
+                            :desc="Address"
+                            :src="Picture.PictureUrl1"
+                            :tags="[
+                                City,
+                                Class,
+                            ]"
+                        />
+                    </router-link>
+                </div>
+                <div
+                    v-show="selectTypes[typeIndex] === BIKE_TYPE.TOUR"
+                    class="bike-search__cards-tour"
+                >
+                    <router-link
+                        v-for="({ Name, Address, Description, City, Picture, Position }) in tours"
+                        :key="Name"
+                        :to="{ name: 'BikePlace', params: { value: `${Position.PositionLat},${Position.PositionLon}` }, query: { ...$route.query } }"
+                    >
+                        <BikeListCard
+                            :title="Name"
+                            :from="Address"
+                            :desc="Description"
+                            :src="Picture.PictureUrl1"
+                            :tags="[
+                                City,
                             ]"
                         />
                     </router-link>
