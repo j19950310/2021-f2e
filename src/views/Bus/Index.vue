@@ -30,16 +30,17 @@ export default defineComponent({
 
         // variable
         let stationMarkers = []
-        const preventInteraction = ref(false)
+        const preventInteraction = ref(true)
         const viewIndex = ref(0)
         const googleMapEl = ref('')
         const searchValue = ref(null)
-        const searchQuerys = ref([])
+        const searchQueries = ref([])
         const cacheQuerys = ref([])
         const currentStation = ref(null)
         const currentRoute = ref(null) // 此route為車的路線...
         const mapInit = () => {
             const { lat, lng } = $map.value.mapInstance.getCenter()
+            preventInteraction.value = false
             $busQuery.setPosition({ lat: lat(), lng: lng() })
         }
         const submit = async () => { // 查詢關鍵字
@@ -49,11 +50,11 @@ export default defineComponent({
                     const config = $busQuery.mergeRouteKeywordsConfig({}, searchValue.value)
                     const cityResults = await $busQuery.searchRouteByNearBy(searchValue.value)
                     const interCityResults = await $busQuery.searchRouteInterCity(config)
-                    searchQuerys.value = [...cityResults, ...interCityResults]
+                    searchQueries.value = [...cityResults, ...interCityResults]
                 } catch (e) {
                     console.error(e)
                 } finally {
-                    viewIndex.value = 0
+                    viewIndex.value = 1
                     $router.push({
                         name: 'BusSearch',
                         params: {
@@ -117,7 +118,7 @@ export default defineComponent({
                 }
                 if (results && results[0]) {
                     currentRoute.value = results[0]
-                    viewIndex.value = 1
+                    viewIndex.value = 2
                 }
             }
         })
@@ -137,7 +138,7 @@ export default defineComponent({
             preventInteraction,
             googleMapEl,
             searchValue,
-            searchQuerys,
+            searchQueries,
             submit,
             $busQuery,
             currentRoute,
@@ -151,27 +152,25 @@ export default defineComponent({
         }
     },
     methods: {
-        clickRoute (route) {
-            this.$router.push({
-                name: 'BusSearch',
-                params: {
-                    ...this.$route.params,
-                },
-                query: {
-                    ...this.$route.query,
-                    uid: route.uid,
-                },
-            })
-            this.currentRoute = route
-            this.cacheQuerys = [...this.searchQuerys]
-            this.searchQuerys = []
-        },
         backToResult () {
             this.$router.back()
-            this.viewIndex = 0
+            if (this.searchValue) {
+                this.viewIndex = 1
+            } else if (this.currentStation) {
+                this.viewIndex = 0
+            } else {
+                this.viewIndex = 0
+                this.clearSearch()
+            }
         },
         goToDetail () {
-            this.viewIndex = 2
+            this.viewIndex = 3
+        },
+        clearSearch () {
+            this.currentStation = null
+            this.searchValue = null
+            this.searchQueries = []
+            this.viewIndex = 0
         },
     },
 })
@@ -195,20 +194,33 @@ export default defineComponent({
             >
                 <SearchBusFilter
                     v-model.trim="searchValue"
+                    :active="viewIndex === 1 || currentStation"
+                    :style="{
+                        'pointer-events': preventInteraction ? 'none' : 'auto',
+                    }"
                     @submit="submit"
+                    @close="clearSearch"
                 />
-                <DragPopup v-if="searchQuerys.length > 0">
+                <DragPopup v-if="currentStation || searchQueries.length > 0">
                     <div class="bus__view">
                         <div
                             class="bus__view-wrapper"
                             :style="{transform: `translate3d(${viewIndex * -100}%,0,0)`}"
                         >
                             <router-view
+                                key="BusStation"
                                 class="bus__view-slide"
-                                name="BusSearchResult"
-                                :querys="searchQuerys"
+                                name="BusStation"
+                                :bus-station="currentStation"
                             />
                             <router-view
+                                key="BusSearchResult"
+                                class="bus__view-slide"
+                                name="BusSearchResult"
+                                :queries="searchQueries"
+                            />
+                            <router-view
+                                key="BusSearchRoute"
                                 class="bus__view-slide"
                                 :bus-route="currentRoute"
                                 :map="$map"
@@ -217,6 +229,7 @@ export default defineComponent({
                                 @forward="goToDetail"
                             />
                             <router-view
+                                key="BusSearchRouteDetail"
                                 class="bus__view-slide"
                                 :data="currentRoute"
                                 name="BusSearchRouteDetail"

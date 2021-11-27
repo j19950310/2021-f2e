@@ -47,10 +47,10 @@ export default {
             return this.stops.find(({ direction }) => (direction === this.direction))
         },
         activeRoute () {
-            return this.viewIndex.value === 1
+            return this.viewIndex.value === 2
         },
         updateTime () {
-            if (this.formatBusRoute.updateTime) {
+            if (this.formatBusRoute?.updateTime) {
                 const date = new Date(this.formatBusRoute.updateTime)
                 return date.toLocaleTimeString()
             }
@@ -95,6 +95,7 @@ export default {
             } else {
                 this.clearMarker()
                 this.hidePolyline()
+                this.activeStop = null
             }
         },
         activeStop (focusStop, blurStop) {

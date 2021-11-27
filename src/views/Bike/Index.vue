@@ -30,7 +30,7 @@ export default defineComponent({
         const searchValue = ref(null)
         const googleMapEl = ref(null)
         const map = ref(null)
-        const searchQuerys = ref([])
+        const searchQueries = ref([])
         const selectTypesMap = ref({
             [BIKE_TYPE.STATION]: '自行車站',
             [BIKE_TYPE.CYCLING]: '自行車路線',
@@ -55,10 +55,10 @@ export default defineComponent({
 
         watch(() => searchValue.value, async (value) => {
             if (value) {
-                searchQuerys.value = await map.value.searchQuery(value)
+                searchQueries.value = await map.value.searchQuery(value)
                 return
             }
-            searchQuerys.value = []
+            searchQueries.value = []
         })
         watch(() => $route.params.value, (value) => {
             if (value) {
@@ -245,7 +245,7 @@ export default defineComponent({
             googleMapEl,
             map,
             searchValue,
-            searchQuerys,
+            searchQueries,
             isWaiting,
             isHome,
             isSearch,
@@ -303,12 +303,12 @@ export default defineComponent({
                         </div> -->
                     </div>
                     <div
-                        v-show="searchQuerys.length"
+                        v-show="searchQueries.length"
                         class="bike__search-result"
                     >
                         <ul class="bike__search-result-main">
                             <li
-                                v-for="query in searchQuerys"
+                                v-for="query in searchQueries"
                                 :key="query.place_id"
                                 class="bike__search-result-item"
                                 @click="submit(query.structured_formatting.main_text)"

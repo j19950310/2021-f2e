@@ -3,14 +3,14 @@
 export default {
     name: 'BusSearchResult',
     props: {
-        querys: {
+        queries: {
             type: Array,
             default: () => ([]),
         },
     },
     computed: {
         filterData () {
-            return this.querys.map(({ name, city, id, uid, type, start, end }) => ({ name, city, id, uid, type, start, end }))
+            return this.queries.map(({ name, city, id, uid, type, start, end }) => ({ name, city, id, uid, type, start, end }))
         },
     },
     methods: {
