@@ -5,8 +5,6 @@ export default class GoogleMapDev extends GoogleMap {
         super(el, options)
         this.onEvents.init = () => {
             // 初始化 Class
-            this.Stop = getStop(this.googleMap)
-
             this.customPolylineOuter = new this.googleMap.Polyline({
                 path: [],
                 geodesic: true,
@@ -29,15 +27,5 @@ export default class GoogleMapDev extends GoogleMap {
         this.customPolylineInner.setPath(path)
         this.customPolylineOuter.setMap(this.mapInstance)
         this.customPolylineInner.setMap(this.mapInstance)
-    }
-}
-
-function getStop (googleMap) {
-    if (googleMap) {
-        return class Stop extends googleMap.Marker {
-            constructor (options) {
-                super(options)
-            }
-        }
     }
 }

@@ -13,7 +13,6 @@ import BikeHome from '@/views/Bike/Index.vue'
 import BikeSearch from '@/views/Bike/Search.vue'
 import BikePlace from '@/views/Bike/Place.vue'
 import BikeDir from '@/views/Bike/Dir.vue'
-import Dev from '@/views/Dev.vue'
 import About from '@/views/About/index.vue'
 import AboutPerson from '@/views/About/AboutPerson.vue'
 import TourHome from '@/views/Tour/Index.vue'
@@ -29,11 +28,6 @@ const routes = [
     //     name: 'Home',
     //     component: Home,
     // },
-    {
-        path: '/dev',
-        name: 'Dev',
-        component: Dev,
-    },
     {
         path: '/about',
         name: 'About',
