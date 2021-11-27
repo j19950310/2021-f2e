@@ -3,6 +3,10 @@ import store from '@/store/index'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
 import Components from '@/views/Components.vue'
+import Bus from '@/views/Bus/Index.vue'
+import BusSearchResult from '@/views/Bus/SearchResult.vue'
+import BusSearchRoute from '@/views/Bus/SearchRoute.vue'
+import BusSearchRouteDetail from '@/views/Bus/SearchRouteDetail.vue'
 import Bike from '@/views/Bike/Wrapper.vue'
 import BikeHome from '@/views/Bike/Index.vue'
 import BikeSearch from '@/views/Bike/Search.vue'
@@ -42,6 +46,29 @@ const routes = [
         ],
     },
     {
+        path: '/components',
+        name: 'Components',
+        component: Components,
+    },
+    // 第三週Bus
+    {
+        path: '/bus',
+        name: 'Bus',
+        component: Bus,
+        children: [
+            {
+                path: ':search',
+                name: 'BusSearch',
+                components: {
+                    BusSearchResult,
+                    BusSearchRoute,
+                    BusSearchRouteDetail,
+                },
+            },
+        ],
+    },
+    // 第二週Bike
+    {
         path: '/bike',
         name: 'Bike',
         component: Bike,
@@ -70,11 +97,7 @@ const routes = [
             },
         ],
     },
-    {
-        path: '/components',
-        name: 'Components',
-        component: Components,
-    },
+    // 第ㄧ週Tour
     {
         path: '/tour',
         name: 'Tour',

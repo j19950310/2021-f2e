@@ -1,15 +1,26 @@
 <script>
-import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import { defineComponent, ref, computed, onMounted, watch, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GoogleMap from '@/plugins/GoogleMap/googleMapDev'
+import markerBusStation from '@/assets/markerBusStation.svg'
+import markerBusStationActive from '@/assets/markerBusStationActive.svg'
+import markerBusStop from '@/assets/markerBusStop.png'
+import markerBusStopEnd from '@/assets/markerBusStopEnd.png'
 import { BusQuery } from '@/api/Bus'
+const iconBusStation = {
+    url: markerBusStation,
+    anchor: { x: 12, y: 12 },
+}
+const iconBusStationActive = {
+    url: markerBusStationActive,
+    anchor: { x: 44, y: 44 },
+}
 
-// view 0: search -> 1: result -> 2: routes
+// view -1: station |
+// 0: searchRoute -> 1: routes -> 2: routeDetail
 export default defineComponent({
     name: 'BusRoot',
-    async beforeRouteUpdate (to, from) {
-        console.log(to, from)
-    },
+    inject: ['viewport'],
     setup () {
         // use
         const $router = useRouter()
@@ -18,11 +29,14 @@ export default defineComponent({
         const $map = ref(null)
 
         // variable
+        let stationMarkers = []
         const preventInteraction = ref(false)
+        const viewIndex = ref(0)
         const googleMapEl = ref('')
         const searchValue = ref(null)
         const searchQuerys = ref([])
         const cacheQuerys = ref([])
+        const currentStation = ref(null)
         const currentRoute = ref(null) // 此route為車的路線...
         const mapInit = () => {
             const { lat, lng } = $map.value.mapInstance.getCenter()
@@ -32,11 +46,14 @@ export default defineComponent({
             if (searchValue.value) {
                 preventInteraction.value = true
                 try {
-                    const results = await $busQuery.searchByNearBy(searchValue.value)
-                    searchQuerys.value = results
+                    const config = $busQuery.mergeRouteKeywordsConfig({}, searchValue.value)
+                    const cityResults = await $busQuery.searchRouteByNearBy(searchValue.value)
+                    const interCityResults = await $busQuery.searchRouteInterCity(config)
+                    searchQuerys.value = [...cityResults, ...interCityResults]
                 } catch (e) {
                     console.error(e)
                 } finally {
+                    viewIndex.value = 0
                     $router.push({
                         name: 'BusSearch',
                         params: {
@@ -47,10 +64,63 @@ export default defineComponent({
                 }
             }
         }
+        const createStationMarker = (station) => {
+            const { Marker, event } = $map.value.googleMap
+            const marker = new Marker({
+                position: station.position,
+                map: $map.value.mapInstance,
+                icon: iconBusStation,
+            })
+            event.addListener(marker, 'click', () => {
+                stationMarkers.forEach(marker => {
+                    marker.setIcon(iconBusStation)
+                })
+                marker.setIcon(iconBusStationActive) // 觸發狀態改變
+                currentStation.value = station
+            })
+            return marker
+        }
+        const clearStationMarkers = () => {
+            stationMarkers.forEach(marker => {
+                marker.setMap(null)
+                marker = null
+            })
+        }
         const boundsChanged = ({ lat, lng, radius }) => { // 更新查詢位置
-            $busQuery.setPosition({ lat, lng }, Math.ceil(radius))
+            $busQuery.setPosition({ lat, lng }, Math.ceil(Math.min(radius, 1000)))
+            if (viewIndex.value === 0) {
+                $busQuery.searchStationByNearBy().then(results => {
+                    clearStationMarkers()
+                    stationMarkers = results.map((station) => {
+                        return createStationMarker(station)
+                    })
+                })
+            } else {
+                clearStationMarkers()
+            }
         }
 
+        $router.afterEach(async (to, from) => {
+            console.log(to, from)
+            const { route: toRoute, city } = to.query
+            const { route: fromRoute } = from.query
+            let results = []
+            if (toRoute !== fromRoute && toRoute) {
+                if (city) {
+                    results = await $busQuery.searchRouteByCity(city, {
+                        filter: `RouteUID eq '${toRoute}'`,
+                    })
+                } else {
+                    results = await $busQuery.searchRouteInterCity({
+                        filter: `RouteUID eq '${toRoute}'`,
+                    })
+                }
+                if (results && results[0]) {
+                    currentRoute.value = results[0]
+                    viewIndex.value = 1
+                }
+            }
+        })
         onMounted(() => {
             const map = new GoogleMap(googleMapEl.value)
             Object.assign(map.onEvents, {
@@ -59,7 +129,11 @@ export default defineComponent({
             })
             $map.value = map
         })
+        provide('$map', $map)
+        provide('viewIndex', viewIndex)
+
         return {
+            viewIndex,
             preventInteraction,
             googleMapEl,
             searchValue,
@@ -67,6 +141,7 @@ export default defineComponent({
             submit,
             $busQuery,
             currentRoute,
+            currentStation,
             cacheQuerys,
         }
     },
@@ -91,6 +166,13 @@ export default defineComponent({
             this.cacheQuerys = [...this.searchQuerys]
             this.searchQuerys = []
         },
+        backToResult () {
+            this.$router.back()
+            this.viewIndex = 0
+        },
+        goToDetail () {
+            this.viewIndex = 2
+        },
     },
 })
 </script>
@@ -107,52 +189,37 @@ export default defineComponent({
             class="bus__map"
         />
         <div class="bus__main">
-            <div class="bus__search">
+            <div
+                class="bus__search"
+                :class="{'-mobile': !viewport.isPc}"
+            >
                 <SearchBusFilter
                     v-model.trim="searchValue"
                     @submit="submit"
-                >
-                    <div
-                        v-show="searchQuerys.length"
-                        class="bus__search-result"
-                    >
-                        <ul class="bus__search-result-main">
-                            <li
-                                v-for="query in searchQuerys"
-                                :key="query.id"
-                                class="bus__search-result-item"
-                                @click="clickRoute(query)"
-                            >
-                                <p class="bus__search-result-title">
-                                    {{ query.start }} 往返 {{ query.end }}
-                                </p>
-                                <p class="bus__search-result-desc">
-                                    {{ query.type }} {{ query.name }}
-                                </p>
-                            </li>
-                        </ul>
-                    </div>
-                </SearchBusFilter>
-                <DragPopup v-if="currentRoute">
+                />
+                <DragPopup v-if="searchQuerys.length > 0">
                     <div class="bus__view">
                         <div
                             class="bus__view-wrapper"
-                            :style="{
-                                transform: isDetail ? 'translateX(-100%)':'translateX(0)',
-                            }"
+                            :style="{transform: `translate3d(${viewIndex * -100}%,0,0)`}"
                         >
                             <router-view
                                 class="bus__view-slide"
-                                :data="currentRoute"
-                                :style="{
-                                    transform: !isDetail ? 'translateX(0)' : 'translateX(-100%)',
-                                }"
-                                name="route"
+                                name="BusSearchResult"
+                                :querys="searchQuerys"
+                            />
+                            <router-view
+                                class="bus__view-slide"
+                                :bus-route="currentRoute"
+                                :map="$map"
+                                name="BusSearchRoute"
+                                @back="backToResult"
+                                @forward="goToDetail"
                             />
                             <router-view
                                 class="bus__view-slide"
                                 :data="currentRoute"
-                                name="routeDetail"
+                                name="BusSearchRouteDetail"
                             />
                         </div>
                     </div>
@@ -188,8 +255,12 @@ export default defineComponent({
 
     &__search {
         top: $padding * 3;
+        bottom: $padding * 3;
         left: $padding * 3;
+        display: flex;
         width: 420px;
+        flex-direction: column;
+        pointer-events: none;
         @include media-breakpoint-down(tablet) {
             left: $padding * 2.5;
             width: calc(100% - #{$padding} * 5);
@@ -198,61 +269,40 @@ export default defineComponent({
         .search-default {
             position: relative;
             margin-bottom: $padding * 2;
+            flex: 0 0 auto;
+            pointer-events: all;
         }
 
-        &-result {
-            position: absolute;
-            bottom: -$padding * 2;
-            left: 0;
-            padding: $padding  $padding * 3;
-            width: 100%;
-            background-color: color('White');
-            border-radius: 24px;
-            z-index: 1;
-            box-shadow: 0 0 24px rgba(0, 0, 0, 10%);
-            transform: translate(0, 100%);
+        .drag-popup {
+            pointer-events: all;
 
-            &-item {
-                display: flex;
-                padding: $padding * 2 0;
-                cursor: pointer;
-                transition: color .3s;
-                @media (hover: hover) and (pointer: fine) {
-                    &:hover {
-                        color: var(--primary, color('Primary'));
-                    }
-                }
-            }
-
-            &-title {
-                @include text-ellipsis;
-                @include typo-h3;
-
-                margin-right: $padding;
-            }
-
-            &-desc {
-                @include text-ellipsis;
-                @include typo-h4;
-
-                color: color('Dark-Gray');
+            &:not(.-mobile) {
+                flex: 1 0 500px;
+                position: relative;
+                max-height: initial;
             }
         }
     }
 
     &__view {
-        position: relative;
+        position: absolute;
+        top: $padding * 3;
+        bottom: $padding * 3;
+        right: $padding * 3;
+        left: $padding * 3;
         overflow: hidden;
-        width: 100%;
+        max-height: 100%;
 
         &-wrapper {
             display: flex;
             width: 100%;
+            height: 100%;
             transition: transform .3s;
         }
 
         &-slide {
             flex: 0 0 100%;
+            max-height: 100%;
         }
     }
 }
