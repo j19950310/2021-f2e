@@ -82,7 +82,7 @@ export default {
             }
         },
         activeCurrentView () {
-            return this.viewIndex.value === 2
+            return this.viewIndex.value >= 2
         },
         updateTime () {
             if (this.formatBusRoute?.updateTime) {
