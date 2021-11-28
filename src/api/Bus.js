@@ -94,7 +94,6 @@ export class BusRoute {
             }
             return shape
                 .map(item => {
-                    console.log(item)
                     const points = decode(item.EncodedPolyline)
                     return {
                         points,

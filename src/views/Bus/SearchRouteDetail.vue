@@ -1,13 +1,31 @@
 <script>
 import SearchRoute from '@/views/Bus/SearchRoute.vue'
+import { BusRoute, BusStop } from '@/api/Bus'
 import { countiesMap } from '@/api/taiwanCountyData'
 // 透過 query 顯示
 export default {
     name: 'BusSearchRouteDetail',
-    extends: SearchRoute,
+    // extends: SearchRoute,
+    inject: ['viewIndex'],
+    props: {
+        busRoute: {
+            type: BusRoute,
+            default: null,
+        },
+    },
+    data () {
+        return {
+            formatBusRoute: null,
+        }
+    },
     computed: {
         activeCurrentView () {
             return this.viewIndex.value === 3
+        },
+        infoData () {
+            if (!this.formatBusRoute) return null
+            const { name, city, id, uid, type, start, end } = this.formatBusRoute
+            return { name, city, id, uid, type, start, end, isLink: false }
         },
         routeInfo () {
             if (!this.formatBusRoute) return null
@@ -92,6 +110,20 @@ export default {
                 // routeOperator,
             ].filter(Boolean)
         },
+    },
+    // clear needless
+    watch: {
+        busRoute: {
+            handler (newVal, oldVal) {
+                if (!newVal) return
+                this.formatBusRoute = new BusRoute(newVal)
+            },
+        },
+    },
+    mounted () {
+        if (this.busRoute) {
+            this.formatBusRoute = new BusRoute(this.busRoute)
+        }
     },
 }
 </script>
