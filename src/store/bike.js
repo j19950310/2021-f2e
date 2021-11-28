@@ -102,67 +102,141 @@ export default ({
         async GET_BIKE_STATIONS ({ commit }, { city, options }) {
             let data
             try {
-                commit('SET_WAITING', true)
                 data = await getBikeStationWithAvailability(city, options)
                 commit('SET_BIKE_STATIONS', data)
             } catch (e) {
                 console.log(e)
-            } finally {
-                commit('SET_WAITING', false)
             }
             return data
         },
         async GET_BIKE_NEAR_STATIONS ({ commit }, { options }) {
             let data
             try {
-                commit('SET_WAITING', true)
                 data = await getBikeStationWithAvailabilityNearBy(options)
                 commit('SET_BIKE_STATIONS', data)
             } catch (e) {
                 console.log(e)
-            } finally {
-                commit('SET_WAITING', false)
             }
             return data
+        },
+        async GET_MERGE_BIKE_NEAR_STATIONS ({ commit }, payload) {
+            if (Array.isArray(payload)) {
+                const memo = new Set()
+                const stations = []
+                const results = await Promise.all(payload.map(({ lat, lng, r }) => {
+                    return getBikeStationWithAvailabilityNearBy({
+                        position: { lat, lng },
+                        distance: r | 0,
+                    })
+                }))
+                if (results && results.length) {
+                    results.flat().forEach(result => {
+                        const { StationUID } = result
+                        if (!memo.has(StationUID)) {
+                            memo.add(StationUID)
+                            stations.push(result)
+                        }
+                    })
+                }
+                commit('SET_BIKE_STATIONS', stations)
+                return stations
+            }
         },
         async GET_BIKE_CYCLING ({ commit }, { city, options }) {
             let data
             try {
-                commit('SET_WAITING', true)
                 data = await getCyclingShape(city, options)
                 commit('SET_BIKE_CYCLING', data)
             } catch (e) {
                 console.log(e)
-            } finally {
-                commit('SET_WAITING', false)
             }
             return data
         },
         async GET_RESTAURANTS ({ commit }, { options }) {
             let data
             try {
-                commit('SET_WAITING', true)
                 data = await getRestaurantSpot(options)
                 commit('SET_RESTAURANTS', data.list)
             } catch (e) {
                 console.log(e)
-            } finally {
-                commit('SET_WAITING', false)
             }
             return data
+        },
+        async GET_RESTAURANTS_BY_CITY ({ commit }, { city, options }) {
+            let data
+            try {
+                data = await getRestaurantSpotByCity(city, options)
+                commit('SET_RESTAURANTS', data)
+            } catch (e) {
+                console.log(e)
+            }
+            return data
+        },
+        async GET_MERGE_RESTAURANTS ({ commit }, { city, payload }) {
+            if (Array.isArray(payload)) {
+                const memo = new Set()
+                const restaurants = []
+                const results = await Promise.all(payload.map(({ lat, lng, r }) => {
+                    return getRestaurantSpotByCity(city, {
+                        position: { lat, lng },
+                        distance: r | 0,
+                    })
+                }))
+                if (results && results.length) {
+                    results.flat().forEach(result => {
+                        const { RestaurantID } = result
+                        if (!memo.has(RestaurantID)) {
+                            memo.add(RestaurantID)
+                            restaurants.push(result)
+                        }
+                    })
+                }
+                commit('SET_RESTAURANTS', restaurants)
+                return restaurants
+            }
         },
         async GET_TOURS ({ commit }, { options }) {
             let data
             try {
-                commit('SET_WAITING', true)
                 data = await getScenicSpot(options)
                 commit('SET_TOURS', data.list)
             } catch (e) {
                 console.log(e)
-            } finally {
-                commit('SET_WAITING', false)
             }
             return data
+        },
+        async GET_TOURS_BY_CITY ({ commit }, { city, options }) {
+            let data
+            try {
+                data = await getScenicSpotByCity(city, options)
+                commit('SET_TOURS', data)
+            } catch (e) {
+                console.log(e)
+            }
+            return data
+        },
+        async GET_MERGE_TOURS ({ commit }, { city, payload }) {
+            if (Array.isArray(payload)) {
+                const memo = new Set()
+                const tours = []
+                const results = await Promise.all(payload.map(({ lat, lng, r }) => {
+                    return getScenicSpotByCity(city, {
+                        position: { lat, lng },
+                        distance: r | 0,
+                    })
+                }))
+                if (results && results.length) {
+                    results.flat().forEach(result => {
+                        const { ScenicSpotID } = result
+                        if (!memo.has(ScenicSpotID)) {
+                            memo.add(ScenicSpotID)
+                            tours.push(result)
+                        }
+                    })
+                }
+                commit('SET_TOURS', tours)
+                return tours
+            }
         },
     },
 })

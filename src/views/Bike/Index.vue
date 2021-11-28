@@ -7,6 +7,9 @@ import GoogleMap from '@/plugins/GoogleMap/googleMap'
 import { BIKE_TYPE } from '@/plugins/variable'
 import { cities } from '@/api/paramsFormat'
 
+const SEARCH_NEAR_RANGE = 300
+const PLACE_NEAR_RANGE = 1000
+
 export default defineComponent({
     components: {
         BikeSearch,
@@ -68,6 +71,7 @@ export default defineComponent({
             if (map.value) {
                 if (map.value.agreeGeolocation) {
                     map.value.moveMapToPlace(map.value.userLocationMark.getPosition())
+                    map.value.setZoom(17)
                 }
             }
         }
@@ -131,11 +135,11 @@ export default defineComponent({
             }
         }
 
-        const getViewportBikeStations = async (lat, lng, r) => {
+        const getViewportBikeStations = async (lat, lng, r, administrative) => {
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            const administrative = await getAdministrative()
+            administrative = administrative || await getAdministrative()
             if (administrative && map.value) {
                 const stations = await $store.dispatch('bike/GET_BIKE_STATIONS', {
                     city: administrative,
@@ -179,8 +183,23 @@ export default defineComponent({
                 }
             }
         }
-        const getBikeCycling = async () => {
-            const administrative = await getAdministrative()
+        const getMergeNearbyBikeStations = async (payload) => {
+            if (map.value) {
+                const stations = await $store.dispatch('bike/GET_MERGE_BIKE_NEAR_STATIONS', payload)
+                if (Array.isArray(stations)) {
+                    const markers = stations.map(station => {
+                        const { StationPosition } = station
+                        return map.value.generateMarker(station, {
+                            position: { lat: StationPosition.PositionLat, lng: StationPosition.PositionLon },
+                            icon: new URL('../../assets/icons/bike.svg', import.meta.url).href,
+                        })
+                    })
+                    map.value.setFilterMarkers(markers)
+                }
+            }
+        }
+        const getBikeCycling = async (administrative) => {
+            administrative = administrative || await getAdministrative()
             if (administrative && map.value) {
                 const cyclings = await $store.dispatch('bike/GET_BIKE_CYCLING', {
                     city: administrative,
@@ -205,19 +224,21 @@ export default defineComponent({
                 }
             }
         }
-        const getRestaurants = async (lat, lng, r) => {
+        const getRestaurants = async (lat, lng, r, administrative) => {
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            if (map.value) {
-                const { length, list } = await $store.dispatch('bike/GET_RESTAURANTS', {
+            administrative = administrative || await getAdministrative()
+            if (map.value && administrative) {
+                const restaurants = await $store.dispatch('bike/GET_RESTAURANTS_BY_CITY', {
+                    city: administrative,
                     options: {
                         position: { lat, lng },
                         distance: r | 0,
                     },
                 })
-                if (length) {
-                    const markers = list.map(restaurant => {
+                if (Array.isArray(restaurants)) {
+                    const markers = restaurants.map(restaurant => {
                         const { Position } = restaurant
                         return map.value.generateMarker(restaurant, {
                             position: { lat: Position.PositionLat, lng: Position.PositionLon },
@@ -228,19 +249,59 @@ export default defineComponent({
                 }
             }
         }
-        const getTours = async (lat, lng, r) => {
+        const getMergeRestaurants = async (payload, administrative) => {
+            administrative = administrative || await getAdministrative()
+            if (map.value && administrative) {
+                const restaurants = await $store.dispatch('bike/GET_MERGE_RESTAURANTS', {
+                    city: administrative,
+                    payload,
+                })
+                if (Array.isArray(restaurants)) {
+                    const markers = restaurants.map(restaurant => {
+                        const { Position } = restaurant
+                        return map.value.generateMarker(restaurant, {
+                            position: { lat: Position.PositionLat, lng: Position.PositionLon },
+                            icon: new URL('../../assets/icons/restaurant.svg', import.meta.url).href,
+                        })
+                    })
+                    map.value.setFilterMarkers(markers)
+                }
+            }
+        }
+        const getTours = async (lat, lng, r, administrative) => {
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            if (map.value) {
-                const { length, list } = await $store.dispatch('bike/GET_TOURS', {
+            administrative = administrative || await getAdministrative()
+            if (map.value && administrative) {
+                const tours = await $store.dispatch('bike/GET_TOURS_BY_CITY', {
+                    city: administrative,
                     options: {
                         position: { lat, lng },
                         distance: r | 0,
                     },
                 })
-                if (length) {
-                    const markers = list.map(tour => {
+                if (Array.isArray(tours)) {
+                    const markers = tours.map(tour => {
+                        const { Position } = tour
+                        return map.value.generateMarker(tour, {
+                            position: { lat: Position.PositionLat, lng: Position.PositionLon },
+                            icon: new URL('../../assets/icons/tour.svg', import.meta.url).href,
+                        })
+                    })
+                    map.value.setFilterMarkers(markers)
+                }
+            }
+        }
+        const getMergeTours = async (payload, administrative) => {
+            administrative = administrative || await getAdministrative()
+            if (map.value && administrative) {
+                const tours = await $store.dispatch('bike/GET_MERGE_TOURS', {
+                    city: administrative,
+                    payload,
+                })
+                if (Array.isArray(tours)) {
+                    const markers = tours.map(tour => {
                         const { Position } = tour
                         return map.value.generateMarker(tour, {
                             position: { lat: Position.PositionLat, lng: Position.PositionLon },
@@ -252,108 +313,118 @@ export default defineComponent({
             }
         }
 
+        const searchFromMap = async (lat, lng, r) => {
+            console.log('searchMap')
+            lat = lat || $route.query.lat
+            lng = lng || $route.query.lng
+            r = r || $route.query.r
+            const administrative = await getAdministrative()
+            await Promise.all(selectTypes.value.map(type => {
+                if (type === BIKE_TYPE.STATION) {
+                    return getViewportBikeStations(lat, lng, r, administrative)
+                }
+                // if (type === BIKE_TYPE.CYCLING) {
+                //     return getBikeCycling(administrative)
+                // }
+                if (type === BIKE_TYPE.RESTAURANT) {
+                    return getRestaurants(lat, lng, r, administrative)
+                }
+                if (type === BIKE_TYPE.TOUR) {
+                    return getTours(lat, lng, r, administrative)
+                }
+                return null
+            }))
+        }
+
         const searchFromText = async () => {
             if (searchValue.value) {
                 console.log('searchText')
-                const promises = []
                 const positions = []
                 const markers = []
+                const administrative = await getAdministrative()
                 const places = await map.value.textSearch(searchValue.value)
                 places.forEach(place => {
                     const { location } = place.geometry
                     positions.push({
                         lat: location.lat(),
                         lng: location.lng(),
-                        r: 300,
+                        r: SEARCH_NEAR_RANGE,
                     })
                     markers.push(map.value.generateMarker(place, {
                         position: location,
                     }))
                 })
-                map.value.clearQueryMarkers()
                 map.value.setQueryMarkers(markers)
-                map.value.moveMapToPlace(markers[0].position)
-                positions.forEach(({ lat, lng, r }) => {
-                    selectTypes.value.forEach(type => {
-                        if (type === BIKE_TYPE.STATION) {
-                            promises.push(getNearbyBikeStations(lat, lng, r))
-                        }
-                        if (type === BIKE_TYPE.RESTAURANT) {
-                            promises.push(getRestaurants(lat, lng, r))
-                        }
-                        if (type === BIKE_TYPE.TOUR) {
-                            promises.push(getTours(lat, lng, r))
-                        }
-                    })
-                })
-                selectTypes.value.forEach(type => {
-                    if (type === BIKE_TYPE.CYCLING) {
-                        promises.push(getBikeCycling())
-                    }
-                })
-                await Promise.all(promises)
-            }
-        }
-        const searchFromPlace = async () => {
-            if (isPlace.value) {
-                console.log('searchPlace')
-                const [lat, lng] = $route.params.value.split(',')
-                const position = new map.value.googleMap.LatLng(lat, lng)
-                const marker = map.value.generateMarker(null, {
-                    position,
-                    zIndex: 3,
-                })
-                map.value.clearQueryMarkers()
-                map.value.setQueryMarkers([marker])
-                map.value.moveMapToPlace(position)
+                const [firstMarker] = markers
+                if (firstMarker) {
+                    map.value.moveMapToPlace(firstMarker.position)
+                }
                 await Promise.all(selectTypes.value.map(type => {
                     if (type === BIKE_TYPE.STATION) {
-                        return getNearbyBikeStations(lat, lng, 1000)
+                        return getMergeNearbyBikeStations(positions)
                     }
                     if (type === BIKE_TYPE.CYCLING) {
-                        return getBikeCycling()
+                        return getBikeCycling(administrative)
                     }
                     if (type === BIKE_TYPE.RESTAURANT) {
-                        return getRestaurants(lat, lng, 1000)
+                        return getMergeRestaurants(positions, administrative)
                     }
                     if (type === BIKE_TYPE.TOUR) {
-                        return getTours(lat, lng, 1000)
+                        return getMergeTours(positions, administrative)
                     }
                     return null
                 }))
             }
         }
-
-        const search = async (lat, lng, r) => {
-            lat = lat || $route.query.lat
-            lng = lng || $route.query.lng
-            r = r || $route.query.r
-            $store.commit('bike/CLEAR_ALL_DATA')
-            map.value.clearFilterMarkers()
-            if (isSearch.value) {
-                await searchFromText()
-                return
-            }
+        const searchFromPlace = async () => {
             if (isPlace.value) {
-                await searchFromPlace()
-                return
+                console.log('searchPlace')
+                const administrative = await getAdministrative()
+                const [lat, lng] = $route.params.value.split(',')
+                if (lat && lng) {
+                    const position = new map.value.googleMap.LatLng(lat, lng)
+                    const marker = map.value.generateMarker(null, {
+                        position,
+                        zIndex: 3,
+                    })
+                    map.value.setQueryMarkers([marker])
+                    map.value.moveMapToPlace(position)
+                    await Promise.all(selectTypes.value.map(type => {
+                        if (type === BIKE_TYPE.STATION) {
+                            return getNearbyBikeStations(lat, lng, PLACE_NEAR_RANGE)
+                        }
+                        if (type === BIKE_TYPE.CYCLING) {
+                            return getBikeCycling(administrative)
+                        }
+                        if (type === BIKE_TYPE.RESTAURANT) {
+                            return getRestaurants(lat, lng, PLACE_NEAR_RANGE, administrative)
+                        }
+                        if (type === BIKE_TYPE.TOUR) {
+                            return getTours(lat, lng, PLACE_NEAR_RANGE, administrative)
+                        }
+                        return null
+                    }))
+                }
             }
-            console.log('search')
-            await Promise.all(selectTypes.value.map(type => {
-                if (type === BIKE_TYPE.STATION) {
-                    return getViewportBikeStations(lat, lng, r)
+        }
+
+        const search = async () => {
+            try {
+                $store.commit('bike/SET_WAITING', true)
+                $store.commit('bike/CLEAR_ALL_DATA')
+                map.value.clearAllMapMarkers()
+                if (isSearch.value) {
+                    await searchFromText()
+                    return
                 }
-                // if (type === BIKE_TYPE.CYCLING) {
-                //     return getBikeCycling()
-                // }
-                if (type === BIKE_TYPE.RESTAURANT) {
-                    return getRestaurants(lat, lng, r)
+                if (isPlace.value) {
+                    await searchFromPlace()
+                    return
                 }
-                if (type === BIKE_TYPE.TOUR) {
-                    return getTours(lat, lng, r)
-                }
-                return null
-            }))
+                await searchFromMap()
+            } finally {
+                $store.commit('bike/SET_WAITING', false)
+            }
         }
         const submitText = async () => {
             if (searchValue.value) {
@@ -365,21 +436,25 @@ export default defineComponent({
         const submitPlace = async (query) => {
             if (query) {
                 const [place] = await map.value.findPlaceFromQuery(query.structured_formatting.main_text)
-                const lat = place.geometry.location.lat()
-                const lng = place.geometry.location.lng()
-                const [info] = await map.value.getLocationInformation({
-                    location: new map.value.googleMap.LatLng(lat, lng),
-                })
-                await $router.push({ name: 'BikePlace', params: { value: `${lat},${lng}` }, query: { ...$route.query } })
-                searchValue.value = info.formatted_address
-                isSearchFocus.value = false
-                search()
+                if (place) {
+                    const lat = place.geometry.location.lat()
+                    const lng = place.geometry.location.lng()
+                    const [info] = await map.value.getLocationInformation({
+                        location: new map.value.googleMap.LatLng(lat, lng),
+                    })
+                    if (info) {
+                        await $router.push({ name: 'BikePlace', params: { value: `${lat},${lng}` }, query: { ...$route.query } })
+                        searchValue.value = info.formatted_address
+                        isSearchFocus.value = false
+                        search()
+                    }
+                }
             }
         }
         const clearSearch = () => {
             searchValue.value = null
-            map.value.clearQueryMarkers()
-            $router.push({ name: 'BikeHome' })
+            map.value.clearAllMapMarkers()
+            $router.push({ name: 'BikeHome', query: { ...$route.query } })
         }
 
         onMounted(() => {
@@ -390,10 +465,14 @@ export default defineComponent({
                 }
                 if (isPlace.value) {
                     const [lat, lng] = $route.params.value.split(',')
-                    const [info] = await map.value.getLocationInformation({
-                        location: new map.value.googleMap.LatLng(lat, lng),
-                    })
-                    searchValue.value = info.formatted_address
+                    if (lat && lng) {
+                        const [info] = await map.value.getLocationInformation({
+                            location: new map.value.googleMap.LatLng(lat, lng),
+                        })
+                        if (info) {
+                            searchValue.value = info.formatted_address
+                        }
+                    }
                 }
             })
             map.value.on('boundsChanged', (payload) => {
