@@ -128,7 +128,7 @@ export default class GoogleMap {
                     resolve(results)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -143,7 +143,7 @@ export default class GoogleMap {
                     resolve(result)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -159,7 +159,7 @@ export default class GoogleMap {
                     resolve(result)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -179,7 +179,7 @@ export default class GoogleMap {
                     resolve(result)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -196,7 +196,7 @@ export default class GoogleMap {
                     resolve(result)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -212,7 +212,7 @@ export default class GoogleMap {
                     resolve(result)
                     return
                 }
-                reject(new Error('FAIL'))
+                resolve([])
             })
         })
     }
@@ -342,6 +342,14 @@ export default class GoogleMap {
         if (currentPath) {
             currentPath.setMap(null)
         }
+    }
+
+    clearAllMapMarkers () {
+        this.clearFilterMarkers()
+        this.clearQueryMarkers()
+        this.clearPathStartMarker()
+        this.clearPathEndMarker()
+        this.clearActivatePath()
     }
 
     calcLineDistance (l1, l2) {
