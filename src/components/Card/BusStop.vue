@@ -36,9 +36,9 @@
                     :href="link"
                 />
             </div>
-            <div class="card-bus-stop__tool-item -like">
+            <!-- <div class="card-bus-stop__tool-item -like">
                 <Icon name="like-default" />
-            </div>
+            </div> -->
         </div>
     </div>
 </template>

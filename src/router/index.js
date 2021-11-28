@@ -2,7 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 import store from '@/store/index'
 import ScrollTrigger from 'gsap/dist/ScrollTrigger'
 import Home from '@/views/Home.vue'
-import Components from '@/views/Components.vue'
 import Bus from '@/views/Bus/Index.vue'
 import BusStation from '@/views/Bus/Station.vue'
 import BusSearchResult from '@/views/Bus/SearchResult.vue'
@@ -39,11 +38,6 @@ const routes = [
                 component: AboutPerson,
             },
         ],
-    },
-    {
-        path: '/components',
-        name: 'Components',
-        component: Components,
     },
     // 第三週Bus
     {
