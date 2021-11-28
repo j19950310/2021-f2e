@@ -82,10 +82,14 @@ export default defineComponent({
                 map.value.requestUserLocation()
             }
         }
-        const getAdministrative = async () => {
+        const getAdministrative = async (lat, lng) => {
             // console.log('getAdministrative')
             if (map.value) {
-                let data = await map.value.getLocationInformation()
+                const requests = {}
+                if (lat && lng) {
+                    requests.location = new map.value.googleMap.LatLng(lat, lng)
+                }
+                let data = await map.value.getLocationInformation(requests)
                 if (Array.isArray(data)) {
                     data = data.flatMap(d => d.address_components)
                     for (let i = 0, len = data.length; i < len; i++) {
@@ -121,12 +125,12 @@ export default defineComponent({
         const displayMapObjects = () => {
             // console.log('display')
             const marker = findLocationMarker($route.params.value)
+            map.value.clearPathStartMarker()
+            map.value.clearPathEndMarker()
+            map.value.clearActivatePath()
             if (marker) {
                 const { position, markerData } = marker
                 const { type } = markerData
-                map.value.clearPathStartMarker()
-                map.value.clearPathEndMarker()
-                map.value.clearActivatePath()
                 if (type === BIKE_TYPE.CYCLING) {
                     const { geometry } = markerData
                     map.value.setActivatePath(geometry.map(g => {
@@ -139,14 +143,16 @@ export default defineComponent({
                 map.value.setActivateMarker(marker)
                 map.value.moveMapToPlace(position)
                 $store.commit('bike/SET_CURRENT_LOCATION_DATA', markerData)
+                return
             }
+            $store.commit('bike/SET_CURRENT_LOCATION_DATA', null)
         }
 
         const getViewportBikeStations = async (lat, lng, r, administrative) => {
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            administrative = administrative || await getAdministrative()
+            administrative = administrative || await getAdministrative(lat, lng)
             if (administrative && map.value) {
                 const stations = await $store.dispatch('bike/GET_BIKE_STATIONS', {
                     city: administrative,
@@ -235,7 +241,7 @@ export default defineComponent({
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            administrative = administrative || await getAdministrative()
+            administrative = administrative || await getAdministrative(lat, lng)
             if (map.value && administrative) {
                 const restaurants = await $store.dispatch('bike/GET_RESTAURANTS_BY_CITY', {
                     city: administrative,
@@ -279,7 +285,7 @@ export default defineComponent({
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            administrative = administrative || await getAdministrative()
+            administrative = administrative || await getAdministrative(lat, lng)
             if (map.value && administrative) {
                 const tours = await $store.dispatch('bike/GET_TOURS_BY_CITY', {
                     city: administrative,
@@ -325,7 +331,7 @@ export default defineComponent({
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
-            const administrative = await getAdministrative()
+            const administrative = await getAdministrative(lat, lng)
             await Promise.all(selectTypes.value.map(type => {
                 if (type === BIKE_TYPE.STATION) {
                     return getViewportBikeStations(lat, lng, r, administrative)
@@ -346,9 +352,9 @@ export default defineComponent({
         const searchFromText = async () => {
             if (searchValue.value) {
                 // console.log('searchText')
+                let administrative
                 const positions = []
                 const markers = []
-                const administrative = await getAdministrative()
                 const places = await map.value.textSearch(searchValue.value)
                 places.forEach(place => {
                     const { location } = place.geometry
@@ -364,6 +370,7 @@ export default defineComponent({
                 map.value.setQueryMarkers(markers)
                 const [firstMarker] = markers
                 if (firstMarker) {
+                    administrative = await getAdministrative(firstMarker.position.lat(), firstMarker.position.lng())
                     map.value.moveMapToPlace(firstMarker.position)
                 }
                 await Promise.all(selectTypes.value.map(type => {
@@ -386,8 +393,8 @@ export default defineComponent({
         const searchFromPlace = async () => {
             if (isPlace.value) {
                 // console.log('searchPlace')
-                const administrative = await getAdministrative()
                 const [lat, lng] = $route.params.value.split(',')
+                const administrative = await getAdministrative(lat, lng)
                 if (lat && lng) {
                     const position = new map.value.googleMap.LatLng(lat, lng)
                     const marker = map.value.generateMarker(null, {
