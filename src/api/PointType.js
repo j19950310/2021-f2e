@@ -1,4 +1,6 @@
-
+/**
+ * 轉譯API格式至自訂與Google Map API格式
+ */
 export default class PointType {
     constructor (config) {
         const {

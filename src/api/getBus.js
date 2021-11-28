@@ -2,7 +2,7 @@
 import getAxios from '@/api/getAxios'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 
-// Request URL: https://ptx.transportdata.tw/MOTC/v2/Bus
+// Request URL: https://ptx.transportdata.tw/MOTC/?t=Bus&v=2
 const { axios, refreshHeader } = getAxios('Bus')
 
 function errorHandler (e) {
