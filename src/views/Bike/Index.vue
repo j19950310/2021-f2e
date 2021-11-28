@@ -847,7 +847,7 @@ export default defineComponent({
     }
 
     &__reset-position {
-        color: color('Dark-Gray');
+        color: var(--primary, color('Primary'));
     }
 
     &__types {

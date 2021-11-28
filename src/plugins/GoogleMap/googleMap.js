@@ -74,7 +74,9 @@ export default class GoogleMap {
                 this.setZoom(17)
                 this.userLocationChange(e)
                 this.moveMapToPlace(this.userLocationMark.getPosition())
-                this.onEvents.allowUserLocation?.()
+                setTimeout(() => {
+                    this.onEvents.allowUserLocation?.()
+                }, 500)
             })
             .catch(() => {
                 this.onEvents.denyUserLocation?.()
@@ -82,7 +84,7 @@ export default class GoogleMap {
             .finally(() => {
                 setTimeout(() => {
                     this.onEvents.requestUserLocation?.()
-                }, 1000)
+                }, 500)
             })
     }
 
@@ -90,7 +92,6 @@ export default class GoogleMap {
         if (this.agreeGeolocation) return
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
-                console.log(navigator.geolocation)
                 navigator.geolocation.getCurrentPosition(
                     (e) => {
                         this.agreeGeolocation = true
