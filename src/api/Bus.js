@@ -1,13 +1,22 @@
+import { decode, encode } from '@googlemaps/polyline-codec'
 import PointType from '@/api/PointType'
 import { getCityByPosition } from '@/api/getAdministrative'
 import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 import {
     getBusStationNearBy,
+    getInterCityBusEstimatedTimeOfArrivalById,
+    getCityBusEstimatedTimeOfArrivalById,
     getBusRouteInterCity,
     getBusRouteByCity,
+    getCityBusEstimatedTimeOfArrivalByRouteName,
+    getInterBusEstimatedTimeOfArrivalByRouteName,
+    getBusShapeByCity,
+    getBusShapeByInterCity,
     getBusRouteByNearBy,
     getStopOfRouteInterCity,
-    getBusDisplayStopOfRoute
+    getBusDisplayStopOfRoute,
+    getCityBusRealTimeByFrequency,
+    getInterBusRealTimeByFrequency
 } from '@/api/getBus'
 const PER_PAGE = 10
 
@@ -27,7 +36,10 @@ export class BusStation {
             .map(item => new BusRoute(item))
         const cityRoutes = (await getBusRouteByCity(city, config))
             .map(item => new BusRoute(item))
-        return { interRoutes, cityRoutes }
+        const interTimeOfArrival = (await getInterCityBusEstimatedTimeOfArrivalById(this.id)).map(item => new BusStopEstimatedTime(item))
+        const cityTimeOfArrival = (await getCityBusEstimatedTimeOfArrivalById(city, this.id)).map(item => new BusStopEstimatedTime(item))
+
+        return { interRoutes, cityRoutes, interTimeOfArrival, cityTimeOfArrival }
     }
 
     get name () {
@@ -69,6 +81,59 @@ export class BusRoute {
             return (await getBusDisplayStopOfRoute(this.city, this.name, config))
         } else { // 公交車路線沒有城市資訊
             return (await getStopOfRouteInterCity(config))
+        }
+    }
+
+    async getShape () { // TODO 建立 class
+        try {
+            const shape = []
+            if (this.city) {
+                shape.push(...await getBusShapeByCity(this.city, this.name, this.config))
+            } else {
+                shape.push(...await getBusShapeByInterCity(this.name, this.config))
+            }
+            return shape
+                .map(item => {
+                    console.log(item)
+                    const points = decode(item.EncodedPolyline)
+                    return {
+                        points,
+                    }
+                })
+        } catch (error) {
+            return []
+        }
+    }
+
+    async getEstimatedTime () {
+        // getCityBusEstimatedTimeOfArrivalByRouteName
+        // getInterBusEstimatedTimeOfArrivalByRouteName
+        try {
+            const stops = []
+            if (this.city) {
+                stops.push(...await getCityBusEstimatedTimeOfArrivalByRouteName(this.city, this.name))
+            } else {
+                stops.push(...await getInterBusEstimatedTimeOfArrivalByRouteName(this.name))
+            }
+            return stops.map(item => new BusStopEstimatedTime(item))
+        } catch (error) {
+            return []
+        }
+    }
+
+    async getBusRealTime () {
+        // getCityBusRealTimeByFrequency
+        // getInterBusRealTimeByFrequency
+        try {
+            const buss = []
+            if (this.city) {
+                buss.push(...await getCityBusRealTimeByFrequency(this.city, this.name))
+            } else {
+                buss.push(...await getInterBusRealTimeByFrequency(this.name))
+            }
+            return buss.map(item => new BusBusData(item))
+        } catch (error) {
+            return []
         }
     }
 
@@ -123,8 +188,7 @@ export class BusRoute {
     }
 
     get ticket () {
-        // TicketPriceDescriptionEn 票價英文敘述
-        return this.TicketPriceDescriptionZh
+        return `${this.TicketPriceDescriptionZh}(${this.TicketPriceDescriptionEn})`
     }
 
     get fareBufferZone () {
@@ -148,7 +212,6 @@ export class BusRoute {
         return this.UpdateTime
     }
 }
-
 export class BusSubRoute {
     constructor (config, stop1, stop2) {
         Object.assign(this, { stop1, stop2 }, config)
@@ -237,6 +300,55 @@ export class BusStop {
     get position () {
         return new PointType(this.StopPosition)
     }
+}
+
+export class BusBusData {
+    constructor (config) {
+        Object.assign(this, config)
+    }
+
+    get number () {
+        return this.PlateNumb
+    }
+
+    get route () {
+        return {
+            id: this.RouteID,
+            uid: this.RouteUID,
+            name: this.RouteName.Zh_tw,
+        }
+    }
+
+    get direction () {
+        // [0:'去程',1:'返程',2:'迴圈',255:'未知']
+        return this.Direction
+    }
+
+    get position () {
+        return new PointType(this.BusPosition)
+    }
+
+    get status () {
+        const statusName = { 0: '正常', 1: '車禍', 2: '故障', 3: '塞車', 4: '緊急求援', 5: '加油', 90: '不明', 91: '去回不明', 98: '偏移路線', 99: '非營運狀態', 100: '客滿', 101: '包車出租', 255: '未知' }
+        return statusName[this.BusStatus]
+    }
+
+    get updateTime () {
+        return this.UpdateTime
+    }
+}
+
+export class BusStopEstimatedTime extends BusStop {
+    get estimateTime () {
+        if (!this.EstimateTime) return null
+        const date = new Date(new Date().getTime() + this.EstimateTime * 1000)
+        return date.toLocaleTimeString('zh-TW', { hour12: false, timeStyle: 'short' })
+    }
+
+    get direction () {
+        return this.Direction
+    }
+    // TODO
 }
 
 export class BusQuery {

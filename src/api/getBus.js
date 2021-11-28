@@ -27,6 +27,40 @@ export const getBusStationNearBy = async (config) => {
     }
 }
 
+// GET /v2/Bus/EstimatedTimeOfArrival/City/{City}/PassThrough/Station/{StationID}
+/**
+ * 取得指定[縣市],[站位]的市區公車預估到站資料(N1)
+ */
+export const getCityBusEstimatedTimeOfArrivalById = async (city, id, config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/EstimatedTimeOfArrival/City/${city}/PassThrough/Station/${id}?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+        return []
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/EstimatedTimeOfArrival/InterCity/PassThrough/Station/{StationID}
+/**
+ * 取得指定[站位]的公路客運預估到站資料(N1)
+ */
+export const getInterCityBusEstimatedTimeOfArrivalById = async (id, config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/EstimatedTimeOfArrival/InterCity/PassThrough/Station/${id}?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+        return []
+    } finally {
+        refreshHeader()
+    }
+}
+
 // GET /v2/Bus/Route/InterCity
 /**
  * 取得公路客運路線資料
@@ -80,6 +114,41 @@ export const getBusRouteByNearBy = async (config) => {
     }
 }
 
+// GET /v2/Bus/EstimatedTimeOfArrival/City/{City}/{RouteName}
+/**
+ * 取得指定[縣市],[路線名稱]的公車預估到站資料(N1)[批次更新]
+ */
+export const getCityBusEstimatedTimeOfArrivalByRouteName = async (queryCity, routeName, config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+        const city = getCityParam(queryCity)
+        const { data } = await axios.get(`/EstimatedTimeOfArrival/City/${city}/${routeName}?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+        return []
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/EstimatedTimeOfArrival/InterCity/{RouteName}
+/**
+ * 取得指定[路線名稱]的公路客運預估到站資料(N1)[批次更新]
+ */
+export const getInterBusEstimatedTimeOfArrivalByRouteName = async (routeName, config = {}) => {
+    try {
+        const queryString = paramsFormat(config)
+        const { data } = await axios.get(`/EstimatedTimeOfArrival/InterCity/${routeName}?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+        return []
+    } finally {
+        refreshHeader()
+    }
+}
+
 // GET /v2/Bus/StopOfRoute/InterCity
 /**
  * 取得公路客運路線與站牌資料
@@ -88,6 +157,37 @@ export const getStopOfRouteInterCity = async (config) => {
     try {
         const queryString = paramsFormat(config)
         const { data } = await axios.get(`/StopOfRoute/InterCity?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/Shape/City/{City}/{RouteName}
+/**
+ * 取得指定[縣市],[路線名稱]的市區公車線型資料
+ */
+export const getBusShapeByCity = async (queryCity, queryRouteName, config = {}) => {
+    try {
+        const city = getCityParam(queryCity)
+        const { data } = await axios.get(`/Shape/City/${city}/${queryRouteName}?${paramsFormat(config)}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/Shape/InterCity/{RouteName}
+/**
+ * 取得指定[路線名稱]的公路公車線型資料
+ */
+export const getBusShapeByInterCity = async (queryRouteName, config = {}) => {
+    try {
+        const { data } = await axios.get(`/Shape/InterCity/${queryRouteName}?${paramsFormat(config)}`)
         return data
     } catch (error) {
         errorHandler(error)
@@ -107,6 +207,37 @@ export const getBusDisplayStopOfRoute = async (queryCity, queryRouteName, config
         if (!city) throw new Error('查詢不到輸入字串的城市')
 
         const { data } = await axios.get(`/DisplayStopOfRoute/City/${city}/${queryRouteName}?${queryString}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/RealTimeByFrequency/City/{City}/{RouteName}
+/**
+ * 取得指定[縣市],[路線名稱]的公車動態定時資料(A1)[批次更新]
+ */
+export const getCityBusRealTimeByFrequency = async (queryCity, queryRouteName, config = {}) => {
+    try {
+        const city = getCityParam(queryCity)
+        const { data } = await axios.get(`/RealTimeByFrequency/City/${city}/${queryRouteName}?${paramsFormat(config)}`)
+        return data
+    } catch (error) {
+        errorHandler(error)
+    } finally {
+        refreshHeader()
+    }
+}
+
+// GET /v2/Bus/RealTimeByFrequency/InterCity/{RouteName}
+/**
+ * 取得指定[路線名稱]的公路客運動態定時資料(A1)[批次更新]
+ */
+export const getInterBusRealTimeByFrequency = async (queryRouteName, config = {}) => {
+    try {
+        const { data } = await axios.get(`/RealTimeByFrequency/InterCity/${queryRouteName}?${paramsFormat(config)}`)
         return data
     } catch (error) {
         errorHandler(error)
