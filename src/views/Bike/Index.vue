@@ -553,10 +553,7 @@ export default defineComponent({
 </script>
 
 <template>
-    <div
-        class="bike"
-        :style="{'--primary': '#32F3AE'}"
-    >
+    <div class="bike">
         <div
             ref="googleMapEl"
             class="bike__map"

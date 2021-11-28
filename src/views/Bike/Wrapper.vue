@@ -10,7 +10,10 @@ const isLoading = computed(() => $store.state.bike.isLoading)
 </script>
 
 <template>
-    <div class="bike-wrapper">
+    <div
+        class="bike-wrapper"
+        :style="{'--primary': '#32F3AE'}"
+    >
         <router-view />
         <transition name="bike-loading">
             <div

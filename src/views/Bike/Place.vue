@@ -28,12 +28,14 @@ export default defineComponent({
         const currentLocationData = computed(() => $store.state.bike.currentLocationData)
         const userLocation = computed(() => $store.state.bike.userLocation)
 
-        const linkGoogleDirections = (address) => {
+        const linkGoogleDirections = (to, from) => {
             let { query: { lat, lng } } = $route
             if (userLocation.value) {
                 ({ lat, lng } = userLocation.value)
+                from = from || `${lat},${lng}`
             }
-            window.open(`https://www.google.com.tw/maps/dir/${lat},${lng}/${address}`, '_blank')
+            console.log(to)
+            window.open(`https://www.google.com.tw/maps/dir/${from}/${to}`, '_blank')
         }
 
         return {
@@ -93,7 +95,7 @@ export default defineComponent({
             ]"
             :date="currentLocationData.UpdateTime"
             @on-back="$router.push(prevRoute)"
-            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}}`)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}`)"
         />
         <BikeCard
             v-if="currentLocationData && currentLocationData.type === bikeType.TOUR"
@@ -108,7 +110,7 @@ export default defineComponent({
             ]"
             :date="currentLocationData.UpdateTime"
             @on-back="$router.push(prevRoute)"
-            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}}`)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}`)"
         />
     </div>
 </template>
