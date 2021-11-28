@@ -4,19 +4,28 @@
         :class="{
             '-start': index === 1,
             '-end': isEnd,
-            '-active': active
+            '-active': active,
+            ['-' + busState]: busState
         }"
         @click="$emit('click')"
     >
         <div class="card-bus-stop__state">
             <div class="card-bus-stop__state-circle" />
+            <div
+                v-if="busState"
+                :style="{ backgroundImage: `url('${markerBusStation}')`}"
+                class="card-bus-stop__state-bus"
+            />
         </div>
         <div class="card-bus-stop__info">
             <div class="card-bus-stop__info-name">
                 {{ name }}
             </div>
-            <div class="card-bus-stop__info-time">
-                到站時間 15:14
+            <div
+                v-if="time"
+                class="card-bus-stop__info-time"
+            >
+                到站時間 {{ time }}
             </div>
         </div>
         <div class="card-bus-stop__tool">
@@ -34,6 +43,8 @@
     </div>
 </template>
 <script>
+import markerBusStation from '@/assets/markerBusStation.png'
+
 export default {
     props: {
         active: {
@@ -56,6 +67,19 @@ export default {
             type: Object,
             default: () => ({}),
         },
+        time: {
+            type: Object,
+            default: undefined,
+        },
+        busState: {
+            type: [Boolean, String],
+            default: false,
+        },
+    },
+    data () {
+        return {
+            markerBusStation,
+        }
     },
     computed: {
         link () {
@@ -132,6 +156,29 @@ export default {
                 border-radius: 50%;
                 transition: transform 0.3s ease, background-color 0.3s ease;
                 @include size(100%);
+            }
+        }
+
+        &-bus {
+            position: absolute;
+            top: 22px;
+            left: 50%;
+            background-size: cover;
+            @include size(24px);
+
+            transform: translate(-50%, -50%);
+            z-index: 2;
+
+            .card-bus-stop.-coming & {
+                top: 0;
+            }
+
+            .card-bus-stop.-now & {
+                top: 22px;
+            }
+
+            .card-bus-stop.-start & {
+                display: none;
             }
         }
     }

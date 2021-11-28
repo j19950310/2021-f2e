@@ -2,6 +2,7 @@
 import { BusRoute, BusStop } from '@/api/Bus'
 import markerIconUrl from '@/assets/markerBusStop.png'
 import markerIconEndsUrl from '@/assets/markerBusStopEnd.png'
+import markerBusStationActive from '@/assets/markerBusStationActive.svg'
 const iconBetween = {
     url: markerIconUrl,
     anchor: { x: 12, y: 12 },
@@ -9,6 +10,10 @@ const iconBetween = {
 const iconEnds = {
     url: markerIconEndsUrl,
     anchor: { x: 16, y: 16 },
+}
+const iconBus = {
+    url: markerBusStationActive,
+    anchor: { x: 44, y: 44 },
 }
 const createMarkerLabel = (text) => ({
     text,
@@ -32,8 +37,10 @@ export default {
         return {
             direction: 0,
             stops: [],
+            buss: [],
             formatBusRoute: null,
             activeStop: null,
+            estimatedTime: [],
         }
     },
     computed: {
@@ -43,25 +50,68 @@ export default {
             return { name, city, id, uid, type, start, end, isLink: false }
         },
         currentStops () {
-            if (!this.stops.length) return null
-            return this.stops.find(({ direction }) => (direction === this.direction))
+            if (!this.activeCurrentView) return null
+            const stops = this.stops.find(({ direction }) => (direction === this.direction))
+            if (!stops) return null
+            const { stops: stopsList = [] } = stops
+            let estimateTime = Infinity
+            const times = this.estimatedTime
+                .filter(({ direction }) => (direction === this.direction))
+                .sort((stop1, stop2) => (stopsList.findIndex(({ id }) => id === stop1.id) - stopsList.findIndex(({ id }) => id === stop2.id)))
+
+            times.forEach((stop) => {
+                if (stop.EstimateTime !== undefined) {
+                    if (stop.EstimateTime === 0) {
+                        console.log(stop)
+                        stop.busState = 'now'
+                    } else if (estimateTime > stop.EstimateTime) {
+                        stop.busState = 'coming'
+                    } else {
+                        stop.busState = false
+                    }
+                    estimateTime = stop.EstimateTime
+                } else {
+                    stop.busState = false
+                }
+            })
+
+            return {
+                ...stops,
+                times: times.map(stop => stop.estimateTime),
+                busState: times.map(stop => stop.busState),
+            }
         },
-        activeRoute () {
+        activeCurrentView () {
             return this.viewIndex.value === 2
         },
         updateTime () {
             if (this.formatBusRoute?.updateTime) {
                 const date = new Date(this.formatBusRoute.updateTime)
-                return date.toLocaleTimeString()
+                return date.toLocaleTimeString('zh-TW', { hour12: false, timeStyle: 'short' })
             }
             return ''
         },
     },
     watch: {
         busRoute: {
-            handler (newVal) {
+            handler (newVal, oldVal) {
+                if (!newVal) return
+                const { mapInstance } = this.$map.value
                 this.stops = []
                 this.formatBusRoute = new BusRoute(newVal)
+                this.formatBusRoute.getShape().then(res => {
+                    const drawPoints = (() => {
+                        const arr = []
+                        res.forEach(({ points }) => {
+                            points.forEach(([lat, lng]) => { arr.push({ lat, lng }) })
+                        })
+                        return arr
+                    })()
+                    this.customPolylineOuter.setPath(drawPoints)
+                    this.customPolylineInner.setPath(drawPoints)
+                    this.customPolylineOuter.setMap(mapInstance)
+                    this.customPolylineInner.setMap(mapInstance)
+                })
                 this.formatBusRoute.getStops().then(res => {
                     this.stops = res.map(route => {
                         const { Direction: direction, Stops } = route
@@ -72,24 +122,33 @@ export default {
                     })
                     this.direction = 0
                 })
+                this.formatBusRoute.getEstimatedTime().then(res => {
+                    this.estimatedTime = res
+                })
+                this.formatBusRoute.getBusRealTime().then(res => {
+                    this.buss = [...res]
+                    this.updateBusMarker(this.buss.filter(({ direction }) => (direction === this.direction)))
+                })
             },
-            deep: true,
         },
         currentStops (routeStops) {
             if (!routeStops) return
-            const { stops } = routeStops
-            if (stops) {
-                const { mapInstance } = this.$map.value
-                const path = stops.map(stop => (stop.position))
-                this.customPolylineOuter.setPath(path)
-                this.customPolylineInner.setPath(path)
-                this.customPolylineOuter.setMap(mapInstance)
-                this.customPolylineInner.setMap(mapInstance)
-                this.updateMarker(stops)
-                mapInstance.panTo(stops[0].position)
-            }
+            const { stops = [] } = routeStops
+            this.clearMarker().then(() => {
+                if (stops.length) {
+                    this.updateMarker()
+                }
+            })
         },
-        activeRoute (newVal) {
+        direction () {
+            this.clearBusMarker().then(() => {
+                const filterBuss = this.buss.filter(({ direction }) => (direction === this.direction))
+                if (filterBuss.length) {
+                    this.updateBusMarker(filterBuss)
+                }
+            })
+        },
+        activeCurrentView (newVal) {
             if (newVal) {
                 this.showPolyline()
             } else {
@@ -100,8 +159,8 @@ export default {
         },
         activeStop (focusStop, blurStop) {
             const { mapInstance } = this.$map.value
-            const focusMarker = this.markers.find(marker => (marker.stop === focusStop))
-            const blurMarker = this.markers.find(marker => (marker.stop === blurStop))
+            const focusMarker = this.stopMarkers.find(marker => (marker.stop === focusStop))
+            const blurMarker = this.stopMarkers.find(marker => (marker.stop === blurStop))
             if (focusMarker) {
                 mapInstance.panTo(focusMarker.position)
                 if (!focusMarker.isEnd) {
@@ -115,7 +174,8 @@ export default {
     },
     mounted () {
         const { googleMap } = this.$map.value
-        this.markers = [] // 不在data，防止代理無法清除
+        this.stopMarkers = []
+        this.busMarkers = []
         this.customPolylineOuter = new googleMap.Polyline({
             path: [],
             geodesic: true,
@@ -132,14 +192,14 @@ export default {
         })
     },
     methods: {
-        updateMarker (stops) {
+        updateMarker () {
+            const stops = this.currentStops.stops
             const { googleMap, mapInstance } = this.$map.value
             const length = stops.length
-            const markers = []
-            this.clearMarker()
             stops.forEach((stop, index) => {
                 const isEnd = (index === 0 | index === length - 1)
                 const marker = new googleMap.Marker({
+                    zIndex: 1,
                     position: stop.position,
                     map: mapInstance,
                     title: stop.name,
@@ -148,22 +208,49 @@ export default {
                 })
                 marker.stop = stop
                 marker.isEnd = isEnd
-                markers.push(marker)
+                this.stopMarkers.push(marker)
                 googleMap.event.addListener(marker, 'click', () => {
                     this.activeStop = stop
                 })
             })
-            this.clearMarker()
-            this.markers = markers
+        },
+        updateBusMarker (buss) {
+            const { googleMap, mapInstance } = this.$map.value
+            buss.forEach(bus => {
+                const marker = new googleMap.Marker({
+                    zIndex: 2,
+                    position: bus.position,
+                    map: mapInstance,
+                    icon: iconBus,
+                    label: createMarkerLabel(bus.number || bus.PlateNumb),
+                })
+                this.busMarkers.push(marker)
+            })
         },
         clearMarker () {
-            const markers = [...this.markers]
-            markers.forEach(marker => {
-                console.log(marker)
-                marker.setMap(null)
-                marker = null
+            return new Promise(resolve => {
+                while (this.stopMarkers.length) {
+                    let marker = this.stopMarkers.pop()
+                    marker.setMap(null)
+                    marker = null
+                }
+                while (this.busMarkers.length) {
+                    let marker = this.busMarkers.pop()
+                    marker.setMap(null)
+                    marker = null
+                }
+                resolve()
             })
-            this.markers = []
+        },
+        clearBusMarker () {
+            return new Promise(resolve => {
+                while (this.busMarkers.length) {
+                    let marker = this.busMarkers.pop()
+                    marker.setMap(null)
+                    marker = null
+                }
+                resolve()
+            })
         },
         showPolyline () {
             const { mapInstance } = this.$map.value
@@ -180,7 +267,13 @@ export default {
 }
 </script>
 <template>
-    <div class="bus-search-route">
+    <div
+        class="bus-search-route"
+        :class="{
+            '-hide': !activeCurrentView,
+            '-show': activeCurrentView,
+        }"
+    >
         <div class="bus-search-route__info">
             <CardBusQuery v-bind="infoData" />
             <div
@@ -213,6 +306,7 @@ export default {
             >
                 <div
                     :key="index"
+                    :data-direction="currentStops.direction"
                     class="bus-search-route__stops-wrap"
                 >
                     <CardBusStop
@@ -223,6 +317,8 @@ export default {
                         :name="stop.name"
                         :position="stop.position"
                         :is-end="stopIndex === currentStops.stops.length - 1"
+                        :time="currentStops.times[stopIndex] || ''"
+                        :bus-state="currentStops.busState[stopIndex] || false"
                         @click="activeStop = stop"
                     />
                 </div>
@@ -284,7 +380,16 @@ export default {
             overflow-x: hidden;
             overflow-y: auto;
             flex-grow: 1;
-            margin: $padding * 1.5 $padding * -3;
+            margin: $padding * 1.5 0;
+
+            .card-bus-stop {
+                margin-right: -$padding * 3;
+                margin-left: -$padding * 3;
+            }
+
+            .-hide & {
+                overflow: hidden;
+            }
         }
 
         &__action {
