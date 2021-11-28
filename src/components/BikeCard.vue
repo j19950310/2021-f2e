@@ -1,4 +1,6 @@
 <script setup>
+const bikeThumbnail = new URL('../assets/bike_thumbnail.jpg', import.meta.url).href
+
 defineProps({
     title: {
         type: String,
@@ -48,7 +50,7 @@ defineEmits(['on-back', 'on-road'])
 <template>
     <div class="bike-card">
         <div
-            v-bg="'https://source.unsplash.com/random/1024x768'"
+            v-bg="src || bikeThumbnail"
             class="bike-card__image"
         >
             <!-- <div
@@ -109,7 +111,12 @@ defineEmits(['on-back', 'on-road'])
                     <p>可退還</p>
                 </div>
             </div>
-            <div>{{ content }}</div>
+        </div>
+        <div
+            v-if="content"
+            class="bike-card__content"
+        >
+            {{ content }}
         </div>
         <div class="bike-card__tags">
             <Tag
@@ -243,6 +250,10 @@ defineEmits(['on-back', 'on-road'])
 
             margin-left: $padding;
         }
+    }
+
+    &__content {
+        padding: $padding 0;
     }
 
     &__tags {

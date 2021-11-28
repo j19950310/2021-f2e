@@ -1,5 +1,7 @@
 // ZipCode collection
 import PointType from '@/api/PointType'
+import { BIKE_TYPE } from '@/plugins/variable'
+
 export default class TourSpot {
     constructor (config) {
         Object.assign(this, config)
@@ -92,6 +94,7 @@ export default class TourSpot {
 export class ScenicSpot extends TourSpot {
     constructor (config) {
         super(config)
+        this.type = BIKE_TYPE.TOUR
         this.category = 'scenic'
     }
 
@@ -139,6 +142,7 @@ export class ScenicSpot extends TourSpot {
 export class RestaurantSpot extends TourSpot {
     constructor (config) {
         super(config)
+        this.type = BIKE_TYPE.RESTAURANT
         this.category = 'restaurant'
     }
 }

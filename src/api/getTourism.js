@@ -6,9 +6,9 @@ import paramsFormat, { getCityParam } from '@/api/paramsFormat'
 // Request URL: https://ptx.transportdata.tw/MOTC/v2/Tourism
 const { axios, refreshHeader } = getAxios('Tourism')
 const simpleQueryNumConfig = {
-    top: 10000,
-    skip: 0,
-    select: ['ID'],
+    // top: 10000,
+    // skip: 0,
+    // select: ['ID'],
 }
 
 function errorHandler (e) {

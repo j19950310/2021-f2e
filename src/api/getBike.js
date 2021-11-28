@@ -25,7 +25,7 @@ export const getBikeStation = async (queryCity, config = {}) => {
         if (!city) throw new Error('查詢不到輸入字串的城市')
         const queryString = paramsFormat(config)
         // 取得資料
-        const { data } = await axios.get(`/Station/${city}/?${queryString}`)
+        const { data } = await axios.get(`/Station/${city}?${queryString}`)
         return data.map(item => (new BikeStation(item)))
     } catch (e) {
         return errorHandler(e)
@@ -58,15 +58,17 @@ export const getBikeAvailability = async (queryCity, config = {}) => {
 export const getBikeStationWithAvailability = async (queryCity, config = {}) => {
     const stations = await getBikeStation(queryCity, { ...config, orderBy: 'StationID' })
     const availabilities = await getBikeAvailability(queryCity, { ...config, orderBy: 'StationID' })
-
-    return stations.map((station, index) => {
-        if (station.StationUID === availabilities[index].StationUID) {
-            return new BikeStation(station, availabilities[index])
-        } else {
-            const ava = availabilities.find(availability => availability.StationUID === station.StationUID)
-            return new BikeStation(station, ava || null)
-        }
-    }).filter(Boolean)
+    if (Array.isArray(stations)) {
+        return stations.map((station, index) => {
+            if (station.StationUID === availabilities[index].StationUID) {
+                return new BikeStation(station, availabilities[index])
+            } else {
+                const ava = availabilities.find(availability => availability.StationUID === station.StationUID)
+                return new BikeStation(station, ava || null)
+            }
+        }).filter(Boolean)
+    }
+    return []
 }
 
 // GET /v2/Bike/Station/NearBy
@@ -114,13 +116,16 @@ export const getBikeStationWithAvailabilityNearBy = async (config = {}) => {
     const stations = await getBikeStationNearBy({ ...config, orderBy: 'StationID' })
     const availabilities = await getBikeAvailabilityNearBy({ ...config, orderBy: 'StationID' })
 
-    return stations.map((station, index) => {
-        if (station.StationUID === availabilities[index].StationUID) {
-            // BikeStation(Station, Availabilities)
-            return new BikeStation(station, availabilities[index])
-        } else {
-            const ava = availabilities.find(availability => availability.StationUID === station.StationUID)
-            return new BikeStation(station, ava || null)
-        }
-    }).filter(Boolean)
+    if (Array.isArray(stations)) {
+        return stations.map((station, index) => {
+            if (station.StationUID === availabilities[index].StationUID) {
+                // BikeStation(Station, Availabilities)
+                return new BikeStation(station, availabilities[index])
+            } else {
+                const ava = availabilities.find(availability => availability.StationUID === station.StationUID)
+                return new BikeStation(station, ava || null)
+            }
+        }).filter(Boolean)
+    }
+    return []
 }

@@ -1,4 +1,6 @@
 <script setup>
+const bikeThumbnail = new URL('../assets/bike_thumbnail.jpg', import.meta.url).href
+
 defineProps({
     title: {
         type: String,
@@ -31,7 +33,7 @@ defineProps({
     <div class="bike-list-card">
         <div class="bike-list-card__main">
             <div
-                v-bg="'https://source.unsplash.com/random/1024x768'"
+                v-bg="src || bikeThumbnail"
                 class="bike-list-card__image"
             />
             <div class="bike-list-card__content">
