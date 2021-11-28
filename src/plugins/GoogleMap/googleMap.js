@@ -36,26 +36,17 @@ export default class GoogleMap {
         })
         loader.load()
             .then((google) => {
-                const User = getUserMark(google)
+                this.google = google
                 this.googleMap = google.maps
                 this.mapInstance = new google.maps.Map(this.el, this.options)
                 this.mapInstance.addListener('idle', this.boundsChanged)
                 this.geocoder = new google.maps.Geocoder()
                 this.placesInstance = new google.maps.places.PlacesService(this.mapInstance)
                 this.autocompleteInstance = new google.maps.places.AutocompleteService()
-                this.userLocationMark = new User(this.options.center)
                 this.currentMarker = null
                 this.onEvents.init?.()
 
-                this.getUserLocation().then((e) => {
-                    this.userLocationMark.setMap(this.mapInstance)
-                    this.setZoom(17)
-                    this.userLocationChange(e)
-                    this.moveMapToPlace(this.userLocationMark.getPosition())
-                    setTimeout(() => {
-                        this.onEvents.allowUserLocation?.()
-                    }, 1000)
-                })
+                // this.requestUserLocation()
             })
             .catch(err => {
                 console.log(err)
@@ -73,10 +64,33 @@ export default class GoogleMap {
         }, this.mapInstance, this.googleMap)
     }
 
+    requestUserLocation () {
+        const User = getUserMark(this.google)
+
+        this.getUserLocation()
+            .then((e) => {
+                this.userLocationMark = new User(this.options.center)
+                this.userLocationMark.setMap(this.mapInstance)
+                this.setZoom(17)
+                this.userLocationChange(e)
+                this.moveMapToPlace(this.userLocationMark.getPosition())
+                this.onEvents.allowUserLocation?.()
+            })
+            .catch(() => {
+                this.onEvents.denyUserLocation?.()
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    this.onEvents.requestUserLocation?.()
+                }, 1000)
+            })
+    }
+
     getUserLocation () {
         if (this.agreeGeolocation) return
         return new Promise((resolve, reject) => {
             if (navigator.geolocation) {
+                console.log(navigator.geolocation)
                 navigator.geolocation.getCurrentPosition(
                     (e) => {
                         this.agreeGeolocation = true

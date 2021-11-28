@@ -1,5 +1,5 @@
 <script>
-import { defineComponent, ref, computed, onMounted, watch } from 'vue'
+import { defineComponent, ref, computed, watch, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute, useRouter } from 'vue-router'
 import BikeSearch from '@/views/Bike/Search.vue'
@@ -46,6 +46,11 @@ export default defineComponent({
         const allTypes = computed(() => $store.state.bike.allTypes)
         const selectTypes = computed(() => $store.state.bike.selectTypes)
 
+        watch(() => $store.state.bike.isStart, (value) => {
+            if (map.value) {
+                map.value.requestUserLocation()
+            }
+        })
         watch(() => searchValue.value, async (value) => {
             if (value && map.value) {
                 queryPredictions.value = await map.value.getPlacePredictions(value)
@@ -72,11 +77,13 @@ export default defineComponent({
                 if (map.value.agreeGeolocation) {
                     map.value.moveMapToPlace(map.value.userLocationMark.getPosition())
                     map.value.setZoom(17)
+                    return
                 }
+                map.value.requestUserLocation()
             }
         }
         const getAdministrative = async () => {
-            console.log('getAdministrative')
+            // console.log('getAdministrative')
             if (map.value) {
                 let data = await map.value.getLocationInformation()
                 if (Array.isArray(data)) {
@@ -112,7 +119,7 @@ export default defineComponent({
             search()
         }
         const displayMapObjects = () => {
-            console.log('display')
+            // console.log('display')
             const marker = findLocationMarker($route.params.value)
             if (marker) {
                 const { position, markerData } = marker
@@ -314,7 +321,7 @@ export default defineComponent({
         }
 
         const searchFromMap = async (lat, lng, r) => {
-            console.log('searchMap')
+            // console.log('searchMap')
             lat = lat || $route.query.lat
             lng = lng || $route.query.lng
             r = r || $route.query.r
@@ -338,7 +345,7 @@ export default defineComponent({
 
         const searchFromText = async () => {
             if (searchValue.value) {
-                console.log('searchText')
+                // console.log('searchText')
                 const positions = []
                 const markers = []
                 const administrative = await getAdministrative()
@@ -378,7 +385,7 @@ export default defineComponent({
         }
         const searchFromPlace = async () => {
             if (isPlace.value) {
-                console.log('searchPlace')
+                // console.log('searchPlace')
                 const administrative = await getAdministrative()
                 const [lat, lng] = $route.params.value.split(',')
                 if (lat && lng) {
@@ -481,6 +488,8 @@ export default defineComponent({
             map.value.on('allowUserLocation', async () => {
                 await search()
                 displayMapObjects()
+            })
+            map.value.on('requestUserLocation', async () => {
                 $store.commit('bike/SET_LOADING', false)
             })
             map.value.on('onUserLocationChanged', (position) => {

@@ -1,10 +1,49 @@
+import { detect } from 'detect-browser'
+
 export default (google) => {
     if (google) {
         return class User extends google.maps.OverlayView {
-            // TODO 方向
             constructor ({ lat, lng }) {
                 super()
                 this.latlng = new google.maps.LatLng(lat, lng)
+                this.deviceorientation = this.deviceorientation.bind(this)
+            }
+
+            requestDeviceOrientation () {
+                const { os } = detect()
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    DeviceOrientationEvent.requestPermission()
+                        .then(permissionState => {
+                            if (permissionState === 'granted') {
+                                this.allowDeviceorientation = true
+                                this.div.appendChild(this.direction)
+                                if (os === 'iOS') {
+                                    window.addEventListener('deviceorientation', this.deviceorientation)
+                                }
+                            }
+                        })
+                        .catch(console.error)
+                    return
+                }
+                this.allowDeviceorientation = true
+                this.div.appendChild(this.direction)
+                window.addEventListener('deviceorientationabsolute', this.deviceorientation)
+            }
+
+            deviceorientation (e) {
+                // https://stackoverflow.com/questions/40871669/js-html-detect-get-compass-heading-for-android
+                const { beta: x, gamma: y, alpha: z } = e
+                let absoluteHeading
+                if (e.webkitCompassHeading) {
+                    // ios
+                    absoluteHeading = e.webkitCompassHeading
+                } else {
+                    // android
+                    absoluteHeading = 180 - z
+                }
+                if (this.allowDeviceorientation) {
+                    this.direction.style.transform = `translate(-50%, -50%) rotate(${absoluteHeading}deg)`
+                }
             }
 
             onAdd () {
@@ -27,9 +66,21 @@ export default (google) => {
                 span.style.borderRadius = '50%'
                 this.div.appendChild(span)
 
+                this.direction = document.createElement('div')
+                this.direction.style.position = 'absolute'
+                this.direction.style.top = '50%'
+                this.direction.style.left = '50%'
+                this.direction.style.transform = 'translate(-50%, -50%)'
+                this.direction.style.width = '150%'
+                this.direction.style.height = '350%'
+                this.direction.style.background = `url('${new URL('../../assets/direction.png', import.meta.url).href}') no-repeat center / cover`
+                this.direction.style.zIndex = '-1'
+
                 const panes = this.getPanes()
 
                 panes.overlayLayer.appendChild(this.div)
+
+                this.requestDeviceOrientation()
             }
 
             draw () {
