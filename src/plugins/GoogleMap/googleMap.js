@@ -65,6 +65,7 @@ export default class GoogleMap {
     }
 
     requestUserLocation () {
+        // TODO 重構
         const User = getUserMark(this.google)
 
         this.getUserLocation()
