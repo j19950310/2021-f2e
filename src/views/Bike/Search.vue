@@ -2,6 +2,8 @@
 import { ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { BIKE_TYPE } from '@/plugins/variable'
+const bikeThumbnail = new URL('../../assets/bike_thumbnail.jpg', import.meta.url).href
+const cyclingThumbnail = new URL('../../assets/cycling_thumbnail.jpg', import.meta.url).href
 
 const $store = useStore()
 
@@ -49,6 +51,7 @@ const selectTypes = computed(() => $store.state.bike.selectTypes)
                         <BikeListCard
                             :title="StationName.Zh_tw"
                             :desc="StationAddress.Zh_tw"
+                            :src="bikeThumbnail"
                             :tags="[
                                 serviceStatusMap[availability.ServiceStatus],
                                 `YouBike${ServiceType}.0`,
@@ -69,6 +72,7 @@ const selectTypes = computed(() => $store.state.bike.selectTypes)
                             :title="RouteName"
                             :from="RoadSectionStart"
                             :to="RoadSectionEnd"
+                            :src="cyclingThumbnail"
                             :tags="[
                                 city,
                                 `路線長度：${CyclingLength / 1000}km`,

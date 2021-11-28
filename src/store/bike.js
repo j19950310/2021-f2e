@@ -14,6 +14,7 @@ import { BIKE_TYPE } from '@/plugins/variable'
 export default ({
     namespaced: true,
     state: () => ({
+        isStart: false,
         isLoading: true,
         isWaiting: false,
         currentLocationData: null,
@@ -31,6 +32,9 @@ export default ({
         },
     },
     mutations: {
+        SET_START (state) {
+            state.isStart = true
+        },
         SET_LOADING (state, status) {
             state.isLoading = status
         },
