@@ -1,10 +1,13 @@
 import { Loader } from '@googlemaps/js-api-loader'
-import { MarkerClusterer } from '@googlemaps/markerclusterer'
 import getUserMark from './user'
 const apiKey = import.meta.env.VITE_APP_GOOGLE_MAP_API_KEY
 const mapId = import.meta.env.VITE_APP_GOOGLE_MAP_STYLE_ID
 
 const queryMarkers = []
+const filterMarkers = []
+let currentPath = null
+let pathStartMarker = null
+let pathEndMarker = null
 export default class GoogleMap {
     constructor (el, options) {
         if (!(el instanceof Element)) return
@@ -37,26 +40,22 @@ export default class GoogleMap {
                 this.googleMap = google.maps
                 this.mapInstance = new google.maps.Map(this.el, this.options)
                 this.mapInstance.addListener('idle', this.boundsChanged)
+                this.geocoder = new google.maps.Geocoder()
                 this.placesInstance = new google.maps.places.PlacesService(this.mapInstance)
                 this.autocompleteInstance = new google.maps.places.AutocompleteService()
-                this.markerCluster = new MarkerClusterer({ map: this.mapInstance })
                 this.userLocationMark = new User(this.options.center)
                 this.currentMarker = null
+                this.onEvents.init?.()
 
-                if (navigator.geolocation) {
-                    this.getUserLocation(() => {
-                        this.userLocationMark.setMap(this.mapInstance)
-                        this.setZoom(17)
-                        this.onEvents.init?.()
-                    }, () => {
-                        this.onEvents.init?.()
-                    })
-                    navigator.geolocation.watchPosition(this.userLocationChange, (err) => {
-                        console.log(err)
-                    })
-                } else {
-                    this.onEvents.init?.()
-                }
+                this.getUserLocation().then((e) => {
+                    this.userLocationMark.setMap(this.mapInstance)
+                    this.setZoom(17)
+                    this.userLocationChange(e)
+                    this.moveMapToPlace(this.userLocationMark.getPosition())
+                    setTimeout(() => {
+                        this.onEvents.allowUserLocation?.()
+                    }, 1000)
+                })
             })
             .catch(err => {
                 console.log(err)
@@ -74,86 +73,32 @@ export default class GoogleMap {
         }, this.mapInstance, this.googleMap)
     }
 
-    getUserLocation (callback, errCallback) {
-        if (this.agreeGeolocation) {
-            callback?.()
-            this.moveMapToPlace(this.userLocationMark.getPosition())
-            return
-        }
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (e) => {
-                    this.agreeGeolocation = true
-                    callback?.()
-                    this.userLocationChange(e)
-                    this.moveMapToPlace(this.userLocationMark.getPosition())
-                },
-                (err) => {
-                    console.log(err)
-                    errCallback?.()
-                }
-            )
-        }
+    getUserLocation () {
+        if (this.agreeGeolocation) return
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (e) => {
+                        this.agreeGeolocation = true
+                        navigator.geolocation.watchPosition(this.userLocationChange, (err) => {
+                            reject(err)
+                        })
+                        resolve(e)
+                    },
+                    (err) => {
+                        reject(err)
+                    }
+                )
+                return
+            }
+            reject(new Error('FAIL'))
+        })
     }
 
     userLocationChange ({ coords: { latitude: lat, longitude: lng } }) {
         if (this.userLocationMark) {
             this.userLocationMark.setPosition({ lat, lng })
             this.onEvents.onUserLocationChanged?.(this.userLocationMark.getPosition())
-        }
-    }
-
-    searchQuery (value) {
-        if (value) {
-            return new Promise(resolve => {
-                this.autocompleteInstance.getPlacePredictions({
-                    input: value,
-                    bounds: this.mapInstance.getBounds(),
-                }, (e) => {
-                    resolve(e || [])
-                })
-            })
-        }
-    }
-
-    async searchPlace (query, options) {
-        const [minBound] = this.radius
-        return await Promise.all([
-            new Promise(resolve => {
-                this.placesInstance.textSearch({
-                    location: this.mapInstance.getCenter(),
-                    radius: minBound,
-                    ...options,
-                    query,
-                }, (result) => resolve(result || []))
-            }),
-            new Promise(resolve => {
-                this.placesInstance.nearbySearch({
-                    location: this.mapInstance.getCenter(),
-                    radius: minBound,
-                    ...options,
-                    query,
-                }, (result) => resolve(result || []))
-            }),
-            new Promise(resolve => {
-                this.placesInstance.findPlaceFromQuery({
-                    fields: ['name', 'geometry', 'place_id', 'types'],
-                    query,
-                }, (result) => resolve(result || []))
-            }),
-        ]).then(results => results.flat())
-    }
-
-    searchPlaceDetail (placeId, options) {
-        if (placeId) {
-            return new Promise(resolve => {
-                this.placesInstance.getDetails({
-                    placeId,
-                    ...options,
-                }, (e) => {
-                    resolve(e || [])
-                })
-            })
         }
     }
 
@@ -167,48 +112,179 @@ export default class GoogleMap {
         }
     }
 
-    setQueryMarker (options) {
-        if (this.mapInstance) {
-            queryMarkers.push(new google.maps.Marker({
-                map: this.mapInstance,
-                animation: google.maps.Animation.DROP,
-                ...options,
-            }))
+    setZoom (zoom) {
+        if (zoom) {
+            return this.mapInstance.setZoom(zoom)
         }
     }
 
-    removeQueryMarker () {
-        while (queryMarkers.length) {
-            let marker = queryMarkers.pop()
+    getLocationInformation (requests) {
+        return new Promise((resolve, reject) => {
+            this.geocoder.geocode({
+                location: this.mapInstance.getCenter(),
+                ...requests,
+            }, (results, status) => {
+                if (status === 'OK') {
+                    resolve(results)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    getPlaceDetail (placeId, requests) {
+        return new Promise((resolve, reject) => {
+            this.placesInstance.getDetails({
+                placeId,
+                ...requests,
+            }, (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(result)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    getPlacePredictions (query, requests) {
+        return new Promise((resolve, reject) => {
+            this.autocompleteInstance.getPlacePredictions({
+                input: query,
+                bounds: this.mapInstance.getBounds(),
+                ...requests,
+            }, (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(result)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    textSearch (query, requests) {
+        const [minBound] = this.radius
+
+        return new Promise((resolve, reject) => {
+            this.placesInstance.textSearch({
+                location: this.mapInstance.getCenter(),
+                radius: minBound,
+                // bounds: this.mapInstance.getBounds(),
+                ...requests,
+                query,
+            }, (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(result)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    nearbySearch (query, requests) {
+        return new Promise((resolve, reject) => {
+            this.placesInstance.nearbySearch({
+                location: this.mapInstance.getCenter(),
+                bounds: this.mapInstance.getBounds(),
+                ...requests,
+                query,
+            }, (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(result)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    findPlaceFromQuery (query, requests) {
+        return new Promise((resolve, reject) => {
+            this.placesInstance.findPlaceFromQuery({
+                fields: ['name', 'geometry', 'place_id', 'types'],
+                ...requests,
+                query,
+            }, (result, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    resolve(result)
+                    return
+                }
+                resolve([])
+            })
+        })
+    }
+
+    generateMarker (data, options) {
+        const marker = new google.maps.Marker({
+            ...options,
+        })
+        marker.markerData = data
+        marker.addListener('click', () => {
+            this.onEvents.markerClicked?.(marker)
+        })
+        return marker
+    }
+
+    setFilterMarkers (payload, onDraw = true) {
+        if (this.mapInstance && payload) {
+            if (Array.isArray(payload)) {
+                for (let i = 0, len = payload.length; i < len; i++) {
+                    const marker = payload[i]
+                    if (onDraw) {
+                        marker.setMap(this.mapInstance)
+                    }
+                    filterMarkers.push(marker)
+                }
+                return
+            }
+            if (onDraw) {
+                payload.setMap(this.mapInstance)
+            }
+            filterMarkers.push(payload)
+        }
+    }
+
+    clearFilterMarkers () {
+        while (filterMarkers.length) {
+            let marker = filterMarkers.pop()
             marker.setMap(null)
             marker = null
         }
     }
 
-    setClusterMarker (markerData, options) {
-        if (this.markerCluster) {
-            const marker = new google.maps.Marker({
-                animation: google.maps.Animation.DROP,
-                ...options,
-            })
-            marker.markerData = markerData
-            marker.addListener('click', () => {
-                this.onEvents.markerClicked?.(marker)
-                this.setActivateMarker(marker)
-            })
-            this.markerCluster.addMarker(marker, true)
+    findFilterMarker (callback) {
+        if (this.mapInstance) {
+            return filterMarkers.find(callback)
         }
     }
 
-    clearClusterMarker () {
-        if (this.markerCluster) {
-            this.markerCluster.clearMarkers(true)
+    setQueryMarkers (payload, onDraw = true) {
+        if (this.mapInstance && payload) {
+            if (Array.isArray(payload)) {
+                for (let i = 0, len = payload.length; i < len; i++) {
+                    const marker = payload[i]
+                    if (onDraw) {
+                        marker.setMap(this.mapInstance)
+                    }
+                    queryMarkers.push(marker)
+                }
+                return
+            }
+            if (onDraw) {
+                payload.setMap(this.mapInstance)
+            }
+            queryMarkers.push(payload)
         }
     }
 
-    findClusterMarker (callback) {
-        if (this.markerCluster) {
-            return this.markerCluster.markers.find(callback)
+    clearQueryMarkers () {
+        while (queryMarkers.length) {
+            let marker = queryMarkers.pop()
+            marker.setMap(null)
+            marker = null
         }
     }
 
@@ -222,10 +298,58 @@ export default class GoogleMap {
         }
     }
 
-    setZoom (zoom) {
-        if (zoom) {
-            return this.mapInstance.setZoom(zoom)
+    setPathStartMarker (marker) {
+        if (marker) {
+            this.clearPathStartMarker()
+            pathStartMarker = marker
+            pathStartMarker.setMap(this.mapInstance)
         }
+    }
+
+    clearPathStartMarker () {
+        if (pathStartMarker) {
+            pathStartMarker.setMap(null)
+        }
+    }
+
+    setPathEndMarker (marker) {
+        if (marker) {
+            this.clearPathEndMarker()
+            pathEndMarker = marker
+            pathEndMarker.setMap(this.mapInstance)
+        }
+    }
+
+    clearPathEndMarker () {
+        if (pathEndMarker) {
+            pathEndMarker.setMap(null)
+        }
+    }
+
+    setActivatePath (coordinates) {
+        if (coordinates) {
+            this.clearActivatePath()
+            currentPath = new this.googleMap.Polyline({
+                path: coordinates,
+                strokeColor: '#32F3AE',
+                strokeWeight: 8,
+            })
+            currentPath.setMap(this.mapInstance)
+        }
+    }
+
+    clearActivatePath () {
+        if (currentPath) {
+            currentPath.setMap(null)
+        }
+    }
+
+    clearAllMapMarkers () {
+        this.clearFilterMarkers()
+        this.clearQueryMarkers()
+        this.clearPathStartMarker()
+        this.clearPathEndMarker()
+        this.clearActivatePath()
     }
 
     calcLineDistance (l1, l2) {

@@ -1,7 +1,7 @@
 <script>
 import { defineComponent, ref, computed, onMounted, watch, provide } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import GoogleMap from '@/plugins/GoogleMap/googleMapDev'
+import GoogleMap from '@/plugins/GoogleMap/googleMap'
 import markerBusStation from '@/assets/markerBusStation.svg'
 import markerBusStationActive from '@/assets/markerBusStationActive.svg'
 import markerBusStop from '@/assets/markerBusStop.png'
@@ -67,10 +67,11 @@ export default defineComponent({
         }
         const createStationMarker = (station) => {
             const { Marker, event } = $map.value.googleMap
+            const isActive = station.uid === currentStation?.value?.uid
             const marker = new Marker({
                 position: station.position,
                 map: $map.value.mapInstance,
-                icon: iconBusStation,
+                icon: isActive ? iconBusStationActive : iconBusStation,
             })
             event.addListener(marker, 'click', () => {
                 stationMarkers.forEach(marker => {
@@ -78,6 +79,13 @@ export default defineComponent({
                 })
                 marker.setIcon(iconBusStationActive) // 觸發狀態改變
                 currentStation.value = station
+                viewIndex.value = 0
+                $router.replace({
+                    name: 'BusSearch',
+                    params: {
+                        search: station.name,
+                    },
+                })
             })
             return marker
         }
@@ -89,7 +97,7 @@ export default defineComponent({
         }
         const boundsChanged = ({ lat, lng, radius }) => { // 更新查詢位置
             $busQuery.setPosition({ lat, lng }, Math.ceil(Math.min(radius, 1000)))
-            if (viewIndex.value === 0) {
+            if (viewIndex.value === 0) { // 巴士站點畫面
                 $busQuery.searchStationByNearBy().then(results => {
                     clearStationMarkers()
                     stationMarkers = results.map((station) => {
@@ -117,8 +125,10 @@ export default defineComponent({
                     })
                 }
                 if (results && results[0]) {
-                    currentRoute.value = results[0]
-                    viewIndex.value = 2
+                    if (results[0].uid !== currentRoute.value?.uid) {
+                        currentRoute.value = results[0]
+                        viewIndex.value = 2
+                    }
                 }
             }
         })
@@ -153,11 +163,19 @@ export default defineComponent({
     },
     methods: {
         backToResult () {
-            this.$router.back()
+            this.$router.replace({
+                name: 'BusSearch',
+                query: {
+                    route: undefined,
+                },
+            })
             if (this.searchValue) {
                 this.viewIndex = 1
             } else if (this.currentStation) {
                 this.viewIndex = 0
+                this.$nextTick(() => {
+                    this.currentRoute = null
+                })
             } else {
                 this.viewIndex = 0
                 this.clearSearch()
@@ -165,6 +183,7 @@ export default defineComponent({
         },
         goToDetail () {
             this.viewIndex = 3
+            this.$forceUpdate()
         },
         clearSearch () {
             this.currentStation = null
@@ -207,18 +226,21 @@ export default defineComponent({
                             class="bus__view-wrapper"
                             :style="{transform: `translate3d(${viewIndex * -100}%,0,0)`}"
                         >
+                            <!-- 0: Station -->
                             <router-view
                                 key="BusStation"
                                 class="bus__view-slide"
                                 name="BusStation"
                                 :bus-station="currentStation"
                             />
+                            <!-- 1: Search -->
                             <router-view
                                 key="BusSearchResult"
                                 class="bus__view-slide"
                                 name="BusSearchResult"
                                 :queries="searchQueries"
                             />
+                            <!-- 2: Route -->
                             <router-view
                                 key="BusSearchRoute"
                                 class="bus__view-slide"
@@ -228,11 +250,13 @@ export default defineComponent({
                                 @back="backToResult"
                                 @forward="goToDetail"
                             />
+                            <!-- 3: Route Detail -->
                             <router-view
                                 key="BusSearchRouteDetail"
                                 class="bus__view-slide"
-                                :data="currentRoute"
+                                :bus-route="currentRoute"
                                 name="BusSearchRouteDetail"
+                                @back="viewIndex = 2"
                             />
                         </div>
                     </div>

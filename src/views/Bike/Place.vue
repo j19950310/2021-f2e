@@ -28,12 +28,14 @@ export default defineComponent({
         const currentLocationData = computed(() => $store.state.bike.currentLocationData)
         const userLocation = computed(() => $store.state.bike.userLocation)
 
-        const linkGoogleDirections = (address) => {
+        const linkGoogleDirections = (to, from) => {
             let { query: { lat, lng } } = $route
             if (userLocation.value) {
                 ({ lat, lng } = userLocation.value)
+                from = from || `${lat},${lng}`
             }
-            window.open(`https://www.google.com.tw/maps/dir/${lat},${lng}/${address}`, '_blank')
+            console.log(to)
+            window.open(`https://www.google.com.tw/maps/dir/${from}/${to}`, '_blank')
         }
 
         return {
@@ -52,6 +54,7 @@ export default defineComponent({
     <div class="bike-place">
         <BikeCard
             v-if="currentLocationData && currentLocationData.type === bikeType.STATION"
+            :key="currentLocationData.StationName.Zh_tw"
             :title="currentLocationData.StationName.Zh_tw"
             :desc="currentLocationData.StationAddress.Zh_tw"
             :rent-bikes="currentLocationData.availability.AvailableRentBikes"
@@ -65,7 +68,8 @@ export default defineComponent({
             @on-road="linkGoogleDirections(`${currentLocationData.StationPosition.PositionLat},${currentLocationData.StationPosition.PositionLon}`)"
         />
         <BikeCard
-            v-if="currentLocationData && currentLocationData.type === 'bikeCycling'"
+            v-if="currentLocationData && currentLocationData.type === bikeType.CYCLING"
+            :key="currentLocationData.RouteName"
             :title="currentLocationData.RouteName"
             :from="currentLocationData.RoadSectionStart"
             :to="currentLocationData.RoadSectionEnd"
@@ -76,6 +80,37 @@ export default defineComponent({
             :date="currentLocationData.UpdateTime"
             @on-back="$router.push(prevRoute)"
             @on-road="linkGoogleDirections(`${currentLocationData.geometry[0].split(' ').reverse().join(',')}`)"
+        />
+        <BikeCard
+            v-if="currentLocationData && currentLocationData.type === bikeType.RESTAURANT"
+            :key="currentLocationData.Name"
+            :title="currentLocationData.Name"
+            :from="currentLocationData.Address"
+            :desc="currentLocationData.OpenTime"
+            :src="currentLocationData.Picture.PictureUrl1"
+            :content="currentLocationData.Description"
+            :tags="[
+                currentLocationData.City,
+                currentLocationData.Class,
+            ]"
+            :date="currentLocationData.UpdateTime"
+            @on-back="$router.push(prevRoute)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}`)"
+        />
+        <BikeCard
+            v-if="currentLocationData && currentLocationData.type === bikeType.TOUR"
+            :key="currentLocationData.Name"
+            :title="currentLocationData.Name"
+            :from="currentLocationData.Address"
+            :desc="currentLocationData.Description"
+            :src="currentLocationData.Picture.PictureUrl1"
+            :content="currentLocationData.DescriptionDetail"
+            :tags="[
+                currentLocationData.City,
+            ]"
+            :date="currentLocationData.UpdateTime"
+            @on-back="$router.push(prevRoute)"
+            @on-road="linkGoogleDirections(`${currentLocationData.Position.PositionLat},${currentLocationData.Position.PositionLon}`)"
         />
     </div>
 </template>

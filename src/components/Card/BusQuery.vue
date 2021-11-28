@@ -12,6 +12,12 @@
             <div class="card-bus-query__info-route">
                 {{ start }} <Icon name="round-trip" /> {{ end }}
             </div>
+            <div
+                v-if="stop && stop.estimateTime"
+                class="card-bus-query__info-time"
+            >
+                到站時間 <span>{{ stop.estimateTime }}</span>
+            </div>
         </div>
         <div
             v-if="isLink"
@@ -23,6 +29,7 @@
     </div>
 </template>
 <script>
+import { BusStopEstimatedTime } from '@/api/Bus'
 export default {
     inheritAttrs: false,
     props: {
@@ -50,6 +57,12 @@ export default {
             type: Boolean,
             default: true,
         },
+        stop: {
+            type: BusStopEstimatedTime,
+            default: undefined,
+        },
+    },
+    mounted () {
     },
 }
 </script>
@@ -92,6 +105,18 @@ export default {
 
                 .card-bus-query.-title & {
                     @include typo-h2;
+                }
+            }
+
+            &-time {
+                @include typo('ZH/Minimal_12px_Medium');
+
+                color: color('Dark-Gray');
+
+                span {
+                    padding-left: 4px;
+                    color: color('Dark-Gray');
+                    @include typo('EN/D/H3_16px_Semi-Bold');
                 }
             }
         }

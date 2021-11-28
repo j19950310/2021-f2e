@@ -33,7 +33,8 @@
             </div>
 
             <!-- Filter -->
-            <div
+            <!-- TODO -->
+            <!-- <div
                 class="search-filter__functions-item"
                 tabindex="0"
                 @blur="setBlur"
@@ -41,7 +42,7 @@
                 @click="$emit('click', 'filter')"
             >
                 <Icon name="filter" />
-            </div>
+            </div> -->
         </div>
         <slot />
     </SearchDefault>

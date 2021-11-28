@@ -27,7 +27,7 @@ export const getCyclingShape = async (queryCity, config = {}) => {
         if (!city) throw new Error('查詢不到輸入字串的城市')
         const queryString = paramsFormat(config)
         // 取得資料
-        const { data } = await axios.get(`/Shape/${city}/?${queryString}`)
+        const { data } = await axios.get(`/Shape/${city}?${queryString}`)
         return data.map(item => (new BikeShape(item)))
     } catch (e) {
         return errorHandler(e)
