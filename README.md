@@ -7,10 +7,10 @@
 
 ## 系統說明
 
-專案運行: `yarn; yarn build; yarn serve`
-開發模式: `yarn; yarn dev`
-Node.js版本: 16.12
-備註: `.env` 的 `VITE_APP_GOOGLE_MAP_API_KEY` 為網域專屬憑證，開發或測試需替換個人的 Google Map 憑證
+專案運行: `yarn; yarn build; yarn serve` \
+開發模式: `yarn; yarn dev` \
+Node.js版本: 16.12 \
+備註: `.env` 的 `VITE_APP_GOOGLE_MAP_API_KEY` 為網域專屬憑證，開發或測試需替換個人的 Google Map 憑證 \
 
 ## 資料夾說明
 
