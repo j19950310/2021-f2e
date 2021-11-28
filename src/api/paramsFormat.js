@@ -61,7 +61,12 @@ export function selectToString (arr) {
     return `${arr.join(',')}`
 }
 
-// filter('test>3&number<9|what==123') => 'test gt 3 and number lt 9 or what eq 12'
+/**
+ * 轉譯較易閱讀的filter
+ * @param {String} str js 格式的字串
+ * @returns OData 格式的字串
+ * @example filterStringConvert('test>3&number<9|what==123') => 'test gt 3 and number lt 9 or what eq 12'
+ */
 export function filterStringConvert (str) {
     const sign2key = {
         '==': 'eq',
@@ -85,8 +90,11 @@ export function filterStringConvert (str) {
     return str
 }
 
-// nearby({Lat},{Lon},{DistanceInMeters})，距離範圍為{DistanceInMeters}公尺
+/**
+ * 轉譯 API nearby格式
+ */
 export function spatialFilter (position, distance) {
+    // nearby({Lat},{Lon},{DistanceInMeters})，距離範圍為{DistanceInMeters}公尺
     const { lat, lng } = position
     return `nearby(${lat},${lng},${distance})`
 }
