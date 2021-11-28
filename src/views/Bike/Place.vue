@@ -3,6 +3,8 @@ import { defineComponent, ref, computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
 import { BIKE_TYPE } from '@/plugins/variable'
+const bikeThumbnail = new URL('../../assets/bike_thumbnail.jpg', import.meta.url).href
+const cyclingThumbnail = new URL('../../assets/cycling_thumbnail.jpg', import.meta.url).href
 
 export default defineComponent({
     beforeRouteEnter (to, from, next) {
@@ -39,6 +41,8 @@ export default defineComponent({
         }
 
         return {
+            bikeThumbnail,
+            cyclingThumbnail,
             bikeType,
             serviceStatusMap,
             currentLocationData,
@@ -57,6 +61,7 @@ export default defineComponent({
             :key="currentLocationData.StationName.Zh_tw"
             :title="currentLocationData.StationName.Zh_tw"
             :desc="currentLocationData.StationAddress.Zh_tw"
+            :src="bikeThumbnail"
             :rent-bikes="currentLocationData.availability.AvailableRentBikes"
             :return-bikes="currentLocationData.availability.AvailableReturnBikes"
             :tags="[
@@ -71,6 +76,7 @@ export default defineComponent({
             v-if="currentLocationData && currentLocationData.type === bikeType.CYCLING"
             :key="currentLocationData.RouteName"
             :title="currentLocationData.RouteName"
+            :src="cyclingThumbnail"
             :from="currentLocationData.RoadSectionStart"
             :to="currentLocationData.RoadSectionEnd"
             :tags="[

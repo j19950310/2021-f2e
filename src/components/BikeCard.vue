@@ -1,6 +1,4 @@
 <script setup>
-const bikeThumbnail = new URL('../assets/bike_thumbnail.jpg', import.meta.url).href
-
 defineProps({
     title: {
         type: String,
@@ -50,7 +48,7 @@ defineEmits(['on-back', 'on-road'])
 <template>
     <div class="bike-card">
         <div
-            v-bg="src || bikeThumbnail"
+            v-bg="src"
             class="bike-card__image"
         >
             <!-- <div
