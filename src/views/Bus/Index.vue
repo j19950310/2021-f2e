@@ -350,7 +350,7 @@ export default defineComponent({
                             FORMOSA<br> BUS Guide
                         </p>
                         <p class="bus-loading__title">
-                            台灣自行車懶人包
+                            台灣巴士懶人包
                         </p>
                     </div>
                     <div
